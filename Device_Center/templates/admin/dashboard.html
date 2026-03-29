@@ -1,0 +1,2801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - Device Center</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* 订单详情弹窗样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--gray-50);
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dukekunshan-blue);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            color: var(--gray-800);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        /* 状态修改弹窗样式 */
+        .status-modal-content {
+            max-width: 420px;
+            text-align: center;
+        }
+        
+        .status-modal-body {
+            padding: 32px 24px;
+        }
+        
+        .status-modal-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: var(--gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .status-modal-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--dukekunshan-orange);
+        }
+        
+        .status-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dukekunshan-blue);
+            margin-bottom: 8px;
+        }
+        
+        .status-modal-message {
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+        
+        .status-modal-order {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 14px;
+            color: var(--dukekunshan-blue);
+            background: var(--gray-100);
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .status-modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            border-radius: 0 0 16px 16px;
+            justify-content: center;
+        }
+        
+        .status-modal-footer .btn {
+            min-width: 100px;
+        }
+        
+        .detail-section {
+            margin-bottom: 24px;
+        }
+        
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-section h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: var(--dukekunshan-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-bottom: 4px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            color: var(--gray-800);
+            word-break: break-word;
+            font-weight: 500;
+        }
+        
+        .detail-value.remark {
+            background: var(--gray-100);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            margin-top: 4px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .status-processing {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .status-completed {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .status-cancelled {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        
+        /* 已终止订单行样式 */
+        .order-row-cancelled {
+            background-color: #fafafa !important;
+            opacity: 0.7;
+        }
+        
+        .order-row-cancelled td {
+            color: var(--gray-400);
+        }
+        
+        .order-row-cancelled .badge.status-cancelled {
+            background: var(--gray-400);
+            color: white;
+        }
+        
+        .btn-detail {
+            padding: 8px 14px;
+            font-size: 13px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 6px;
+            transition: var(--transition);
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+        
+        .btn-detail:hover {
+            background: var(--dukekunshan-blue);
+            border-color: var(--dukekunshan-blue);
+            color: white;
+        }
+        
+        /* Toast 提示样式 */
+        .toast {
+            position: fixed;
+            top: 90px;
+            right: 24px;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 2000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast-success {
+            background: var(--green-500);
+            color: white;
+        }
+        
+        .toast-error {
+            background: var(--red-500);
+            color: white;
+        }
+        
+        .toast-info {
+            background: var(--dukekunshan-blue);
+            color: white;
+        }
+        
+        /* 导航链接样式 */
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-right: 8px;
+        }
+        
+        .nav-link:hover {
+            /* background: var(--gray-100); */
+            color: var(--dukekunshan-blue);
+        }
+        
+        .nav-link.active {
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: var(--gray-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-right: 8px;
+        }
+        
+        /* 管理内容切换 */
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        /* 产品管理样式 */
+        .product-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: 8px;
+        }
+        
+        .product-tab {
+            padding: 10px 20px;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray-600);
+            background: var(--gray-100);
+            border: none;
+            transition: var(--transition);
+        }
+        
+        .product-tab:hover {
+            background: var(--gray-200);
+        }
+        
+        .product-tab.active {
+            background: var(--dukekunshan-blue);
+            color: white;
+        }
+        
+        .product-brand-section {
+            display: none;
+        }
+        
+        .product-brand-section.active {
+            display: block;
+        }
+        
+        .product-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .product-search {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .product-search input {
+            padding: 8px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            width: 200px;
+        }
+        
+        .product-table-container {
+            overflow-x: auto;
+        }
+        
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 800px;
+        }
+        
+        .product-table th {
+            background: var(--gray-50);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dukekunshan-blue);
+            border-bottom: 2px solid var(--gray-200);
+            white-space: nowrap;
+        }
+        
+        .product-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: middle;
+        }
+        
+        .product-table tr:hover {
+            background: var(--gray-50);
+        }
+        
+        .product-table .product-name {
+            font-weight: 600;
+            color: var(--dukekunshan-blue);
+        }
+        
+        .product-table .product-price {
+            font-weight: 600;
+            color: var(--dukekunshan-orange);
+        }
+        
+        .product-table .actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .btn-icon {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--gray-300);
+            background: white;
+            transition: var(--transition);
+        }
+        
+        .btn-icon:hover {
+            background: var(--dukekunshan-blue);
+            border-color: var(--dukekunshan-blue);
+            color: white;
+        }
+        
+        .btn-icon.delete:hover {
+            background: var(--red-500);
+            border-color: var(--red-500);
+        }
+        
+        .image-preview {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--gray-300);
+        }
+        
+        .image-url-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        
+        /* 添加/编辑产品弹窗 */
+        .product-modal-content {
+            max-width: 700px;
+        }
+        
+        .product-modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--dukekunshan-blue);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        /* 配置管理样式 */
+        .config-section {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .config-section h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: var(--dukekunshan-blue);
+        }
+        
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .config-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .config-info {
+            flex: 1;
+        }
+        
+        .config-name {
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+        
+        .config-spec {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+        
+        .config-price {
+            font-weight: 600;
+            color: var(--dukekunshan-orange);
+            margin-right: 12px;
+        }
+        
+        /* ============ 图片管理样式 ============ */
+        .image-modal-content {
+            max-width: 800px;
+        }
+        
+        .image-preview-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .main-image-section h4,
+        .gallery-section h4,
+        .image-upload-form h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: var(--dukekunshan-blue);
+        }
+        
+        .main-image-wrapper {
+            width: 100%;
+            min-height: 200px;
+            border: 2px dashed var(--gray-300);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-50);
+            overflow: hidden;
+        }
+        
+        .main-image-wrapper.has-image {
+            border-style: solid;
+            border-color: var(--dukekunshan-blue);
+        }
+        
+        .main-image-wrapper img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+        }
+        
+        .empty-image-placeholder {
+            color: var(--gray-400);
+            font-size: 14px;
+        }
+        
+        .main-image-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .gallery-section {
+            margin-top: 8px;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            min-height: 80px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .gallery-item img:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item-actions {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .gallery-item:hover .gallery-item-actions {
+            opacity: 1;
+        }
+        
+        .gallery-item-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+        
+        .gallery-item-btn.set-main {
+            background: var(--dukekunshan-blue);
+            color: white;
+        }
+        
+        .gallery-item-btn.set-main:hover {
+            background: #0066cc;
+        }
+        
+        .gallery-item-btn.delete {
+            background: var(--red-500);
+            color: white;
+        }
+        
+        .gallery-item-btn.delete:hover {
+            background: #dc2626;
+        }
+        
+        .image-hint {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .image-upload-form {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .empty-gallery {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            font-size: 14px;
+            min-height: 80px;
+        }
+
+        /* 升级选项样式 */
+        .upgrade-section {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 4px;
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .upgrade-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .upgrade-name {
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .upgrade-price {
+            font-weight: 600;
+            color: var(--dukekunshan-orange);
+            white-space: nowrap;
+            margin-left: 12px;
+        }
+
+        .no-upgrades {
+            text-align: center;
+            padding: 16px;
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+
+        .price-breakdown {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--gray-300);
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .price-row.total {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--dukekunshan-orange);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--gray-300);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="{% url 'manage' %}">Device Center</a> <span class="brand-separator">/</span> <span class="current-brand">管理后台</span></h1>
+                <nav class="nav">
+                    <a href="#" class="nav-link active" id="nav-orders" onclick="switchAdminTab('orders', this)">订单管理</a>
+                    <a href="#" class="nav-link" id="nav-products" onclick="switchAdminTab('products', this)">产品管理</a>
+                    <span class="user-info">
+                        👤 {{ admin_name }}
+                        <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 订单管理区域 -->
+    <main class="main admin-main" id="orders-section">
+        <div class="container">
+            <!-- 统计卡片 -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value">{{ total_orders }}</span>
+                        <span class="stat-label">总订单数</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card warning">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value">{{ pending_orders }}</span>
+                        <span class="stat-label">待处理订单</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value">{{ total_users }}</span>
+                        <span class="stat-label">用户数</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card info">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value">{{ total_revenue }} 元</span>
+                        <span class="stat-label">金额总计</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 品牌统计 -->
+            <section class="brand-stats">
+                <h3>品牌分布</h3>
+                <div class="brand-stat-list">
+                    {% for stat in brand_stats %}
+                    <div class="brand-stat-item">
+                        <span class="brand-name">{{ stat.brand|upper }}</span>
+                        <div class="brand-bar">
+                            <div class="brand-bar-fill" style="width: {{ stat.count|add:10 }}%;"></div>
+                        </div>
+                        <span class="brand-count">{{ stat.count }} 单</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            
+            <!-- 订单列表 -->
+            <section class="order-list">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0;">近期订单 <small style="font-weight: normal; color: var(--gray-500); font-size: 14px;">(点击"查看详情"查看完整订单信息)</small></h3>
+                    <button class="btn btn-primary" onclick="exportOrdersExcel()" style="display: flex; align-items: center; gap: 6px;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        导出Excel
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>用户</th>
+                                <th>品牌</th>
+                                <th>产品</th>
+                                <th>价格</th>
+                                <th>状态</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            {% for order in recent_orders %}
+                            <tr class="order-row {% if order.status == 'cancelled' %}order-row-cancelled{% endif %}" data-order-id="{{ order.id }}" data-status="{{ order.status }}">
+                                <td><code>{{ order.order_number }}</code></td>
+                                <td>{{ order.user_name }}</td>
+                                <td><span class="badge brand-{{ order.brand }}">{{ order.brand|upper }}</span></td>
+                                <td>{{ order.model_name }}</td>
+                                <td width="120px">{{ order.total_price }} ¥</td>
+                                <td width="100px">
+                                    <span class="badge status-{{ order.status }}" id="status-badge-{{ order.id }}">
+                                        {% if order.status == 'pending' %}待处理
+                                        {% elif order.status == 'processing' %}处理中
+                                        {% elif order.status == 'completed' %}已完成
+                                        {% elif order.status == 'cancelled' %}已终止
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ order.created_at|date:"m-d H:i" }}</td>
+                                <td>
+                                    <button class="btn-detail" onclick="viewOrderDetail({{ order.id }})">查看详情</button>
+                                    <select onchange="confirmStatusChange({{ order.id }}, this.value)" class="status-select" id="status-select-{{ order.id }}">
+                                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>待处理</option>
+                                        <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>处理中</option>
+                                        <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>已完成</option>
+                                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>已终止</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="empty-text">暂无订单</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 产品管理区域 -->
+    <main class="main admin-main" id="products-section" style="display: none;">
+        <div class="container">
+            <section class="product-manage">
+                <h3>产品管理</h3>
+                
+                <div class="product-tabs">
+                    <button class="product-tab active" data-brand="apple" onclick="switchProductTab('apple', this)">Apple</button>
+                    <button class="product-tab" data-brand="dell" onclick="switchProductTab('dell', this)">Dell</button>
+                    <button class="product-tab" data-brand="lenovo" onclick="switchProductTab('lenovo', this)">Lenovo</button>
+                </div>
+                
+                <!-- Apple 产品管理 -->
+                <div class="product-brand-section active" id="apple-products">
+                    <div class="product-toolbar">
+                        <div class="product-search">
+                            <input type="text" id="apple-search" placeholder="搜索产品型号..." onkeyup="filterProducts('apple')">
+                        </div>
+                        <button class="btn btn-primary" onclick="showAddAppleModel()">+ 添加型号</button>
+                    </div>
+                    <div class="product-table-container">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>型号名称</th>
+                                    <th>设备类型</th>
+                                    <th>配置数量</th>
+                                    <th>产品图片</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apple-model-list">
+                                <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">加载中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Dell 产品管理 -->
+                <div class="product-brand-section" id="dell-products">
+                    <div class="product-toolbar">
+                        <div class="product-search">
+                            <input type="text" id="dell-search" placeholder="搜索产品..." onkeyup="filterProducts('dell')">
+                        </div>
+                        <button class="btn btn-primary" onclick="showAddDellProduct()">+ 添加产品</button>
+                    </div>
+                    <div class="product-table-container">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>产品型号</th>
+                                    <th>设备类型</th>
+                                    <th>基本配置</th>
+                                    <th>价格</th>
+                                    <th>产品图片</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dell-product-list">
+                                <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--gray-500);">加载中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Lenovo 产品管理 -->
+                <div class="product-brand-section" id="lenovo-products">
+                    <div class="product-toolbar">
+                        <div class="product-search">
+                            <input type="text" id="lenovo-search" placeholder="搜索产品..." onkeyup="filterProducts('lenovo')">
+                        </div>
+                        <button class="btn btn-primary" onclick="showAddLenovoProduct()">+ 添加产品</button>
+                    </div>
+                    <div class="product-table-container">
+                        <table class="product-table">
+                            <thead>
+                                <tr>
+                                    <th>产品型号</th>
+                                    <th>设备类型</th>
+                                    <th>配置版本</th>
+                                    <th>CPU</th>
+                                    <th>价格</th>
+                                    <th>产品图片</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lenovo-product-list">
+                                <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--gray-500);">加载中...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 订单详情弹窗 -->
+    <div class="modal-overlay" id="orderDetailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>订单详情</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="orderDetailBody">
+                <div style="text-align: center; padding: 40px; color: var(--gray-500);">
+                    加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 状态修改确认弹窗 -->
+    <div class="modal-overlay" id="statusConfirmModal">
+        <div class="modal-content status-modal-content">
+            <div class="modal-header">
+                <h3>确认修改状态</h3>
+                <button class="modal-close" onclick="closeStatusModal()">&times;</button>
+            </div>
+            <div class="modal-body status-modal-body">
+                <div class="status-modal-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <div class="status-modal-title">确认修改订单状态</div>
+                <div class="status-modal-order" id="confirmOrderNumber">-</div>
+                <div class="status-modal-message">确定要将订单状态修改为：<strong id="confirmNewStatus" style="color: var(--dukekunshan-orange);">-</strong> 吗？</div>
+            </div>
+            <div class="status-modal-footer">
+                <button class="btn btn-secondary" onclick="closeStatusModal()">取消</button>
+                <button class="btn btn-primary" id="confirmStatusBtn" onclick="executeStatusChange()">确认修改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑 Apple 型号弹窗 -->
+    <div class="modal-overlay" id="appleModelModal">
+        <div class="modal-content product-modal-content">
+            <div class="modal-header">
+                <h3 id="appleModelModalTitle">添加型号</h3>
+                <button class="modal-close" onclick="closeAppleModelModal()">&times;</button>
+            </div>
+            <div class="modal-body product-modal-body">
+                <input type="hidden" id="appleModelId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appleModelName">型号名称</label>
+                        <input type="text" id="appleModelName" placeholder="如: MacBook Pro 14英寸">
+                    </div>
+                    <div class="form-group">
+                        <label for="appleDeviceType">设备类型</label>
+                        <select id="appleDeviceType">
+                            <option value="Laptop">MacBook</option>
+                            <option value="Desktop">iMac/Mac mini</option>
+                            <option value="iPad">iPad</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="appleModelDesc">描述</label>
+                        <textarea id="appleModelDesc" placeholder="型号描述..."></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="appleModelImage">产品图片URL</label>
+                        <input type="text" id="appleModelImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+                <div class="config-section" id="appleConfigsSection" style="display: none;">
+                    <h4>产品配置</h4>
+                    <div id="appleConfigsList"></div>
+                    <button class="btn btn-outline" style="margin-top: 12px;" onclick="showAddAppleConfig()">+ 添加配置</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAppleModelModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveAppleModel()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑 Apple 配置弹窗 -->
+    <div class="modal-overlay" id="appleConfigModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加配置</h3>
+                <button class="modal-close" onclick="closeAppleConfigModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="appleConfigId">
+                <input type="hidden" id="appleConfigModelId">
+                <div class="form-group">
+                    <label for="appleConfigName">配置名称</label>
+                    <input type="text" id="appleConfigName" placeholder="如: M3 Pro/18GB/512GB">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appleConfigCpu">芯片</label>
+                        <input type="text" id="appleConfigCpu" placeholder="如: Apple M3 Pro">
+                    </div>
+                    <div class="form-group">
+                        <label for="appleConfigMemory">内存</label>
+                        <input type="text" id="appleConfigMemory" placeholder="如: 18GB">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appleConfigStorage">存储</label>
+                        <input type="text" id="appleConfigStorage" placeholder="如: 512GB SSD">
+                    </div>
+                    <div class="form-group">
+                        <label for="appleConfigGpu">显卡</label>
+                        <input type="text" id="appleConfigGpu" placeholder="如: 14核GPU">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appleConfigScreen">显示屏</label>
+                        <input type="text" id="appleConfigScreen" placeholder="如: 14.2英寸 Liquid Retina XDR">
+                    </div>
+                    <div class="form-group">
+                        <label for="appleConfigPrice">售价</label>
+                        <input type="number" id="appleConfigPrice" placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAppleConfigModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveAppleConfig()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 产品图片管理弹窗 -->
+    <div class="modal-overlay" id="imageManagerModal">
+        <div class="modal-content product-modal-content image-modal-content">
+            <div class="modal-header">
+                <h3 id="imageManagerTitle">管理产品图片</h3>
+                <button class="modal-close" onclick="closeImageManagerModal()">&times;</button>
+            </div>
+            <div class="modal-body product-modal-body">
+                <input type="hidden" id="imageManagerBrand">
+                <input type="hidden" id="imageManagerProductType">
+                <input type="hidden" id="imageManagerProductId">
+                
+                <!-- 图片预览区域 -->
+                <div class="image-preview-container">
+                    <div class="main-image-section">
+                        <h4>主图</h4>
+                        <div class="main-image-wrapper" id="mainImagePreview">
+                            <div class="empty-image-placeholder">暂无主图</div>
+                        </div>
+                        <p class="image-hint">点击"设为封面"可将其设为主图</p>
+                    </div>
+                    <div class="gallery-section">
+                        <h4>副图 (<span id="galleryCount">0</span>)</h4>
+                        <div class="gallery-grid" id="galleryPreview">
+                            <div class="empty-gallery">暂无副图</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 上传表单 -->
+                <div class="image-upload-form">
+                    <h4>上传新图片</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="imageUploadFile">选择图片</label>
+                            <input type="file" id="imageUploadFile" accept="image/*" onchange="previewUploadImage(this)">
+                        </div>
+                        <div class="form-group">
+                            <label for="imageUploadType">图片类型</label>
+                            <select id="imageUploadType">
+                                <option value="gallery">副图</option>
+                                <option value="main">主图</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="imageUploadTitle">图片标题（可选）</label>
+                            <input type="text" id="imageUploadTitle" placeholder="如：正面图、侧面图...">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadImage()" id="uploadBtn" disabled>
+                        上传图片
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑 Dell 产品弹窗 -->
+    <div class="modal-overlay" id="dellProductModal">
+        <div class="modal-content product-modal-content">
+            <div class="modal-header">
+                <h3 id="dellProductModalTitle">添加产品</h3>
+                <button class="modal-close" onclick="closeDellProductModal()">&times;</button>
+            </div>
+            <div class="modal-body product-modal-body">
+                <input type="hidden" id="dellProductId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dellProductModel">产品型号</label>
+                        <input type="text" id="dellProductModel" placeholder="如: XPS 15">
+                    </div>
+                    <div class="form-group">
+                        <label for="dellProductType">设备类型</label>
+                        <select id="dellProductType">
+                            <option value="Notebook">笔记本</option>
+                            <option value="Laptop">高性能本</option>
+                            <option value="Desktop">台式机</option>
+                            <option value="Monitor">显示器</option>
+                            <option value="Docking">配件</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dellProductCpu">CPU</label>
+                        <input type="text" id="dellProductCpu" placeholder="如: Intel Core i7-13700H">
+                    </div>
+                    <div class="form-group">
+                        <label for="dellProductMemory">内存</label>
+                        <input type="text" id="dellProductMemory" placeholder="如: 32GB DDR5">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dellProductStorage">存储</label>
+                        <input type="text" id="dellProductStorage" placeholder="如: 1TB SSD">
+                    </div>
+                    <div class="form-group">
+                        <label for="dellProductGpu">显卡</label>
+                        <input type="text" id="dellProductGpu" placeholder="如: NVIDIA RTX 4060">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dellProductPrice">售价</label>
+                        <input type="number" id="dellProductPrice" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="dellProductOriginalPrice">原价</label>
+                        <input type="number" id="dellProductOriginalPrice" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="dellProductImage">产品图片URL</label>
+                        <input type="text" id="dellProductImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDellProductModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveDellProduct()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加/编辑 Lenovo 产品弹窗 -->
+    <div class="modal-overlay" id="lenovoProductModal">
+        <div class="modal-content product-modal-content">
+            <div class="modal-header">
+                <h3 id="lenovoProductModalTitle">添加产品</h3>
+                <button class="modal-close" onclick="closeLenovoProductModal()">&times;</button>
+            </div>
+            <div class="modal-body product-modal-body">
+                <input type="hidden" id="lenovoProductId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lenovoProductModel">产品型号</label>
+                        <input type="text" id="lenovoProductModel" placeholder="如: ThinkPad X1 Carbon">
+                    </div>
+                    <div class="form-group">
+                        <label for="lenovoProductType">设备类型</label>
+                        <select id="lenovoProductType">
+                            <option value="Laptop">笔记本</option>
+                            <option value="Desktop">台式机</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lenovoProductConfig">配置版本</label>
+                        <input type="text" id="lenovoProductConfig" placeholder="如: Ultra 7/32GB/1TB">
+                    </div>
+                    <div class="form-group">
+                        <label for="lenovoProductCpu">CPU</label>
+                        <input type="text" id="lenovoProductCpu" placeholder="如: Intel Core Ultra 7 155H">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lenovoProductMemory">内存</label>
+                        <input type="text" id="lenovoProductMemory" placeholder="如: 32GB LPDDR5X">
+                    </div>
+                    <div class="form-group">
+                        <label for="lenovoProductStorage">存储</label>
+                        <input type="text" id="lenovoProductStorage" placeholder="如: 1TB PCIe SSD">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lenovoProductPrice">优惠价</label>
+                        <input type="number" id="lenovoProductPrice" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="lenovoProductOriginalPrice">原价</label>
+                        <input type="number" id="lenovoProductOriginalPrice" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="lenovoProductImage">产品图片URL</label>
+                        <input type="text" id="lenovoProductImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeLenovoProductModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveLenovoProduct()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    // ============ 通用功能 ============
+    
+    // 切换管理标签页
+    function switchAdminTab(tab, element) {
+        document.getElementById('nav-orders').classList.remove('active');
+        document.getElementById('nav-products').classList.remove('active');
+        element.classList.add('active');
+        
+        document.getElementById('orders-section').style.display = tab === 'orders' ? 'block' : 'none';
+        document.getElementById('products-section').style.display = tab === 'products' ? 'block' : 'none';
+        
+        if (tab === 'products') {
+            // 加载产品数据
+            loadAppleModels();
+            loadDellProducts();
+            loadLenovoProducts();
+        }
+    }
+    
+    // 切换产品品牌标签页
+    function switchProductTab(brand, element) {
+        document.querySelectorAll('.product-tab').forEach(t => t.classList.remove('active'));
+        element.classList.add('active');
+        
+        document.querySelectorAll('.product-brand-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(brand + '-products').classList.add('active');
+    }
+    
+    // 显示Toast提示
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast toast-' + type;
+        
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // ============ Apple 产品管理 ============
+    
+    let appleModelsData = [];
+    
+    function loadAppleModels() {
+        fetch('/api/admin/apple/models/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    appleModelsData = data.data;
+                    renderAppleModels(appleModelsData);
+                } else {
+                    document.getElementById('apple-model-list').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--red-500);">加载失败: ' + data.message + '</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('apple-model-list').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--red-500);">加载失败，请重试</td></tr>';
+            });
+    }
+    
+    function renderAppleModels(models) {
+        if (models.length === 0) {
+            document.getElementById('apple-model-list').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">暂无型号</td></tr>';
+            return;
+        }
+        
+        const searchTerm = document.getElementById('apple-search').value.toLowerCase();
+        const filtered = models.filter(m => 
+            m.model_name.toLowerCase().includes(searchTerm) ||
+            m.device_type_name.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filtered.length === 0) {
+            document.getElementById('apple-model-list').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">没有找到匹配的结果</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        filtered.forEach(m => {
+            html += `<tr>
+                <td class="product-name">${m.model_name}</td>
+                <td>${m.device_type_name}</td>
+                <td>${m.config_count} 个配置</td>
+                <td>${m.image_url ? `<img src="${m.image_url}" class="image-preview" alt="产品图片">` : '<span style="color: var(--gray-400);">未设置</span>'}</td>
+                <td><span class="badge ${m.is_active ? 'status-completed' : 'status-cancelled'}">${m.is_active ? '启用' : '禁用'}</span></td>
+                <td class="actions">
+                    <button class="btn-icon" onclick="editAppleModel(${m.id})">编辑</button>
+                    <button class="btn-icon image" onclick="openImageManager('apple', 'model', ${m.id})" title="管理图片">📷</button>
+                    <button class="btn-icon delete" onclick="deleteAppleModel(${m.id})">删除</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('apple-model-list').innerHTML = html;
+    }
+    
+    function filterProducts(brand) {
+        if (brand === 'apple') {
+            renderAppleModels(appleModelsData);
+        } else if (brand === 'dell') {
+            renderDellProducts(dellProductsData);
+        } else if (brand === 'lenovo') {
+            renderLenovoProducts(lenovoProductsData);
+        }
+    }
+    
+    function showAddAppleModel() {
+        document.getElementById('appleModelModalTitle').textContent = '添加型号';
+        document.getElementById('appleModelId').value = '';
+        document.getElementById('appleModelName').value = '';
+        document.getElementById('appleDeviceType').value = 'Laptop';
+        document.getElementById('appleModelDesc').value = '';
+        document.getElementById('appleModelImage').value = '';
+        document.getElementById('appleConfigsSection').style.display = 'none';
+        document.getElementById('appleModelModal').classList.add('active');
+    }
+    
+    function editAppleModel(id) {
+        const model = appleModelsData.find(m => m.id === id);
+        if (!model) return;
+        
+        document.getElementById('appleModelModalTitle').textContent = '编辑型号';
+        document.getElementById('appleModelId').value = model.id;
+        document.getElementById('appleModelName').value = model.model_name;
+        document.getElementById('appleDeviceType').value = model.device_type;
+        document.getElementById('appleModelDesc').value = model.description || '';
+        document.getElementById('appleModelImage').value = model.image_url || '';
+        
+        document.getElementById('appleModelModal').classList.add('active');
+    }
+    
+    function closeAppleModelModal() {
+        document.getElementById('appleModelModal').classList.remove('active');
+    }
+    
+    function saveAppleModel() {
+        const id = document.getElementById('appleModelId').value;
+        const data = {
+            model_name: document.getElementById('appleModelName').value,
+            device_type: document.getElementById('appleDeviceType').value,
+            description: document.getElementById('appleModelDesc').value,
+            image_url: document.getElementById('appleModelImage').value,
+            is_active: true
+        };
+        
+        if (!data.model_name) {
+            showToast('请输入型号名称', 'error');
+            return;
+        }
+        
+        const url = id ? '/api/admin/apple/model/' + id + '/' : '/api/admin/apple/models/';
+        const method = id ? 'POST' : 'POST';
+        
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeAppleModelModal();
+                loadAppleModels();
+                showToast(id ? '更新成功' : '创建成功', 'success');
+            } else {
+                showToast('保存失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('保存失败，请重试', 'error');
+        });
+    }
+    
+    function deleteAppleModel(id) {
+        if (!confirm('确定要删除此型号吗？相关的配置也会被删除。')) return;
+        
+        fetch('/api/admin/apple/model/' + id + '/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadAppleModels();
+                showToast('删除成功', 'success');
+            } else {
+                showToast('删除失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('删除失败，请重试', 'error');
+        });
+    }
+    
+    function showAddAppleConfig() {
+        document.getElementById('appleConfigModalTitle').textContent = '添加配置';
+        document.getElementById('appleConfigId').value = '';
+        document.getElementById('appleConfigModelId').value = document.getElementById('appleModelId').value || '';
+        document.getElementById('appleConfigName').value = '';
+        document.getElementById('appleConfigCpu').value = '';
+        document.getElementById('appleConfigMemory').value = '';
+        document.getElementById('appleConfigStorage').value = '';
+        document.getElementById('appleConfigGpu').value = '';
+        document.getElementById('appleConfigScreen').value = '';
+        document.getElementById('appleConfigPrice').value = '';
+        document.getElementById('appleConfigModal').classList.add('active');
+    }
+    
+    function closeAppleConfigModal() {
+        document.getElementById('appleConfigModal').classList.remove('active');
+    }
+    
+    function saveAppleConfig() {
+        const data = {
+            model_id: document.getElementById('appleConfigModelId').value,
+            configuration: document.getElementById('appleConfigName').value,
+            cpu: document.getElementById('appleConfigCpu').value,
+            memory: document.getElementById('appleConfigMemory').value,
+            hard_disk: document.getElementById('appleConfigStorage').value,
+            graphic_card: document.getElementById('appleConfigGpu').value,
+            screen: document.getElementById('appleConfigScreen').value,
+            discount_price: document.getElementById('appleConfigPrice').value || 0,
+            original_price: document.getElementById('appleConfigPrice').value || 0
+        };
+        
+        if (!data.model_id) {
+            showToast('请先保存型号', 'error');
+            return;
+        }
+        
+        if (!data.configuration) {
+            showToast('请输入配置名称', 'error');
+            return;
+        }
+        
+        fetch('/api/admin/apple/configs/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeAppleConfigModal();
+                loadAppleModels();
+                showToast('配置创建成功', 'success');
+            } else {
+                showToast('保存失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('保存失败，请重试', 'error');
+        });
+    }
+    
+    // ============ Dell 产品管理 ============
+    
+    let dellProductsData = [];
+    
+    function loadDellProducts() {
+        fetch('/api/admin/dell/products/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    dellProductsData = data.data;
+                    renderDellProducts(dellProductsData);
+                } else {
+                    document.getElementById('dell-product-list').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--red-500);">加载失败: ' + data.message + '</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('dell-product-list').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--red-500);">加载失败，请重试</td></tr>';
+            });
+    }
+    
+    function renderDellProducts(products) {
+        if (products.length === 0) {
+            document.getElementById('dell-product-list').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--gray-500);">暂无产品</td></tr>';
+            return;
+        }
+        
+        const searchTerm = document.getElementById('dell-search').value.toLowerCase();
+        const typeMap = {'Notebook': '笔记本', 'Laptop': '高性能本', 'Desktop': '台式机', 'Monitor': '显示器', 'Docking': '配件'};
+        const filtered = products.filter(p => 
+            p.model.toLowerCase().includes(searchTerm) ||
+            p.device_type.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filtered.length === 0) {
+            document.getElementById('dell-product-list').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--gray-500);">没有找到匹配的结果</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        filtered.forEach(p => {
+            html += `<tr>
+                <td class="product-name">${p.model}</td>
+                <td>${typeMap[p.device_type] || p.device_type}</td>
+                <td>${p.basic_config || '-'}</td>
+                <td class="product-price">¥${parseFloat(p.price).toFixed(2)}</td>
+                <td>${p.image_url ? `<img src="${p.image_url}" class="image-preview" alt="产品图片">` : '<span style="color: var(--gray-400);">未设置</span>'}</td>
+                <td><span class="badge ${p.is_active ? 'status-completed' : 'status-cancelled'}">${p.is_active ? '启用' : '禁用'}</span></td>
+                <td class="actions">
+                    <button class="btn-icon" onclick="editDellProduct(${p.id})">编辑</button>
+                    <button class="btn-icon image" onclick="openImageManager('dell', 'dell_product', ${p.id})" title="管理图片">📷</button>
+                    <button class="btn-icon delete" onclick="deleteDellProduct(${p.id})">删除</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('dell-product-list').innerHTML = html;
+    }
+    
+    function showAddDellProduct() {
+        document.getElementById('dellProductModalTitle').textContent = '添加产品';
+        document.getElementById('dellProductId').value = '';
+        document.getElementById('dellProductModel').value = '';
+        document.getElementById('dellProductType').value = 'Notebook';
+        document.getElementById('dellProductCpu').value = '';
+        document.getElementById('dellProductMemory').value = '';
+        document.getElementById('dellProductStorage').value = '';
+        document.getElementById('dellProductGpu').value = '';
+        document.getElementById('dellProductPrice').value = '';
+        document.getElementById('dellProductOriginalPrice').value = '';
+        document.getElementById('dellProductImage').value = '';
+        document.getElementById('dellProductModal').classList.add('active');
+    }
+    
+    function editDellProduct(id) {
+        const product = dellProductsData.find(p => p.id === id);
+        if (!product) return;
+        
+        document.getElementById('dellProductModalTitle').textContent = '编辑产品';
+        document.getElementById('dellProductId').value = product.id;
+        document.getElementById('dellProductModel').value = product.model;
+        document.getElementById('dellProductType').value = product.device_type;
+        document.getElementById('dellProductCpu').value = product.cpu || '';
+        document.getElementById('dellProductMemory').value = product.memory || '';
+        document.getElementById('dellProductStorage').value = product.hard_disk || '';
+        document.getElementById('dellProductGpu').value = product.graphic_card || '';
+        document.getElementById('dellProductPrice').value = product.price || 0;
+        document.getElementById('dellProductOriginalPrice').value = product.original_price || 0;
+        document.getElementById('dellProductImage').value = product.image_url || '';
+        document.getElementById('dellProductModal').classList.add('active');
+    }
+    
+    function closeDellProductModal() {
+        document.getElementById('dellProductModal').classList.remove('active');
+    }
+    
+    function saveDellProduct() {
+        const id = document.getElementById('dellProductId').value;
+        const data = {
+            model: document.getElementById('dellProductModel').value,
+            device_type: document.getElementById('dellProductType').value,
+            basic_config: '',
+            cpu: document.getElementById('dellProductCpu').value,
+            memory: document.getElementById('dellProductMemory').value,
+            hard_disk: document.getElementById('dellProductStorage').value,
+            graphic_card: document.getElementById('dellProductGpu').value,
+            price: document.getElementById('dellProductPrice').value || 0,
+            original_price: document.getElementById('dellProductOriginalPrice').value || 0,
+            image_url: document.getElementById('dellProductImage').value,
+            is_active: true
+        };
+        
+        if (!data.model) {
+            showToast('请输入产品型号', 'error');
+            return;
+        }
+        
+        const url = id ? '/api/admin/dell/product/' + id + '/' : '/api/admin/dell/products/';
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeDellProductModal();
+                loadDellProducts();
+                showToast(id ? '更新成功' : '创建成功', 'success');
+            } else {
+                showToast('保存失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('保存失败，请重试', 'error');
+        });
+    }
+    
+    function deleteDellProduct(id) {
+        if (!confirm('确定要删除此产品吗？')) return;
+        
+        fetch('/api/admin/dell/product/' + id + '/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadDellProducts();
+                showToast('删除成功', 'success');
+            } else {
+                showToast('删除失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('删除失败，请重试', 'error');
+        });
+    }
+    
+    // ============ Lenovo 产品管理 ============
+    
+    let lenovoProductsData = [];
+    
+    function loadLenovoProducts() {
+        fetch('/api/admin/lenovo/products/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    lenovoProductsData = data.data;
+                    renderLenovoProducts(lenovoProductsData);
+                } else {
+                    document.getElementById('lenovo-product-list').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--red-500);">加载失败: ' + data.message + '</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('lenovo-product-list').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--red-500);">加载失败，请重试</td></tr>';
+            });
+    }
+    
+    function renderLenovoProducts(products) {
+        if (products.length === 0) {
+            document.getElementById('lenovo-product-list').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--gray-500);">暂无产品</td></tr>';
+            return;
+        }
+        
+        const searchTerm = document.getElementById('lenovo-search').value.toLowerCase();
+        const typeMap = {'Laptop': '笔记本', 'Desktop': '台式机'};
+        const filtered = products.filter(p => 
+            p.model.toLowerCase().includes(searchTerm) ||
+            p.configuration.toLowerCase().includes(searchTerm) ||
+            p.cpu.toLowerCase().includes(searchTerm)
+        );
+        
+        if (filtered.length === 0) {
+            document.getElementById('lenovo-product-list').innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--gray-500);">没有找到匹配的结果</td></tr>';
+            return;
+        }
+        
+        let html = '';
+        filtered.forEach(p => {
+            html += `<tr>
+                <td class="product-name">${p.model}</td>
+                <td>${typeMap[p.device_type] || p.device_type}</td>
+                <td>${p.configuration || '-'}</td>
+                <td>${p.cpu || '-'}</td>
+                <td class="product-price">¥${parseFloat(p.discount_price).toFixed(2)}</td>
+                <td>${p.image_url ? `<img src="${p.image_url}" class="image-preview" alt="产品图片">` : '<span style="color: var(--gray-400);">未设置</span>'}</td>
+                <td><span class="badge ${p.is_active ? 'status-completed' : 'status-cancelled'}">${p.is_active ? '启用' : '禁用'}</span></td>
+                <td class="actions">
+                    <button class="btn-icon" onclick="editLenovoProduct(${p.id})">编辑</button>
+                    <button class="btn-icon image" onclick="openImageManager('lenovo', 'lenovo_product', ${p.id})" title="管理图片">📷</button>
+                    <button class="btn-icon delete" onclick="deleteLenovoProduct(${p.id})">删除</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('lenovo-product-list').innerHTML = html;
+    }
+    
+    function showAddLenovoProduct() {
+        document.getElementById('lenovoProductModalTitle').textContent = '添加产品';
+        document.getElementById('lenovoProductId').value = '';
+        document.getElementById('lenovoProductModel').value = '';
+        document.getElementById('lenovoProductType').value = 'Laptop';
+        document.getElementById('lenovoProductConfig').value = '';
+        document.getElementById('lenovoProductCpu').value = '';
+        document.getElementById('lenovoProductMemory').value = '';
+        document.getElementById('lenovoProductStorage').value = '';
+        document.getElementById('lenovoProductPrice').value = '';
+        document.getElementById('lenovoProductOriginalPrice').value = '';
+        document.getElementById('lenovoProductImage').value = '';
+        document.getElementById('lenovoProductModal').classList.add('active');
+    }
+    
+    function editLenovoProduct(id) {
+        const product = lenovoProductsData.find(p => p.id === id);
+        if (!product) return;
+        
+        document.getElementById('lenovoProductModalTitle').textContent = '编辑产品';
+        document.getElementById('lenovoProductId').value = product.id;
+        document.getElementById('lenovoProductModel').value = product.model;
+        document.getElementById('lenovoProductType').value = product.device_type;
+        document.getElementById('lenovoProductConfig').value = product.configuration || '';
+        document.getElementById('lenovoProductCpu').value = product.cpu || '';
+        document.getElementById('lenovoProductMemory').value = product.memory || '';
+        document.getElementById('lenovoProductStorage').value = product.hard_disk || '';
+        document.getElementById('lenovoProductPrice').value = product.discount_price || 0;
+        document.getElementById('lenovoProductOriginalPrice').value = product.original_price || 0;
+        document.getElementById('lenovoProductImage').value = product.image_url || '';
+        document.getElementById('lenovoProductModal').classList.add('active');
+    }
+    
+    function closeLenovoProductModal() {
+        document.getElementById('lenovoProductModal').classList.remove('active');
+    }
+    
+    function saveLenovoProduct() {
+        const id = document.getElementById('lenovoProductId').value;
+        const data = {
+            model: document.getElementById('lenovoProductModel').value,
+            device_type: document.getElementById('lenovoProductType').value,
+            configuration: document.getElementById('lenovoProductConfig').value,
+            cpu: document.getElementById('lenovoProductCpu').value,
+            memory: document.getElementById('lenovoProductMemory').value,
+            hard_disk: document.getElementById('lenovoProductStorage').value,
+            discount_price: document.getElementById('lenovoProductPrice').value || 0,
+            original_price: document.getElementById('lenovoProductOriginalPrice').value || 0,
+            image_url: document.getElementById('lenovoProductImage').value,
+            is_active: true
+        };
+        
+        if (!data.model) {
+            showToast('请输入产品型号', 'error');
+            return;
+        }
+        
+        const url = id ? '/api/admin/lenovo/product/' + id + '/' : '/api/admin/lenovo/products/';
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeLenovoProductModal();
+                loadLenovoProducts();
+                showToast(id ? '更新成功' : '创建成功', 'success');
+            } else {
+                showToast('保存失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('保存失败，请重试', 'error');
+        });
+    }
+    
+    function deleteLenovoProduct(id) {
+        if (!confirm('确定要删除此产品吗？')) return;
+        
+        fetch('/api/admin/lenovo/product/' + id + '/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadLenovoProducts();
+                showToast('删除成功', 'success');
+            } else {
+                showToast('删除失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('删除失败，请重试', 'error');
+        });
+    }
+    
+    // ============ 订单管理功能 ============
+    
+    // 状态修改弹窗变量
+    let pendingStatusChange = null;
+
+    // 状态文本映射
+    const statusTextMap = {
+        'pending': '待处理',
+        'processing': '处理中',
+        'completed': '已完成',
+        'cancelled': '已终止'
+    };
+
+    // 打开状态确认弹窗
+    function confirmStatusChange(orderId, newStatus) {
+        const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+        const currentStatus = orderRow ? orderRow.dataset.status : '';
+        
+        // 如果状态没有变化，不做任何操作
+        if (newStatus === currentStatus) {
+            const select = document.getElementById(`status-select-${orderId}`);
+            select.value = currentStatus;
+            return;
+        }
+
+        const orderNumber = orderRow.querySelector('code').textContent;
+
+        pendingStatusChange = {
+            orderId: orderId,
+            newStatus: newStatus,
+            orderNumber: orderNumber
+        };
+
+        document.getElementById('confirmOrderNumber').textContent = orderNumber;
+        document.getElementById('confirmNewStatus').textContent = statusTextMap[newStatus];
+
+        document.getElementById('statusConfirmModal').classList.add('active');
+    }
+
+    // 关闭状态确认弹窗
+    function closeStatusModal() {
+        document.getElementById('statusConfirmModal').classList.remove('active');
+        
+        if (pendingStatusChange) {
+            const select = document.getElementById(`status-select-${pendingStatusChange.orderId}`);
+            const orderRow = document.querySelector(`tr[data-order-id="${pendingStatusChange.orderId}"]`);
+            select.value = orderRow ? orderRow.dataset.status : 'pending';
+            pendingStatusChange = null;
+        }
+    }
+
+    // 执行状态修改
+    function executeStatusChange() {
+        if (!pendingStatusChange) return;
+
+        const btn = document.getElementById('confirmStatusBtn');
+        btn.disabled = true;
+        btn.textContent = '处理中...';
+
+        const { orderId, newStatus } = pendingStatusChange;
+
+        fetch('/api/admin/order/' + orderId + '/status/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeStatusModal();
+                updateOrderStatus(orderId, newStatus);
+                showToast('订单状态已更新', 'success');
+            } else {
+                showToast('更新失败: ' + data.message, 'error');
+                const select = document.getElementById(`status-select-${orderId}`);
+                const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+                select.value = orderRow ? orderRow.dataset.status : 'pending';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('更新失败，请重试', 'error');
+            const select = document.getElementById(`status-select-${orderId}`);
+            const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+            select.value = orderRow ? orderRow.dataset.status : 'pending';
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = '确认修改';
+            pendingStatusChange = null;
+        });
+    }
+
+    // 更新订单状态显示（无需刷新页面）
+    function updateOrderStatus(orderId, newStatus) {
+        const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+        if (!orderRow) return;
+
+        orderRow.dataset.status = newStatus;
+
+        const statusBadge = document.getElementById(`status-badge-${orderId}`);
+        if (statusBadge) {
+            statusBadge.className = `badge status-${newStatus}`;
+            statusBadge.textContent = statusTextMap[newStatus];
+        }
+
+        if (newStatus === 'cancelled') {
+            orderRow.classList.add('order-row-cancelled');
+        } else {
+            orderRow.classList.remove('order-row-cancelled');
+        }
+    }
+
+    // 查看订单详情
+    function viewOrderDetail(orderId) {
+        const modal = document.getElementById('orderDetailModal');
+        const body = document.getElementById('orderDetailBody');
+
+        body.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--gray-500);">加载中...</div>';
+        modal.classList.add('active');
+
+        fetch('/api/admin/order/' + orderId + '/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const order = data.data;
+
+                    let configHtml = '';
+                    if (order.selected_cpu || order.selected_memory || order.selected_hard_disk || order.selected_graphic_card || order.selected_screen) {
+                        configHtml = `
+                            <div class="detail-section">
+                                <h4>配置信息</h4>
+                                <div class="detail-grid">
+                                    ${order.selected_cpu ? `<div class="detail-item"><span class="detail-label">CPU</span><span class="detail-value">${order.selected_cpu}</span></div>` : ''}
+                                    ${order.selected_memory ? `<div class="detail-item"><span class="detail-label">内存</span><span class="detail-value">${order.selected_memory}</span></div>` : ''}
+                                    ${order.selected_hard_disk ? `<div class="detail-item"><span class="detail-label">硬盘</span><span class="detail-value">${order.selected_hard_disk}</span></div>` : ''}
+                                    ${order.selected_graphic_card ? `<div class="detail-item"><span class="detail-label">显卡</span><span class="detail-value">${order.selected_graphic_card}</span></div>` : ''}
+                                    ${order.selected_screen ? `<div class="detail-item full-width"><span class="detail-label">屏幕</span><span class="detail-value">${order.selected_screen}</span></div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // 构建升级选项HTML
+                    let upgradesHtml = '';
+                    if (order.selected_upgrades && Array.isArray(order.selected_upgrades) && order.selected_upgrades.length > 0) {
+                        const upgradesList = order.selected_upgrades.map(u => {
+                            // 兼容不同的数据格式：{name, price} 或直接字符串
+                            if (typeof u === 'object' && u.name) {
+                                return {
+                                    name: u.name,
+                                    price: u.price || 0
+                                };
+                            } else if (typeof u === 'string') {
+                                return { name: u, price: 0 };
+                            }
+                            return null;
+                        }).filter(u => u !== null);
+
+                        if (upgradesList.length > 0) {
+                            upgradesHtml = `
+                                <div class="detail-section">
+                                    <h4>升级选项</h4>
+                                    <div class="upgrade-section">
+                                        ${upgradesList.map(u => `
+                                            <div class="upgrade-item">
+                                                <span class="upgrade-name">${u.name}</span>
+                                                ${u.price > 0 ? `<span class="upgrade-price">+¥${parseFloat(u.price).toFixed(2)}</span>` : ''}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    // 价格明细HTML
+                    let priceHtml = '';
+                    if (order.upgrade_price > 0 || order.base_price) {
+                        priceHtml = `
+                            <div class="price-breakdown">
+                                <div class="price-row">
+                                    <span>基础价格</span>
+                                    <span>¥${parseFloat(order.base_price || 0).toFixed(2)}</span>
+                                </div>
+                                ${order.upgrade_price > 0 ? `
+                                <div class="price-row">
+                                    <span>升级费用</span>
+                                    <span style="color: var(--dukekunshan-orange);">+¥${parseFloat(order.upgrade_price).toFixed(2)}</span>
+                                </div>
+                                ` : ''}
+                                <div class="price-row total">
+                                    <span>总价</span>
+                                    <span>¥${parseFloat(order.total_price).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        priceHtml = `
+                            <div class="price-row total">
+                                <span>总价</span>
+                                <span>¥${parseFloat(order.total_price || 0).toFixed(2)}</span>
+                            </div>
+                        `;
+                    }
+
+                    body.innerHTML = `
+                        <div class="detail-section">
+                            <h4>基本信息</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">订单号</span>
+                                    <span class="detail-value"><code>${order.order_number}</code></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">状态</span>
+                                    <span class="detail-value"><span class="status-badge status-${order.status}">${statusTextMap[order.status]}</span></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">品牌</span>
+                                    <span class="detail-value">${order.brand.toUpperCase()}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">设备类型</span>
+                                    <span class="detail-value">${order.device_type || '-'}</span>
+                                </div>
+                                <div class="detail-item full-width">
+                                    <span class="detail-label">产品型号</span>
+                                    <span class="detail-value">${order.model_name}</span>
+                                </div>
+                                <div class="detail-item full-width">
+                                    <span class="detail-label">价格明细</span>
+                                    ${priceHtml}
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">下单时间</span>
+                                    <span class="detail-value">${order.created_at}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4>用户信息</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">用户ID</span>
+                                    <span class="detail-value">${order.user_id}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">用户名</span>
+                                    <span class="detail-value">${order.user_name || '-'}</span>
+                                </div>
+                                <div class="detail-item full-width">
+                                    <span class="detail-label">邮箱</span>
+                                    <span class="detail-value">${order.user_email || '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${configHtml}
+
+                        ${upgradesHtml}
+
+                        <div class="detail-section">
+                            <h4>备注信息</h4>
+                            <div class="detail-value remark">${order.remark || '无备注'}</div>
+                        </div>
+                    `;
+                } else {
+                    body.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--red-500);">获取订单详情失败</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                body.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--red-500);">获取订单详情失败，请重试</div>';
+            });
+    }
+    
+    // 关闭订单详情弹窗
+    function closeModal() {
+        document.getElementById('orderDetailModal').classList.remove('active');
+    }
+    
+    // 点击弹窗外部关闭
+    document.getElementById('orderDetailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // 点击状态确认弹窗外部关闭
+    document.getElementById('statusConfirmModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeStatusModal();
+        }
+    });
+    
+    // ESC键关闭弹窗
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+            closeStatusModal();
+            closeAppleModelModal();
+            closeAppleConfigModal();
+            closeDellProductModal();
+            closeLenovoProductModal();
+            closeImageManagerModal();
+        }
+    });
+    
+    // 点击图片管理弹窗外部关闭
+    document.getElementById('imageManagerModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeImageManagerModal();
+        }
+    });
+    
+    // ============ 图片管理功能 ============
+    
+    // 图片数据存储
+    let productImagesData = {
+        mainImage: null,
+        galleryImages: []
+    };
+    
+    // 打开图片管理器
+    function openImageManager(brand, productType, productId) {
+        document.getElementById('imageManagerTitle').textContent = '管理产品图片';
+        document.getElementById('imageManagerBrand').value = brand;
+        document.getElementById('imageManagerProductType').value = productType;
+        document.getElementById('imageManagerProductId').value = productId;
+        
+        // 重置上传表单
+        document.getElementById('imageUploadFile').value = '';
+        document.getElementById('imageUploadType').value = 'gallery';
+        document.getElementById('imageUploadTitle').value = '';
+        document.getElementById('uploadBtn').disabled = true;
+        
+        // 重置图片数据
+        productImagesData = {
+            mainImage: null,
+            galleryImages: []
+        };
+        
+        // 加载产品图片
+        loadProductImages(brand, productType, productId);
+        
+        // 显示弹窗
+        document.getElementById('imageManagerModal').classList.add('active');
+    }
+    
+    // 关闭图片管理器
+    function closeImageManagerModal() {
+        document.getElementById('imageManagerModal').classList.remove('active');
+    }
+    
+    // 加载产品图片
+    function loadProductImages(brand, productType, productId) {
+        const mainPreview = document.getElementById('mainImagePreview');
+        const galleryPreview = document.getElementById('galleryPreview');
+        const galleryCount = document.getElementById('galleryCount');
+        
+        // 显示加载状态
+        mainPreview.innerHTML = '<div class="empty-image-placeholder">加载中...</div>';
+        galleryPreview.innerHTML = '<div class="empty-gallery">加载中...</div>';
+        
+        // 构建API URL
+        let apiUrl = '';
+        if (brand === 'apple') {
+            if (productType === 'model') {
+                apiUrl = '/api/admin/apple/model/' + productId + '/images/';
+            } else {
+                apiUrl = '/api/admin/apple/config/' + productId + '/images/';
+            }
+        } else if (brand === 'dell') {
+            apiUrl = '/api/admin/dell/product/' + productId + '/images/';
+        } else if (brand === 'lenovo') {
+            apiUrl = '/api/admin/lenovo/product/' + productId + '/images/';
+        }
+        
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Handle the API response format
+                    // New format: { mainImage: {...}, galleryImages: [...] }
+                    // Old format: flat array of images (backward compatibility)
+                    const apiData = data.data;
+
+                    if (Array.isArray(apiData)) {
+                        // Old format: flat array, need to convert
+                        // Images with image_type='main' should be the main image
+                        let mainImg = null;
+                        const galleryList = [];
+
+                        for (const img of apiData) {
+                            if (img.image_type === 'main' && !mainImg) {
+                                mainImg = {
+                                    id: img.id,
+                                    url: img.image_url || img.url,
+                                    image_type: 'main',
+                                    title: img.title
+                                };
+                            } else {
+                                galleryList.push({
+                                    id: img.id,
+                                    url: img.image_url || img.url,
+                                    image_type: img.image_type,
+                                    title: img.title,
+                                    sort_order: img.sort_order
+                                });
+                            }
+                        }
+
+                        // If no main image found, use first gallery image
+                        if (!mainImg && galleryList.length > 0) {
+                            mainImg = {
+                                id: galleryList[0].id,
+                                url: galleryList[0].url,
+                                image_type: galleryList[0].image_type,
+                                title: galleryList[0].title
+                            };
+                        }
+
+                        productImagesData = {
+                            mainImage: mainImg,
+                            galleryImages: galleryList
+                        };
+                    } else {
+                        // New format: object with mainImage and galleryImages
+                        productImagesData = {
+                            mainImage: apiData.mainImage || null,
+                            galleryImages: Array.isArray(apiData.galleryImages) ? apiData.galleryImages : []
+                        };
+                    }
+
+                    renderProductImages();
+                } else {
+                    showToast('加载图片失败: ' + data.message, 'error');
+                    mainPreview.innerHTML = '<div class="empty-image-placeholder">加载失败</div>';
+                    galleryPreview.innerHTML = '<div class="empty-gallery">加载失败</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('加载图片失败，请重试', 'error');
+                mainPreview.innerHTML = '<div class="empty-image-placeholder">加载失败</div>';
+                galleryPreview.innerHTML = '<div class="empty-gallery">加载失败</div>';
+            });
+    }
+    
+    // 渲染产品图片
+    function renderProductImages() {
+        const mainPreview = document.getElementById('mainImagePreview');
+        const galleryPreview = document.getElementById('galleryPreview');
+        const galleryCount = document.getElementById('galleryCount');
+
+        // 安全检查：确保 productImagesData 存在且 galleryImages 是数组
+        if (!productImagesData) {
+            productImagesData = { mainImage: null, galleryImages: [] };
+        }
+        if (!Array.isArray(productImagesData.galleryImages)) {
+            productImagesData.galleryImages = [];
+        }
+
+        // 渲染主图
+        if (productImagesData.mainImage) {
+            mainPreview.classList.add('has-image');
+            mainPreview.innerHTML = `
+                <img src="${productImagesData.mainImage.url}" alt="主图" onclick="window.open('${productImagesData.mainImage.url}', '_blank')">
+            `;
+        } else {
+            mainPreview.classList.remove('has-image');
+            mainPreview.innerHTML = '<div class="empty-image-placeholder">暂无主图</div>';
+        }
+
+        // 渲染副图
+        const galleryImages = productImagesData.galleryImages || [];
+        galleryCount.textContent = galleryImages.length;
+
+        if (galleryImages.length === 0) {
+            galleryPreview.innerHTML = '<div class="empty-gallery">暂无副图</div>';
+        } else {
+            let galleryHtml = '';
+            productImagesData.galleryImages.forEach((img, index) => {
+                galleryHtml += `
+                    <div class="gallery-item">
+                        <img src="${img.url}" alt="副图${index + 1}" onclick="viewGalleryImage(${index})" title="${img.title || '副图' + (index + 1)}">
+                        <div class="gallery-item-actions">
+                            <button class="gallery-item-btn set-main" onclick="setAsMain(${index})" title="设为主图">★</button>
+                            <button class="gallery-item-btn delete" onclick="deleteGalleryImage(${index})" title="删除">×</button>
+                        </div>
+                    </div>
+                `;
+            });
+            galleryPreview.innerHTML = galleryHtml;
+        }
+    }
+    
+    // 预览上传的图片
+    function previewUploadImage(input) {
+        const uploadBtn = document.getElementById('uploadBtn');
+        if (input.files && input.files[0]) {
+            // 验证文件类型
+            const file = input.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            
+            if (!validTypes.includes(file.type)) {
+                showToast('请选择图片文件 (JPEG, PNG, GIF, WebP)', 'error');
+                input.value = '';
+                uploadBtn.disabled = true;
+                return;
+            }
+            
+            // 验证文件大小 (最大 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('图片大小不能超过 5MB', 'error');
+                input.value = '';
+                uploadBtn.disabled = true;
+                return;
+            }
+            
+            uploadBtn.disabled = false;
+        } else {
+            uploadBtn.disabled = true;
+        }
+    }
+    
+    // 上传图片
+    function uploadImage() {
+        const fileInput = document.getElementById('imageUploadFile');
+        const imageType = document.getElementById('imageUploadType').value;
+        const title = document.getElementById('imageUploadTitle').value;
+        const uploadBtn = document.getElementById('uploadBtn');
+        
+        if (!fileInput.files || !fileInput.files[0]) {
+            showToast('请选择要上传的图片', 'error');
+            return;
+        }
+        
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('image_type', imageType);  // Fixed: 'image_type' instead of 'type'
+        formData.append('title', title);
+        
+        const brand = document.getElementById('imageManagerBrand').value;
+        const productType = document.getElementById('imageManagerProductType').value;
+        const productId = document.getElementById('imageManagerProductId').value;
+        
+        // 构建API URL
+        let apiUrl = '';
+        if (brand === 'apple') {
+            if (productType === 'model') {
+                apiUrl = '/api/admin/apple/model/' + productId + '/upload-image/';
+            } else {
+                apiUrl = '/api/admin/apple/config/' + productId + '/upload-image/';
+            }
+        } else if (brand === 'dell') {
+            apiUrl = '/api/admin/dell/product/' + productId + '/upload-image/';
+        } else if (brand === 'lenovo') {
+            apiUrl = '/api/admin/lenovo/product/' + productId + '/upload-image/';
+        }
+        
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = '上传中...';
+        
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('图片上传成功', 'success');
+                // 重置表单
+                fileInput.value = '';
+                document.getElementById('imageUploadType').value = 'gallery';
+                document.getElementById('imageUploadTitle').value = '';
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = '上传图片';
+                
+                // 重新加载图片
+                loadProductImages(brand, productType, productId);
+            } else {
+                showToast('上传失败: ' + data.message, 'error');
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '上传图片';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('上传失败，请重试', 'error');
+            uploadBtn.disabled = false;
+            uploadBtn.textContent = '上传图片';
+        });
+    }
+    
+    // 设为封面/主图
+    function setAsMain(index) {
+        const img = productImagesData.galleryImages[index];
+        if (!img) return;
+        
+        if (!confirm('确定要将这张图片设为主图吗？')) return;
+        
+        const brand = document.getElementById('imageManagerBrand').value;
+        const productType = document.getElementById('imageManagerProductType').value;
+        const productId = document.getElementById('imageManagerProductId').value;
+        
+        // 构建API URL
+        let apiUrl = '';
+        if (brand === 'apple') {
+            if (productType === 'model') {
+                apiUrl = '/api/admin/apple/model/' + productId + '/set-main-image/';
+            } else {
+                apiUrl = '/api/admin/apple/config/' + productId + '/set-main-image/';
+            }
+        } else if (brand === 'dell') {
+            apiUrl = '/api/admin/dell/product/' + productId + '/set-main-image/';
+        } else if (brand === 'lenovo') {
+            apiUrl = '/api/admin/lenovo/product/' + productId + '/set-main-image/';
+        }
+        
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ image_id: img.id })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('已设为主图', 'success');
+                loadProductImages(brand, productType, productId);
+            } else {
+                showToast('操作失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('操作失败，请重试', 'error');
+        });
+    }
+    
+    // 删除主图
+    function deleteMainImage() {
+        if (!productImagesData.mainImage) return;
+        
+        if (!confirm('确定要删除主图吗？')) return;
+        
+        const brand = document.getElementById('imageManagerBrand').value;
+        const productType = document.getElementById('imageManagerProductType').value;
+        const productId = document.getElementById('imageManagerProductId').value;
+        
+        // 构建API URL
+        let apiUrl = '';
+        if (brand === 'apple') {
+            if (productType === 'model') {
+                apiUrl = '/api/admin/apple/model/' + productId + '/delete-main-image/';
+            } else {
+                apiUrl = '/api/admin/apple/config/' + productId + '/delete-main-image/';
+            }
+        } else if (brand === 'dell') {
+            apiUrl = '/api/admin/dell/product/' + productId + '/delete-main-image/';
+        } else if (brand === 'lenovo') {
+            apiUrl = '/api/admin/lenovo/product/' + productId + '/delete-main-image/';
+        }
+        
+        fetch(apiUrl, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('主图已删除', 'success');
+                loadProductImages(brand, productType, productId);
+            } else {
+                showToast('删除失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('删除失败，请重试', 'error');
+        });
+    }
+    
+    // 删除副图
+    function deleteGalleryImage(index) {
+        const img = productImagesData.galleryImages[index];
+        if (!img) return;
+        
+        if (!confirm('确定要删除这张图片吗？')) return;
+        
+        const brand = document.getElementById('imageManagerBrand').value;
+        const productType = document.getElementById('imageManagerProductType').value;
+        const productId = document.getElementById('imageManagerProductId').value;
+        
+        // 构建API URL
+        let apiUrl = '';
+        if (brand === 'apple') {
+            if (productType === 'model') {
+                apiUrl = '/api/admin/apple/model/' + productId + '/delete-image/' + img.id + '/';
+            } else {
+                apiUrl = '/api/admin/apple/config/' + productId + '/delete-image/' + img.id + '/';
+            }
+        } else if (brand === 'dell') {
+            apiUrl = '/api/admin/dell/product/' + productId + '/delete-image/' + img.id + '/';
+        } else if (brand === 'lenovo') {
+            apiUrl = '/api/admin/lenovo/product/' + productId + '/delete-image/' + img.id + '/';
+        }
+        
+        fetch(apiUrl, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('图片已删除', 'success');
+                loadProductImages(brand, productType, productId);
+            } else {
+                showToast('删除失败: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('删除失败，请重试', 'error');
+        });
+    }
+    
+    // 查看副图
+    function viewGalleryImage(index) {
+        const img = productImagesData.galleryImages[index];
+        if (img && img.url) {
+            window.open(img.url, '_blank');
+        }
+    }
+    
+    // ============ 订单导出功能 ============
+    
+    // 导出订单到Excel
+    function exportOrdersExcel() {
+        showToast('正在导出订单数据...', 'info');
+        
+        fetch('/api/admin/export/orders/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('导出请求失败');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // 创建下载链接
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // 获取文件名（从Content-Disposition头或生成默认文件名）
+                const filename = `订单数据_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                a.download = filename;
+                
+                // 触发下载
+                document.body.appendChild(a);
+                a.click();
+                
+                // 清理
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showToast('订单数据导出成功', 'success');
+            })
+            .catch(error => {
+                console.error('导出错误:', error);
+                showToast('导出失败: ' + error.message, 'error');
+            });
+    }
+    </script>
+</body>
+</html>

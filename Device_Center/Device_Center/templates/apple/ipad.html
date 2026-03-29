@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPad 选配 - 学校电脑设备选配中心</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-header { padding: 120px 20px 60px; background: linear-gradient(180deg, #1d1d1f 0%, #2c2c2e 100%); color: white; text-align: center; }
+        .page-header h1 { font-size: 48px; font-weight: 600; margin-bottom: 12px; }
+        .page-header p { font-size: 18px; color: rgba(255,255,255,0.8); }
+        .breadcrumb { display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; font-size: 14px; }
+        .breadcrumb a { color: rgba(255,255,255,0.6); }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255,255,255,0.4); }
+        .selection-container { max-width: 1400px; margin: 0 auto; padding: 60px 20px; }
+        .model-selector-section { margin-bottom: 48px; }
+        .selector-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .model-options { display: flex; flex-wrap: wrap; gap: 12px; }
+        .model-btn { padding: 14px 28px; background: var(--card-background); border: 2px solid var(--border-color); border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; transition: var(--transition); }
+        .model-btn:hover { border-color: var(--primary-color); }
+        .model-btn.active { border-color: var(--primary-color); background: rgba(0,113,227,0.05); color: var(--primary-color); }
+        .config-panel { display: grid; grid-template-columns: 1fr 400px; gap: 40px; }
+        @media (max-width: 1100px) { .config-panel { grid-template-columns: 1fr; } }
+        .config-options { background: var(--card-background); border-radius: 20px; padding: 32px; box-shadow: var(--shadow); }
+        .config-group { margin-bottom: 32px; }
+        .config-group:last-child { margin-bottom: 0; }
+        .config-group-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .config-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .config-option { padding: 16px; background: #f5f5f7; border: 2px solid transparent; border-radius: 12px; cursor: pointer; transition: var(--transition); }
+        .config-option:hover { background: #ebebed; }
+        .config-option.selected { border-color: var(--primary-color); background: rgba(0,113,227,0.05); }
+        .config-option-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+        .config-option-price { font-size: 13px; color: var(--text-secondary); }
+        .order-summary { background: var(--card-background); border-radius: 20px; padding: 32px; box-shadow: var(--shadow); height: fit-content; position: sticky; top: 80px; }
+        .summary-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .summary-product { display: flex; gap: 16px; margin-bottom: 24px; }
+        .product-image { width: 80px; height: 80px; background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .product-image svg { width: 40px; height: 40px; fill: #86868b; }
+        .product-info h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .product-info p { font-size: 13px; color: var(--text-secondary); }
+        .summary-config { margin-bottom: 24px; }
+        .config-item { display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px; border-bottom: 1px solid #f5f5f7; }
+        .config-item:last-child { border-bottom: none; }
+        .config-item-label { color: var(--text-secondary); }
+        .config-item-value { font-weight: 500; }
+        .summary-divider { height: 1px; background: var(--border-color); margin: 16px 0; }
+        .summary-price-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+        .summary-price-row.total { font-size: 18px; font-weight: 600; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color); }
+        .price-discount { color: var(--success-color); }
+        .summary-actions { margin-top: 24px; }
+        .summary-actions .btn { margin-bottom: 12px; }
+        .summary-note { font-size: 12px; color: var(--text-secondary); text-align: center; margin-top: 16px; line-height: 1.5; }
+        .empty-state { text-align: center; padding: 80px 20px; color: var(--text-secondary); }
+        .empty-state svg { width: 80px; height: 80px; fill: var(--border-color); margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="background: rgba(29, 29, 31, 0.8);">
+        <div class="navbar-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand" style="color: white;">设备选配中心</a>
+            <ul class="navbar-nav">
+                <li><a href="{{ url_for('apple_center') }}" style="color: white;">Apple</a></li>
+                <li><a href="#" style="color: rgba(255,255,255,0.6);">Dell</a></li>
+                <li><a href="#" style="color: rgba(255,255,255,0.6);">Lenovo</a></li>
+            </ul>
+            <div class="user-info" id="user-info" style="background: rgba(255,255,255,0.1); color: white;">
+                <span id="user-name"></span>
+                <a href="#" onclick="logout(); return false;" style="color: #2997ff;">退出</a>
+            </div>
+        </div>
+    </nav>
+    
+    <header class="page-header">
+        <div class="breadcrumb">
+            <a href="{{ url_for('apple_center') }}">Apple</a>
+            <span>/</span>
+            <span>iPad 选配</span>
+        </div>
+        <h1>iPad 选配</h1>
+        <p>iPad Pro、iPad Air、iPad mini、iPad 选择</p>
+    </header>
+    
+    <div class="selection-container">
+        <div class="model-selector-section">
+            <div class="selector-title">选择型号</div>
+            <div class="model-options" id="model-options">
+                <span class="loading"></span> 加载中...
+            </div>
+        </div>
+        
+        <div class="config-panel">
+            <div class="config-options" id="config-options">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24"><path d="M18.5 0h-14C3.12 0 2 1.12 2 2.5v19C2 22.88 3.12 24 4.5 24h14c1.38 0 2.5-1.12 2.5-2.5v-19C21 1.12 19.88 0 18.5 0zm-7 23c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7.5-4H4V3h15v16z"/></svg>
+                    <p>请选择型号以查看可选配置</p>
+                </div>
+            </div>
+            
+            <div class="order-summary" id="order-summary">
+                <h3 class="summary-title">订单摘要</h3>
+                <div class="empty-state" style="padding: 40px 20px;">
+                    <p>选择型号和配置后<br>将显示订单详情</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedModel = '';
+        let selectedConfig = {};
+        let modelConfigs = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            loadModels();
+        });
+        
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/api/check-login');
+                const data = await response.json();
+                const userInfo = document.getElementById('user-info');
+                const userName = document.getElementById('user-name');
+                if (data.logged_in) {
+                    userInfo.style.display = 'flex';
+                    userName.textContent = data.user.name || data.user.netid || '用户';
+                } else {
+                    userInfo.style.display = 'none';
+                }
+            } catch (error) { console.error(error); }
+        }
+        
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+        
+        async function loadModels() {
+            try {
+                const response = await fetch('/api/apple/models/iPad');
+                const data = await response.json();
+                const container = document.getElementById('model-options');
+                if (data.success && data.data.length > 0) {
+                    container.innerHTML = data.data.map(model => `
+                        <button class="model-btn ${model === selectedModel ? 'active' : ''}" data-model="${model}" onclick="selectModel('${model}')">${model}</button>
+                    `).join('');
+                    selectModel(data.data[0]);
+                } else {
+                    container.innerHTML = '<p style="color: var(--text-secondary);">暂无可选型号</p>';
+                }
+            } catch (error) { console.error('加载失败:', error); }
+        }
+        
+        async function selectModel(model) {
+            selectedModel = model;
+            selectedConfig = {};
+            document.querySelectorAll('.model-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.model === model));
+            await loadConfigOptions(model);
+        }
+        
+        async function loadConfigOptions(model) {
+            const container = document.getElementById('config-options');
+            container.innerHTML = '<div class="text-center" style="padding: 40px;"><span class="loading"></span> 加载配置中...</div>';
+            try {
+                const [configsRes, optionsRes] = await Promise.all([
+                    fetch(`/api/apple/configurations?model_name=${encodeURIComponent(model)}&device_type=iPad`),
+                    fetch(`/api/apple/selection-options?model_name=${encodeURIComponent(model)}&device_type=iPad`)
+                ]);
+                const configsData = await configsRes.json();
+                const optionsData = await optionsRes.json();
+                modelConfigs = configsData.data || [];
+                const options = optionsData.data || {};
+                
+                if (modelConfigs.length > 0) {
+                    container.innerHTML = `
+                        <div class="config-group">
+                            <div class="config-group-title">选择配置</div>
+                            <div class="config-grid">
+                                ${modelConfigs.map((config, idx) => `
+                                    <div class="config-option ${idx === 0 ? 'selected' : ''}" data-idx="${idx}" onclick="selectConfigItem(${idx})">
+                                        <div class="config-option-name">${config.configuration || '标准配置'}</div>
+                                        <div class="config-option-price">¥${formatPrice(config.discount_price)}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    selectedConfig = { idx: 0 };
+                } else {
+                    let html = '';
+                    if (options.memory && options.memory.length > 0) html += createConfigGroup('容量', 'memory', options.memory);
+                    if (options.hard_disk && options.hard_disk.length > 0) html += createConfigGroup('存储', 'hard_disk', options.hard_disk);
+                    container.innerHTML = html || '<div class="empty-state"><p>暂无可选配置</p></div>';
+                }
+                updateOrderSummary();
+            } catch (error) {
+                console.error('加载失败:', error);
+                container.innerHTML = '<p style="color: var(--error-color); text-align: center;">加载失败，请刷新重试</p>';
+            }
+        }
+        
+        function createConfigGroup(title, key, values) {
+            return `<div class="config-group"><div class="config-group-title">${title}</div><div class="config-grid">` +
+                values.map((v, idx) => `<div class="config-option ${idx === 0 ? 'selected' : ''}" data-key="${key}" data-value="${v}" onclick="selectOption(this)">
+                    <div class="config-option-name">${v}</div></div>`).join('') + '</div></div>';
+        }
+        
+        function selectConfigItem(idx) {
+            selectedConfig = { idx };
+            document.querySelectorAll('.config-option[data-idx]').forEach(opt => opt.classList.toggle('selected', parseInt(opt.dataset.idx) === idx));
+            updateOrderSummary();
+        }
+        
+        function selectOption(el) {
+            selectedConfig[el.dataset.key] = el.dataset.value;
+            el.parentElement.querySelectorAll('.config-option').forEach(opt => opt.classList.toggle('selected', opt === el));
+            updateOrderSummary();
+        }
+        
+        function updateOrderSummary() {
+            const container = document.getElementById('order-summary');
+            if (!selectedModel) {
+                container.innerHTML = '<h3 class="summary-title">订单摘要</h3><div class="empty-state" style="padding: 40px 20px;"><p>选择型号和配置后<br>将显示订单详情</p></div>';
+                return;
+            }
+            let productHtml = '', configItems = [], totalPrice = 0, originalPrice = 0;
+            if (modelConfigs.length > 0 && selectedConfig.idx !== undefined) {
+                const config = modelConfigs[selectedConfig.idx];
+                productHtml = `<div class="summary-product"><div class="product-image"><svg viewBox="0 0 24 24"><path d="M18.5 0h-14C3.12 0 2 1.12 2 2.5v19C2 22.88 3.12 24 4.5 24h14c1.38 0 2.5-1.12 2.5-2.5v-19C21 1.12 19.88 0 18.5 0z"/></svg></div>
+                    <div class="product-info"><h4>${selectedModel}</h4><p>${config.configuration || '标准配置'}</p></div></div>`;
+                configItems = [
+                    { label: '处理器', value: config.cpu || '-' },
+                    { label: '内存', value: config.memory || '-' },
+                    { label: '存储', value: config.hard_disk || '-' },
+                    { label: '屏幕', value: config.screen || '-' },
+                    { label: '颜色', value: config.color_option || '默认' }
+                ];
+                totalPrice = config.discount_price || 0;
+                originalPrice = config.original_price || 0;
+            } else {
+                productHtml = `<div class="summary-product"><div class="product-image"><svg viewBox="0 0 24 24"><path d="M18.5 0h-14C3.12 0 2 1.12 2 2.5v19C2 22.88 3.12 24 4.5 24h14c1.38 0 2.5-1.12 2.5-2.5v-19C21 1.12 19.88 0 18.5 0z"/></svg></div>
+                    <div class="product-info"><h4>${selectedModel}</h4><p>自定义配置</p></div></div>`;
+            }
+            let summaryHtml = `<h3 class="summary-title">订单摘要</h3>${productHtml}<div class="summary-config">` +
+                configItems.map(i => `<div class="config-item"><span class="config-item-label">${i.label}</span><span class="config-item-value">${i.value}</span></div>`).join('') +
+                '</div><div class="summary-divider"></div>';
+            if (originalPrice > 0 && originalPrice > totalPrice) {
+                summaryHtml += `<div class="summary-price-row"><span>原价</span><span class="price-original">¥${formatPrice(originalPrice)}</span></div>
+                    <div class="summary-price-row price-discount"><span>教育优惠</span><span>-¥${formatPrice(originalPrice - totalPrice)}</span></div>`;
+            }
+            summaryHtml += `<div class="summary-price-row total"><span>总计</span><span>¥${formatPrice(totalPrice)}</span></div>
+                <div class="summary-actions"><button class="btn btn-primary btn-block btn-large" onclick="submitOrder()">提交订单</button>
+                <button class="btn btn-secondary btn-block" onclick="addToCart()">加入购物车</button></div>
+                <p class="summary-note">价格已包含一年有限保修<br>Apple Pencil 和键盘需单独购买</p>`;
+            container.innerHTML = summaryHtml;
+        }
+        
+        function formatPrice(price) { return price ? Number(price).toLocaleString('zh-CN') : '---'; }
+        
+        async function submitOrder() {
+            const config = modelConfigs[selectedConfig.idx] || {};
+            const response = await fetch('/api/order/create', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    brand: 'Apple', device_type: 'iPad', model_name: selectedModel,
+                    cpu: config.cpu, memory: config.memory, hard_disk: config.hard_disk,
+                    graphic_card: config.graphic_card, screen: config.screen,
+                    total_price: config.discount_price, remark: ''
+                })
+            });
+            const data = await response.json();
+            if (data.success) { alert(`订单提交成功！订单号：${data.order_number}`); window.location.href = '/'; }
+            else { alert(data.message || '订单提交失败'); }
+        }
+        
+        async function addToCart() {
+            const config = modelConfigs[selectedConfig.idx] || {};
+            const response = await fetch('/api/cart/add', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ brand: 'Apple', device_type: 'iPad', model_name: selectedModel, configuration_id: config.id, selected_config: config })
+            });
+            const data = await response.json();
+            if (data.success) { alert('已加入购物车'); }
+            else { alert(data.message || '请先登录'); if (data.message && data.message.includes('登录')) window.location.href = '/login'; }
+        }
+    </script>
+</body>
+</html>

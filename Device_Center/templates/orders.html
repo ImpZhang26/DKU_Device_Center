@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+{% load order_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - Device Center</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .orders-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dukekunshan-blue);
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            color: var(--gray-600);
+        }
+        .orders-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--gray-200);
+            padding-bottom: 0;
+        }
+        .orders-tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-600);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+        .orders-tab:hover {
+            color: var(--dukekunshan-blue);
+        }
+        .orders-tab.active {
+            color: var(--dukekunshan-orange);
+        }
+        .orders-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--dukekunshan-orange);
+        }
+        .orders-tab .count {
+            display: inline-block;
+            background: var(--gray-200);
+            color: var(--gray-700);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .orders-tab.active .count {
+            background: var(--dukekunshan-orange);
+            color: white;
+        }
+        .order-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .order-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+        .order-card.cancelled {
+            opacity: 0.7;
+            background: var(--gray-100);
+        }
+        .order-card.cancelled .order-header {
+            background: var(--gray-200);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .order-info {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        .order-number {
+            font-weight: 700;
+            color: var(--dukekunshan-blue);
+            font-size: 15px;
+        }
+        .order-time {
+            color: var(--gray-500);
+            font-size: 13px;
+        }
+        .order-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .order-status.pending {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        .order-status.processing {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        .order-status.completed {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        .order-status.cancelled {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        .order-body {
+            padding: 20px;
+        }
+        .order-product {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .product-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 8px;
+        }
+        .product-config {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+        .product-config span {
+            display: inline-block;
+            background: var(--gray-100);
+            padding: 4px 12px;
+            border-radius: 4px;
+            margin-right: 8px;
+            margin-bottom: 4px;
+        }
+        .order-price {
+            text-align: right;
+        }
+        .order-price .total {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dukekunshan-blue);
+        }
+        .order-price .base {
+            font-size: 14px;
+            color: var(--gray-400);
+            text-decoration: line-through;
+            margin-top: 4px;
+        }
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-100);
+        }
+        .order-remark {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+        .order-remark strong {
+            color: var(--gray-700);
+        }
+        .order-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-cancelled {
+            background: var(--gray-400);
+            color: white;
+            cursor: not-allowed;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 {
+            font-size: 20px;
+            color: var(--gray-700);
+            margin-bottom: 12px;
+        }
+        .empty-state p {
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a></h1>
+                <nav class="nav">
+                    <span class="user-info">
+                        {% if user_name %}
+                            <a href="{% url 'my_orders' %}" class="user-link active" title="我的订单">
+                                👤 {{ user_name }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="orders-container">
+            <div class="page-header">
+                <h1>我的订单</h1>
+                <p>查看和管理您的所有订单</p>
+            </div>
+            
+            <div class="orders-tabs">
+                <button class="orders-tab active" onclick="filterOrders('all')">
+                    全部订单<span class="count">{{ all_count }}</span>
+                </button>
+                <button class="orders-tab" onclick="filterOrders('pending')">
+                    待处理<span class="count">{{ pending_count }}</span>
+                </button>
+                <button class="orders-tab" onclick="filterOrders('processing')">
+                    处理中<span class="count">{{ processing_count }}</span>
+                </button>
+                <button class="orders-tab" onclick="filterOrders('completed')">
+                    已完成<span class="count">{{ completed_count }}</span>
+                </button>
+                <button class="orders-tab" onclick="filterOrders('cancelled')">
+                    已终止<span class="count">{{ cancelled_count }}</span>
+                </button>
+            </div>
+            
+            <div id="ordersList">
+                {% if orders %}
+                    {% for order in orders %}
+                    <div class="order-card {% if order.status == 'cancelled' %}cancelled{% endif %}" data-status="{{ order.status }}">
+                        <div class="order-header">
+                            <div class="order-info">
+                                <span class="order-number">{{ order.order_number }}</span>
+                                <span class="order-time">{{ order.created_at|date:"Y-m-d H:i:s" }}</span>
+                            </div>
+                            <span class="order-status {{ order.status }}">
+                                {% if order.status == 'pending' %}待处理
+                                {% elif order.status == 'processing' %}处理中
+                                {% elif order.status == 'completed' %}已完成
+                                {% elif order.status == 'cancelled' %}已终止
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="order-body">
+                                <div class="order-product">
+                                <div class="product-info">
+                                    <h3>{{ order.model_name }}</h3>
+                                    <div class="product-config">
+                                        {% if order.selected_cpu %}<span>芯片：{{ order.selected_cpu }}</span>{% endif %}
+                                        {% if order.selected_memory %}<span>内存：{{ order.selected_memory }}</span>{% endif %}
+                                        {% if order.selected_hard_disk %}<span>存储：{{ order.selected_hard_disk }}</span>{% endif %}
+                                        {% if order.selected_graphic_card %}<span>显卡：{{ order.selected_graphic_card }}</span>{% endif %}
+                                        {% if order.selected_screen %}<span>屏幕：{{ order.selected_screen }}</span>{% endif %}
+                                        <span>类型：{{ order.device_type }}</span>
+                                    </div>
+                                    <!-- 升级配置显示 -->
+                                    {% if order.selected_upgrades %}
+                                    <div class="product-upgrades" style="margin-top: 8px;">
+                                        <span class="upgrade-label" style="color: var(--gray-600); font-size: 14px;">升级配置：</span>
+                                        <span class="upgrade-value" style="color: var(--dukekunshan-blue); font-size: 14px;">{{ order.selected_upgrades|format_upgrades_text }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="order-price">
+                                    <div class="total">¥{{ order.total_price }}</div>
+                                    {% if order.base_price > order.total_price %}
+                                    <div class="base">¥{{ order.base_price }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="order-footer">
+                                <div class="order-remark">
+                                    {% if order.remark %}
+                                        <strong>备注：</strong>{{ order.remark }}
+                                    {% else %}
+                                        <strong>备注：</strong>无
+                                    {% endif %}
+                                </div>
+                                <div class="order-actions">
+                                    {% if order.status == 'pending' or order.status == 'processing' %}
+                                        <button class="btn btn-danger" onclick="cancelOrder('{{ order.order_number }}')">
+                                            终止订单
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-cancelled" disabled>
+                                            已终止
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <h3>暂无订单</h3>
+                        <p>您还没有创建任何订单</p>
+                        <a href="/" class="btn btn-primary">去选购</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- 确认终止订单弹窗 -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>确认终止订单</h3>
+                <span class="close-btn" onclick="closeCancelModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="text-align: center; padding: 20px 0;">
+                    确定要终止订单 <strong id="cancelOrderNum" style="color: var(--dukekunshan-blue);"></strong> 吗？
+                </p>
+                <p style="text-align: center; color: var(--gray-500); font-size: 14px;">
+                    终止后您可以重新选购其他产品
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCancelModal()">返回</button>
+                <button class="btn btn-danger" id="confirmCancelBtn" onclick="confirmCancelOrder()">确认终止</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {% now "Y" %} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentCancelOrderNum = null;
+
+        function filterOrders(status) {
+            // 更新tab状态
+            document.querySelectorAll('.orders-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.closest('.orders-tab').classList.add('active');
+            
+            // 过滤订单显示
+            const cards = document.querySelectorAll('.order-card');
+            cards.forEach(card => {
+                if (status === 'all' || card.dataset.status === status) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function cancelOrder(orderNum) {
+            currentCancelOrderNum = orderNum;
+            document.getElementById('cancelOrderNum').textContent = orderNum;
+            document.getElementById('cancelModal').classList.add('show');
+        }
+        
+        function closeCancelModal() {
+            document.getElementById('cancelModal').classList.remove('show');
+            currentCancelOrderNum = null;
+        }
+        
+        function confirmCancelOrder() {
+            if (!currentCancelOrderNum) return;
+            
+            const btn = document.getElementById('confirmCancelBtn');
+            btn.disabled = true;
+            btn.textContent = '处理中...';
+            
+            fetch('/api/order/cancel/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    order_number: currentCancelOrderNum
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('订单已成功终止！');
+                    location.reload();
+                } else {
+                    alert('终止失败：' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('终止失败，请重试');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = '确认终止';
+            });
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // 点击弹窗外部关闭
+        window.onclick = function(event) {
+            const cancelModal = document.getElementById('cancelModal');
+            if (event.target === cancelModal) {
+                closeCancelModal();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备选配中心 - Device Center</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* 首页 Header 蓝色背景 */
+        .header {
+            background: #002060;
+        }
+        /* Logo 和登录链接改为绿色 */
+        .header .logo a {
+            color: #ecf2ec;
+        }
+        .header .logo a:hover {
+            color: var(--dukekunshan-orange);
+        }
+        .header .nav .user-info a {
+            color: #ecf2ec;
+        }
+        .header .nav .user-info a:hover {
+            color: var(--dukekunshan-orange);
+        }
+        /* 移除标题的划线和装饰线 */
+        .section-title {
+            text-decoration: none !important;
+            border-bottom: none !important;
+        }
+        .section-title::before {
+            display: none !important;
+        }
+        /* 用户链接样式 */
+        .user-link {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .user-link:hover {
+            color: var(--dukekunshan-orange) !important;
+        }
+        .user-link.active {
+            color: var(--dukekunshan-orange) !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a></h1>
+                <nav class="nav">
+                    <span class="user-info">
+                        {% if user_name %}
+                            <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
+                                👤 {{ user_name }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="brand-selection">
+                <h2 class="section-title">选择品牌</h2>
+                <div class="brand-grid">
+                    <a href="{% url 'apple_index' %}" class="brand-card apple">
+                        <div class="brand-icon">
+                            <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                            </svg>
+                        </div>
+                        <h3>Apple</h3>
+                        <p>MacBook、iMac、iPad 等</p>
+                    </a>
+                    <a href="{% url 'dell_index' %}" class="brand-card dell">
+                        <div class="brand-icon">
+                            <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor">
+                                <path d="M5 2h14v18H5V2zm4 4v4h6V6H9zm0 6v4h6v-4H9zm0 6v4h6v-4H9z"/>
+                            </svg>
+                        </div>
+                        <h3>Dell</h3>
+                        <p>笔记本、台式机、显示器等</p>
+                    </a>
+                    <a href="{% url 'lenovo_index' %}" class="brand-card lenovo">
+                        <div class="brand-icon">
+                            <svg viewBox="0 0 24 24" width="64" height="64" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                            </svg>
+                        </div>
+                        <h3>Lenovo</h3>
+                        <p>ThinkPad、ThinkStation 等</p>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

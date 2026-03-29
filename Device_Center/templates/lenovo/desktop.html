@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lenovo 台式机选配 - Lenovo</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'lenovo_index' %}">Lenovo</a> <span class="brand-separator">/</span> <span class="current-brand">台式机</span></h1>
+                <nav class="nav">
+                    <a href="{% url 'lenovo_laptop' %}">笔记本</a>
+                    <a href="{% url 'lenovo_desktop' %}" class="active">台式机</a>
+                    <span class="user-info">
+                        {% if user_name %}
+                            <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
+                                👤 {{ user_name }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="config-layout">
+                <!-- 左侧：型号选择 -->
+                <aside class="config-sidebar">
+                    <h3>选择型号</h3>
+                    <ul class="model-list">
+                        {% for m in models %}
+                        <li>
+                            <a href="?model={{ m.model }}" class="{% if selected_model.model == m.model %}active{% endif %}">
+                                <span class="model-name">{{ m.model }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </aside>
+                
+                <!-- 中间：配置列表 -->
+                <section class="config-main">
+                    {% if selected_product %}
+                    <div class="model-header">
+                        <h2>{{ selected_product.model }}</h2>
+                    </div>
+                    
+                    <div class="config-grid">
+                        {% for config in configurations %}
+                        <div class="config-card" data-config='{{ config.id }}'>
+                            <div class="config-header">
+                                <h4>{{ config.configuration }}</h4>
+                                <span class="price-tag">{{ config.discount_price }} 元</span>
+                            </div>
+                            <div class="config-specs">
+                                <div class="spec-item">
+                                    <span class="spec-label">芯片</span>
+                                    <span class="spec-value">{{ config.cpu }}</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">内存</span>
+                                    <span class="spec-value">{{ config.memory }}</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">存储</span>
+                                    <span class="spec-value">{{ config.hard_disk }}</span>
+                                </div>
+                                <div class="spec-item">
+                                    <span class="spec-label">显卡</span>
+                                    <span class="spec-value">{{ config.graphic_card }}</span>
+                                </div>
+                                {% if config.screen %}
+                                <div class="spec-item">
+                                    <span class="spec-label">显示屏</span>
+                                    <span class="spec-value">{{ config.screen }}</span>
+                                </div>
+                                {% endif %}
+                                {% if config.wifi %}
+                                <div class="spec-item">
+                                    <span class="spec-label">无线网络</span>
+                                    <span class="spec-value">{{ config.wifi }}</span>
+                                </div>
+                                {% endif %}
+                                {% if config.weight %}
+                                <div class="spec-item">
+                                    <span class="spec-label">重量</span>
+                                    <span class="spec-value">{{ config.weight }}</span>
+                                </div>
+                                {% endif %}
+                                {% if config.accessary %}
+                                <div class="spec-item">
+                                    <span class="spec-label">配件</span>
+                                    <span class="spec-value">{{ config.accessary }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="config-actions">
+                                <a href="{% url 'lenovo_detail' config.id %}" class="btn btn-primary">
+                                    查看详情
+                                </a>
+                                <button class="btn btn-secondary" onclick="buyNow({{ config.id }}, '{{ selected_product.model }}', '{{ config.configuration }}', {{ config.discount_price }}, '{{ config.cpu }}', '{{ config.memory }}', '{{ config.hard_disk }}', '{{ config.graphic_card }}', '{{ config.screen }}')">
+                                    立即购买
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <p>请从左侧选择一个型号开始配置</p>
+                    </div>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- 订单确认弹窗 -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认订单</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="orderForm" method="POST" action="#">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="order-summary">
+                        <h4>订单摘要</h4>
+                        <div id="orderDetails"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="remark">备注</label>
+                        <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="configId" name="configId">
+                    <input type="hidden" id="modelName" name="modelName">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    const brand = '{{ brand }}';
+    const productType = '{{ product_type }}';
+    
+    function buyNow(configId, modelName, configName, price, cpu, memory, hardDisk, graphicCard, screen) {
+        // 检查用户是否已登录
+        var userName = '{{ user_name|escapejs }}';
+        if (!userName || userName === '') {
+            alert('请先登录后再提交订单');
+            window.location.href = '/login/';
+            return;
+        }
+        
+        document.getElementById('configId').value = configId;
+        document.getElementById('modelName').value = modelName + ' ' + configName;
+        
+        let html = `
+            <div class="summary-item">
+                <span>产品型号:</span>
+                <span>${modelName} ${configName}</span>
+            </div>
+            <div class="summary-item">
+                <span>芯片:</span>
+                <span>${cpu}</span>
+            </div>
+            <div class="summary-item">
+                <span>内存:</span>
+                <span>${memory}</span>
+            </div>
+            <div class="summary-item">
+                <span>存储:</span>
+                <span>${hardDisk}</span>
+            </div>
+            <div class="summary-item">
+                <span>显卡:</span>
+                <span>${graphicCard}</span>
+            </div>
+        `;
+        
+        if (screen) {
+            html += `
+                <div class="summary-item">
+                    <span>显示屏:</span>
+                    <span>${screen}</span>
+                </div>
+            `;
+        }
+        
+        html += `
+            <div class="summary-item total">
+                <span>总价:</span>
+                <span>${price} 元</span>
+            </div>
+        `;
+        
+        document.getElementById('orderDetails').innerHTML = html;
+        document.getElementById('orderModal').style.display = 'block';
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').style.display = 'none';
+    }
+    
+    function submitOrder() {
+        const configId = document.getElementById('configId').value;
+        const modelName = document.getElementById('modelName').value;
+        const remark = document.getElementById('remark').value;
+        
+        const data = {
+            device_type: productType,
+            model_name: modelName,
+            configuration_id: configId,
+            remark: remark,
+            cpu: document.querySelector('#orderDetails .summary-item:nth-child(2) span:last-child').textContent,
+            memory: document.querySelector('#orderDetails .summary-item:nth-child(3) span:last-child').textContent,
+            hard_disk: document.querySelector('#orderDetails .summary-item:nth-child(4) span:last-child').textContent,
+            graphic_card: document.querySelector('#orderDetails .summary-item:nth-child(5) span:last-child').textContent,
+            total_price: parseFloat(document.querySelector('#orderDetails .total span:last-child').textContent)
+        };
+        
+        fetch('/api/' + brand + '/order/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('订单提交成功！订单号: ' + data.order_number);
+                closeModal();
+                window.location.reload();
+            } else {
+                alert('订单提交失败: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('订单提交失败，请重试');
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+        const orderModal = document.getElementById('orderModal');
+        if (event.target === orderModal) {
+            closeModal();
+        }
+    }
+    </script>
+</body>
+</html>

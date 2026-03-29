@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.model }} - Dell</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --dell-blue: #007db8;
+            --dell-dark: #1c1c1e;
+            --dell-gray: #f5f5f7;
+            --dell-border: #d2d2d7;
+            --dell-light-blue: #e8f4fc;
+        }
+        
+        .upgrade-content { font-size: 14px; }
+        .upgrade-list { margin-top: 0; }
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: var(--dell-gray);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .upgrade-item:hover { background: #ebebed; }
+        .upgrade-item.selected {
+            background: var(--dell-light-blue);
+            border-color: var(--dell-blue);
+        }
+        .upgrade-item:last-child { margin-bottom: 0; }
+        .upgrade-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #86868b;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .upgrade-item.selected .upgrade-checkbox {
+            background: var(--dell-blue);
+            border-color: var(--dell-blue);
+        }
+        .upgrade-checkbox::after {
+            content: "\2713";
+            color: white;
+            font-size: 12px;
+            display: none;
+        }
+        .upgrade-item.selected .upgrade-checkbox::after { display: block; }
+        .upgrade-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .upgrade-name { font-size: 14px; color: #333; font-weight: 500; }
+        .upgrade-price {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--dell-blue);
+            white-space: nowrap;
+            margin-left: 16px;
+        }
+        .upgrade-item.has-price .upgrade-name { color: #333; }
+        .upgrade-item.no-price { cursor: default; }
+        .upgrade-item.no-price:hover { background: var(--dell-gray); }
+        .upgrade-divider { border: none; height: 1px; background: var(--dell-border); margin: 16px 0; }
+        
+        .price-summary {
+            background: var(--dell-gray);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .price-row-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .price-row-summary:not(:last-child) { border-bottom: 1px solid var(--dell-border); }
+        .price-row-summary.total {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--dell-dark);
+            border-bottom: none;
+            padding-top: 12px;
+        }
+        .price-row-summary .label { color: #6e6e73; }
+        .price-row-summary.total .label { color: var(--dell-dark); }
+        .price-row-summary .value { color: var(--dell-dark); }
+        .price-row-summary.total .value { color: var(--dell-blue); }
+        
+        .upgrade-summary {
+            background: #fff;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        .upgrade-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+        .upgrade-summary-item .name { color: #6e6e73; }
+        .upgrade-summary-item .price { color: var(--dell-blue); font-weight: 500; }
+        .no-upgrade-selected { color: #86868b; font-style: italic; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> Dell</h1>
+                <nav class="nav">
+                    <a href="{% url 'dell_notebook' %}">笔记本</a>
+                    <a href="{% url 'dell_laptop' %}">高性能本</a>
+                    <a href="{% url 'dell_desktop' %}">台式机</a>
+                    <a href="{% url 'dell_monitor' %}">显示器</a>
+                    <a href="{% url 'dell_accessories' %}">配件</a>
+                    <span class="user-info">
+                        {% if user_name %}&#128100; {{ user_name }} <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}<a href="{% url 'login' %}">[登录]</a>{% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="back-link"><a href="javascript:history.back()">&#8592; 返回列表</a></div>
+            
+                <div class="detail-layout">
+                <div class="detail-gallery">
+                    <div class="main-image">
+                        <img id="mainImage" src="{{ main_image|default:'/static/images/product-placeholder.svg' }}" alt="{{ product.model }}">
+                    </div>
+                    {% if thumbnails %}
+                    <div class="thumbnail-list">
+                        {% for img in thumbnails %}
+                        <div class="thumbnail{% if forloop.first %} active{% endif %}" onclick="switchImage(this, '{{ img }}')">
+                            <img src="{{ img }}" alt="产品图片 {{ forloop.counter }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="detail-info">
+                    <div class="product-title"><h1>{{ product.model }}</h1></div>
+                    
+                    <div class="config-section">
+                        <h3>基本配置</h3>
+                        <table class="config-table">
+                            {% if product.basic_config %}
+                            <tr><td class="config-label">基本配置</td><td class="config-value">{{ product.basic_config }}</td></tr>
+                            {% endif %}
+                            <tr><td class="config-label">芯片</td><td class="config-value">{{ product.cpu }}</td></tr>
+                            <tr><td class="config-label">内存</td><td class="config-value">{{ product.memory }}</td></tr>
+                            <tr><td class="config-label">存储</td><td class="config-value">{{ product.hard_disk }}</td></tr>
+                            <tr><td class="config-label">显卡</td><td class="config-value">{{ product.graphic_card }}</td></tr>
+                            {% if product.wifi %}
+                            <tr><td class="config-label">无线网络</td><td class="config-value">{{ product.wifi }}</td></tr>
+                            {% endif %}
+                            {% if product.weight %}
+                            <tr><td class="config-label">重量/尺寸</td><td class="config-value">{{ product.weight }}</td></tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                    
+                    <div class="price-section">
+                        {% if product.original_price > product.price %}
+                        <div class="original-price">&#165;{{ product.original_price|floatformat:2 }} 元</div>
+                        <div class="current-price">
+                            &#165;{{ product.price|floatformat:2 }} 元
+                            <!-- <span class="discount-badge">省 {{ discount_percent }}%</span> -->
+                        </div>
+                        {% else %}
+                        <div class="current-price">&#165;{{ product.price|floatformat:2 }} 元</div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if product.official_link %}
+                    <div class="official-link-section">
+                        <a href="{{ product.official_link }}" target="_blank" class="btn btn-outline btn-block">&#127760; 查看官方配置器</a>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-lg btn-block" onclick="buyNow()">立即购买</button>
+                    </div>
+                </div>
+            </div>
+            
+            {% if product.configuration_parameters or product.changing_config_price %}
+            <div class="detail-tabs">
+                <div class="tab-header">
+                    {% if product.configuration_parameters %}
+                    <button class="tab-btn active" data-tab="params">详细参数</button>
+                    {% endif %}
+                    {% if product.changing_config_price %}
+                    <button class="tab-btn{% if not product.configuration_parameters %} active{% endif %}" data-tab="upgrade">升级选项</button>
+                    {% endif %}
+                </div>
+                <div class="tab-content">
+                    {% if product.configuration_parameters %}
+                    <div id="params" class="tab-pane active">
+                        <div class="params-content">{{ configuration_parameters_html|safe }}</div>
+                    </div>
+                    {% endif %}
+                    {% if product.changing_config_price %}
+                    <div id="upgrade" class="tab-pane{% if not product.configuration_parameters %} active{% endif %}">
+                        <div class="upgrade-content">{{ configuration_upgrade_html|safe }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认订单</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="order-summary">
+                    <h4>订单摘要</h4>
+                    <div id="orderDetails"></div>
+                </div>
+                <div class="form-group">
+                    <label for="remark">备注</label>
+                    <textarea id="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="modelName">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container"><p>&copy; {{ current_year }} Device Center. All rights reserved.</p></div>
+    </footer>
+
+    <script>
+    var brand = '{{ brand|escapejs }}';
+    var product = {{ product_json|safe }};
+    var basePrice = product.price;
+    var upgradeData = [];
+    var selectedUpgrades = [];
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var items = document.querySelectorAll('.upgrade-item');
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var nameEl = item.querySelector('.upgrade-name');
+            var priceEl = item.querySelector('.upgrade-price');
+            
+            if (nameEl && priceEl) {
+                var name = nameEl.textContent.trim();
+                var priceText = priceEl.textContent.trim();
+                var price = 0;
+                
+                if (priceText && priceText !== '包含') {
+                    var match = priceText.match(/[\d.]+/);
+                    if (match) { price = parseFloat(match[0]); }
+                }
+                
+                upgradeData.push({index: i, name: name, price: price, element: item});
+                
+                if (price > 0) {
+                    (function(idx) {
+                        item.addEventListener('click', function() { toggleUpgrade(idx); });
+                    })(i);
+                    item.classList.add('has-price');
+                } else {
+                    item.classList.add('no-price');
+                }
+            }
+        }
+        
+        // Tab切换
+        var tabBtns = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < tabBtns.length; i++) {
+            tabBtns[i].addEventListener('click', function() {
+                var tabName = this.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        }
+    });
+    
+    function toggleUpgrade(index) {
+        var item = upgradeData[index].element;
+        var upgrade = upgradeData[index];
+        var found = false;
+        
+        for (var i = 0; i < selectedUpgrades.length; i++) {
+            if (selectedUpgrades[i].index === index) {
+                selectedUpgrades.splice(i, 1);
+                item.classList.remove('selected');
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            selectedUpgrades.push({index: index, name: upgrade.name, price: upgrade.price});
+            item.classList.add('selected');
+        }
+    }
+    
+    function getSelectedUpgradesHtml() {
+        if (selectedUpgrades.length === 0) {
+            return '<span class="no-upgrade-selected">暂未选择升级选项</span>';
+        }
+        var html = '<div class="upgrade-summary">';
+        for (var i = 0; i < selectedUpgrades.length; i++) {
+            var u = selectedUpgrades[i];
+            html += '<div class="upgrade-summary-item">';
+            html += '<span class="name">' + u.name + '</span>';
+            html += '<span class="price">+' + u.price.toFixed(2) + ' 元</span>';
+            html += '</div>';
+        }
+        html += '</div>';
+        return html;
+    }
+    
+    function calculateTotal() {
+        var total = basePrice;
+        for (var i = 0; i < selectedUpgrades.length; i++) {
+            total += selectedUpgrades[i].price;
+        }
+        return total;
+    }
+    
+    function switchImage(thumbnail, imageUrl) {
+        document.getElementById('mainImage').src = imageUrl;
+        var thumbnails = document.querySelectorAll('.thumbnail');
+        for (var i = 0; i < thumbnails.length; i++) {
+            thumbnails[i].classList.remove('active');
+        }
+        thumbnail.classList.add('active');
+    }
+    
+    function switchTab(tabName) {
+        var btns = document.querySelectorAll('.tab-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.remove('active');
+        }
+        var panes = document.querySelectorAll('.tab-pane');
+        for (var i = 0; i < panes.length; i++) {
+            panes[i].classList.remove('active');
+        }
+        
+        var targetBtn = document.querySelector('[data-tab="' + tabName + '"]');
+        if (targetBtn) { targetBtn.classList.add('active'); }
+        
+        var targetPane = document.getElementById(tabName);
+        if (targetPane) { targetPane.classList.add('active'); }
+    }
+    
+    function buyNow() {
+        // 检查用户是否已登录
+        var userName = '{{ user_name|escapejs }}';
+        if (!userName || userName === '') {
+            alert('请先登录后再提交订单');
+            window.location.href = '/login/';
+            return;
+        }
+        
+        document.getElementById('modelName').value = product.model;
+        
+        var total = calculateTotal();
+        var upgradeTotal = 0;
+        for (var i = 0; i < selectedUpgrades.length; i++) {
+            upgradeTotal += selectedUpgrades[i].price;
+        }
+        
+        var html = '<div class="summary-item"><span>产品型号:</span><span>' + product.model + '</span></div>';
+        
+        if (product.cpu) {
+            html += '<div class="summary-item"><span>芯片:</span><span>' + product.cpu + '</span></div>';
+        }
+        if (product.memory) {
+            html += '<div class="summary-item"><span>内存:</span><span>' + product.memory + '</span></div>';
+        }
+        if (product.hard_disk) {
+            html += '<div class="summary-item"><span>存储:</span><span>' + product.hard_disk + '</span></div>';
+        }
+        if (product.graphic_card) {
+            html += '<div class="summary-item"><span>显卡:</span><span>' + product.graphic_card + '</span></div>';
+        }
+        
+        html += '<div class="summary-item"><span>升级选项:</span></div>';
+        html += getSelectedUpgradesHtml();
+        
+        html += '<div class="price-summary">';
+        html += '<div class="price-row-summary"><span class="label">基础价格:</span><span class="value">' + basePrice.toFixed(2) + ' 元</span></div>';
+        html += '<div class="price-row-summary"><span class="label">升级费用:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' 元</span></div>';
+        html += '<div class="price-row-summary total"><span class="label">总价:</span><span class="value">' + total.toFixed(2) + ' 元</span></div>';
+        html += '</div>';
+        
+        document.getElementById('orderDetails').innerHTML = html;
+        document.getElementById('orderModal').classList.add('show');
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.remove('show');
+    }
+    
+    function submitOrder() {
+        var modelName = document.getElementById('modelName').value;
+        var remark = document.getElementById('remark').value;
+        var totalPrice = calculateTotal();
+        var upgradePrice = 0;
+        for (var i = 0; i < selectedUpgrades.length; i++) {
+            upgradePrice += selectedUpgrades[i].price;
+        }
+        
+        var data = {
+            device_type: product.device_type || 'Notebook',
+            model_name: modelName,
+            remark: remark,
+            cpu: product.cpu || '-',
+            memory: product.memory || '-',
+            hard_disk: product.hard_disk || '-',
+            graphic_card: product.graphic_card || '-',
+            base_price: basePrice,
+            selected_upgrades: selectedUpgrades,
+            upgrade_price: upgradePrice,
+            total_price: totalPrice
+        };
+        
+        fetch('/api/' + brand + '/order/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (data.success) {
+                alert('订单提交成功!订单号: ' + data.order_number);
+                closeModal();
+                window.location.reload();
+            } else {
+                alert('订单提交失败: ' + data.message);
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            alert('订单提交失败，请重试');
+        });
+    }
+    
+    function getCookie(name) {
+        var value = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    value = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return value;
+    }
+    
+    window.onclick = function(event) {
+        var modal = document.getElementById('orderModal');
+        if (event.target === modal) { closeModal(); }
+    }
+    </script>
+</body>
+</html>

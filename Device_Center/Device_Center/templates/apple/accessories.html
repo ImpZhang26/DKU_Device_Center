@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple 配件 - 学校电脑设备选配中心</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-header { padding: 120px 20px 60px; background: linear-gradient(180deg, #1d1d1f 0%, #2c2c2e 100%); color: white; text-align: center; }
+        .page-header h1 { font-size: 48px; font-weight: 600; margin-bottom: 12px; }
+        .page-header p { font-size: 18px; color: rgba(255,255,255,0.8); }
+        .breadcrumb { display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; font-size: 14px; }
+        .breadcrumb a { color: rgba(255,255,255,0.6); }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255,255,255,0.4); }
+        .accessories-container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+        .accessories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .accessory-card { background: var(--card-background); border-radius: 20px; padding: 28px; box-shadow: var(--shadow); transition: var(--transition); }
+        .accessory-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .accessory-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .accessory-icon svg { width: 32px; height: 32px; fill: #86868b; }
+        .accessory-name { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .accessory-type { font-size: 13px; color: var(--primary-color); background: rgba(0,113,227,0.1); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 16px; }
+        .accessory-price { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+        .price-current { font-size: 24px; font-weight: 600; }
+        .price-original { font-size: 14px; color: var(--text-secondary); text-decoration: line-through; }
+        .accessory-actions { display: flex; gap: 12px; }
+        .accessory-actions .btn { flex: 1; }
+        .empty-state { text-align: center; padding: 80px 20px; color: var(--text-secondary); }
+        .empty-state svg { width: 80px; height: 80px; fill: var(--border-color); margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" style="background: rgba(29, 29, 31, 0.8);">
+        <div class="navbar-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand" style="color: white;">设备选配中心</a>
+            <ul class="navbar-nav">
+                <li><a href="{{ url_for('apple_center') }}" style="color: white;">Apple</a></li>
+                <li><a href="#" style="color: rgba(255,255,255,0.6);">Dell</a></li>
+                <li><a href="#" style="color: rgba(255,255,255,0.6);">Lenovo</a></li>
+            </ul>
+            <div class="user-info" id="user-info" style="background: rgba(255,255,255,0.1); color: white;">
+                <span id="user-name"></span>
+                <a href="#" onclick="logout(); return false;" style="color: #2997ff;">退出</a>
+            </div>
+        </div>
+    </nav>
+    
+    <header class="page-header">
+        <div class="breadcrumb">
+            <a href="{{ url_for('apple_center') }}">Apple</a>
+            <span>/</span>
+            <span>配件</span>
+        </div>
+        <h1>Apple 配件</h1>
+        <p>精选配件，提升您的使用体验</p>
+    </header>
+    
+    <div class="accessories-container">
+        <div class="accessories-grid" id="accessories-grid">
+            <div class="empty-state" style="grid-column: 1/-1;">
+                <span class="loading"></span>
+                <p style="margin-top: 16px;">加载配件中...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            loadAccessories();
+        });
+        
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/api/check-login');
+                const data = await response.json();
+                const userInfo = document.getElementById('user-info');
+                const userName = document.getElementById('user-name');
+                if (data.logged_in) {
+                    userInfo.style.display = 'flex';
+                    userName.textContent = data.user.name || data.user.netid || '用户';
+                } else {
+                    userInfo.style.display = 'none';
+                }
+            } catch (error) { console.error(error); }
+        }
+        
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+        
+        async function loadAccessories() {
+            try {
+                const response = await fetch('/api/apple/accessories');
+                const data = await response.json();
+                const container = document.getElementById('accessories-grid');
+                
+                if (data.success && data.data.length > 0) {
+                    container.innerHTML = data.data.map(item => `
+                        <div class="accessory-card">
+                            <div class="accessory-icon">
+                                <svg viewBox="0 0 24 24"><path d="M9 2v6h2l-4 7V5H9zM4 4h16v2H4V4zm0 14h16v2H4v-2z"/></svg>
+                            </div>
+                            <div class="accessory-name">${item.model}</div>
+                            <span class="accessory-type">${item.device_type}</span>
+                            <div class="accessory-price">
+                                <span class="price-current">¥${formatPrice(item.discount_price)}</span>
+                                ${item.original_price && item.original_price > item.discount_price ? 
+                                    `<span class="price-original">¥${formatPrice(item.original_price)}</span>` : ''}
+                            </div>
+                            <div class="accessory-actions">
+                                <button class="btn btn-primary" onclick="buyNow('${item.model}')">购买</button>
+                                <button class="btn btn-secondary" onclick="addToCart('${item.model}')">加入购物车</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <svg viewBox="0 0 24 24"><path d="M9 2v6h2l-4 7V5H9z"/></svg>
+                            <p>暂无配件信息</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('加载配件失败:', error);
+                document.getElementById('accessories-grid').innerHTML = '<p style="text-align: center; color: var(--error-color);">加载失败，请刷新重试</p>';
+            }
+        }
+        
+        function formatPrice(price) { return price ? Number(price).toLocaleString('zh-CN') : '---'; }
+        
+        async function addToCart(model) {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        brand: 'Apple', device_type: 'Accessories', model_name: model, selected_config: {}
+                    })
+                });
+                const data = await response.json();
+                if (data.success) { alert('已加入购物车'); }
+                else { alert(data.message || '请先登录'); if (data.message && data.message.includes('登录')) window.location.href = '/login'; }
+            } catch (error) { alert('网络错误，请重试'); }
+        }
+        
+        function buyNow(model) {
+            alert(`即将跳转至购买页面：${model}`);
+        }
+    </script>
+</body>
+</html>

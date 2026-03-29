@@ -1,0 +1,286 @@
+{
+  "Laptop": [
+    {
+      "brand": "Lenovo",
+      "model": "ThinkPad X13 13.3\"FHD",
+      "device_type": "Laptop",
+      "configurations": [
+        {
+          "configuration": "Standard",
+          "screen": "13.3\"FHD",
+          "cpu": "Ultra5-225H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI7 2X2BE",
+          "configuration_parameters": "USB-A 3.2 Gen1*1，Thunderbolt 4全功能接口*2，HDMI 2.1",
+          "weight": "1.0KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair), With 24/7 toll-free phone support.",
+          "discount_price": 8405.0,
+          "original_price": 9498.0,
+          "discount_rate": 0.05,
+          "product_link": "https://b.lenovo.com.cn/product/1044929.html?filter=1067%3A7593&recommendType=0&isProprietary=true&source=qyg&innerKey=&key=ThinkPad+T"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "13.3\"FHD",
+          "cpu": "Ultra7-255H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI7 2X2BE",
+          "configuration_parameters": "USB-A 3.2 Gen1*1，Thunderbolt 4全功能接口*2，HDMI 2.1",
+          "weight": "1.0KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair), With 24/7 toll-free phone support.",
+          "discount_price": 9290.0,
+          "original_price": 10498.0,
+          "discount_rate": 0.05,
+          "product_link": "https://item.lenovo.com.cn/product/1047794.html?key=ThinkPad+X13&frompage=home"
+        }
+      ]
+    },
+    {
+      "brand": "Lenovo",
+      "model": "ThinkPad T14 14\"FHD",
+      "device_type": "Laptop",
+      "configurations": [
+        {
+          "configuration": "Standard",
+          "screen": "14\"FHD",
+          "cpu": "Ultra5-225H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI7 2X2BE",
+          "configuration_parameters": "USB-A 3.2 Gen1*2，Thunderbolt 4全功能接口*1，HDMI 2.1 RJ45*1",
+          "weight": "1.39KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair), With 24/7 toll-free phone support.",
+          "discount_price": 8405.0,
+          "original_price": 9498.0,
+          "discount_rate": 0.05,
+          "product_link": "https://b.lenovo.com.cn/product/1044947.html?filter=1067%3A7593&recommendType=0&isProprietary=true&source=qyg&innerKey=&key=ThinkPad+T"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "14\"FHD",
+          "cpu": "Ultra7-255H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI7 2X2BE",
+          "configuration_parameters": "USB-A 3.2 Gen1*2，Thunderbolt 4全功能接口*1，HDMI 2.1 RJ45*1",
+          "weight": "1.39KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair), With 24/7 toll-free phone support.",
+          "discount_price": 9290.0,
+          "original_price": 10498.0,
+          "discount_rate": 0.05,
+          "product_link": "https://b.lenovo.com.cn/product/1044948.html?filter=1067%3A7593&recommendType=0&isProprietary=true&source=qyg&innerKey=&key=ThinkPad+T"
+        }
+      ]
+    },
+    {
+      "brand": "Lenovo",
+      "model": "ThinkPad T14 P21RUA001CD 14\"3K",
+      "device_type": "Laptop",
+      "configurations": [
+        {
+          "configuration": "Standard",
+          "screen": "14\"3K",
+          "cpu": "Ultra5-225H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "Intel BE201 WIFI7",
+          "configuration_parameters": "2xTBT4, 2x USB-A 3.2 Gen1 , Audio Combo, RJ45 HDMI 2.1 TMDS",
+          "weight": "1.56KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service, Accidental Damage Protection & Battery Warranty)",
+          "discount_price": 7343.0,
+          "original_price": 8298.0,
+          "discount_rate": 0.05,
+          "product_link": "https://tk.lenovo.com.cn/product/1044782.html?filter=1067%3A7593&recommendType=0&innerKey=&frompage=home&key=ThinkPad+T14p"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "14\"3K",
+          "cpu": "Ultra9-285H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "Intel BE201 WIFI7",
+          "configuration_parameters": "USB-A 3.2 Gen1*2，Thunderbolt 4全功能接口*1，HDMI 2.1",
+          "weight": "1.56KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service, Accidental Damage Protection & Battery Warranty)",
+          "discount_price": 8848.0,
+          "original_price": 9998.0,
+          "discount_rate": 0.05,
+          "product_link": "https://tk.lenovo.com.cn/product/1044778.html?filter=1067%3A7601&recommendType=0&innerKey=&frompage=home&key=ThinkPad+T14p"
+        }
+      ]
+    },
+    {
+      "brand": "Lenovo",
+      "model": "ThinkPad X1 Carbon 14\"2.8K",
+      "device_type": "Laptop",
+      "configurations": [
+        {
+          "configuration": "Standard",
+          "screen": "14\"2.8K",
+          "cpu": "Ultra5-225H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI 7",
+          "configuration_parameters": "HDMI*1 ThunderBolt 4.0 接口*2  USB 3.2 Gen1*2",
+          "weight": "1.2KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair)",
+          "discount_price": 11150.0,
+          "original_price": 12599.0,
+          "discount_rate": 0.1,
+          "product_link": "https://b.lenovo.com.cn/product/1044932.html?key=+ThinkPad+X1&frompage=home"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "14\"2.8K",
+          "cpu": "Ultra7-255H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI 7",
+          "configuration_parameters": "HDMI*1 ThunderBolt 4.0 接口*2  USB 3.2 Gen1*2",
+          "weight": "1.2KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair)",
+          "discount_price": 13539.0,
+          "original_price": 15299.0,
+          "discount_rate": 0.1,
+          "product_link": "https://b.lenovo.com.cn/product/1044933.html?key=+ThinkPad+X1&frompage=home"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "14\"2.8K",
+          "cpu": "Ultra7-258V",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI 7",
+          "configuration_parameters": "HDMI*1 ThunderBolt 4.0 接口*2  USB 3.2 Gen1*2",
+          "weight": "1.2KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service + Accidental Damage Coverage + Battery Protection) + 1-Year International Warranty + 1-Year Data Protection Plan (Includes 1st Year Data Recovery, HDD Non-Retention, and Express Repair)",
+          "discount_price": 14600.0,
+          "original_price": 16498.0,
+          "discount_rate": 0.1,
+          "product_link": "https://b.lenovo.com.cn/product/1042876.html?key=+ThinkPad+X1&frompage=home"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "14\"2.8K",
+          "cpu": "Ultra7-258V",
+          "memory": "32G",
+          "hard_disk": "2T SSD",
+          "graphic_card": "Integrated",
+          "wifi": "WIFI 7",
+          "configuration_parameters": "HDMI*1 ThunderBolt 4.0 接口*2  USB 3.2 Gen1*2",
+          "weight": "1.2KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service, Accidental Damage Protection & Battery Warranty)",
+          "discount_price": 16370.0,
+          "original_price": 18498.0,
+          "discount_rate": 0.1,
+          "product_link": "https://b.lenovo.com.cn/product/1042877.html?key=+ThinkPad+X1&frompage=home"
+        }
+      ]
+    },
+    {
+      "brand": "Lenovo",
+      "model": "ThinkPad P16V 16\" FHD",
+      "device_type": "Laptop",
+      "configurations": [
+        {
+          "configuration": "Standard",
+          "screen": "16\" FHD",
+          "cpu": "Ultra7-155H",
+          "memory": "16G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "A500-4G",
+          "wifi": "WIFI 6E",
+          "configuration_parameters": "1*USB-A 3.2 Gen1\n2*Thunderbolt 4\n1.0Gbps RJ45*1",
+          "weight": "2.2KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service, Accidental Damage Protection & Battery Warranty)",
+          "discount_price": 10619.0,
+          "original_price": 11999.0,
+          "discount_rate": 0.1,
+          "product_link": "https://b.lenovo.com.cn/product/1049131.html?key=P16V&keyType=%E8%87%AA%E5%A1%AB&pageType=https%3A%2F%2Fs.lenovo.com.cn%2Fsearch%2F%3Fkey%3DThinkPad%2520P%26frompage%3Dhome"
+        },
+        {
+          "configuration": "Standard",
+          "screen": "16\" FHD",
+          "cpu": "Ultra7-155H",
+          "memory": "32G",
+          "hard_disk": "1T SSD",
+          "graphic_card": "A1000-6G",
+          "wifi": "WIFI 6E",
+          "configuration_parameters": "1*USB-A 3.2 Gen1\n2*Thunderbolt 4\n1.0Gbps RJ45*1",
+          "weight": "2.2KG",
+          "accessary": "Mouse/Bag",
+          "changing_config_price": "3-Year Warranty (On-site Service, Accidental Damage Protection & Battery Warranty)",
+          "discount_price": 13539.0,
+          "original_price": 15299.0,
+          "discount_rate": 0.1,
+          "product_link": "https://item.lenovo.com.cn/product/1047948.html?key=P16V&keyType=%E8%87%AA%E5%A1%AB&pageType=https%3A%2F%2Fs.lenovo.com.cn%2Fsearch%2F%3Fkey%3DThinkPad%2520P%26frompage%3Dhome"
+        }
+      ]
+    }
+  ],
+  "Desktop": [
+    {
+      "brand": "Lenovo",
+      "model": "Thinkstation P3",
+      "device_type": "Desktop",
+      "configurations": [
+        {
+          "configuration": "Standard",
+          "screen": "",
+          "cpu": "I7-14700",
+          "memory": "32G",
+          "hard_disk": "512SSD+2T机械",
+          "graphic_card": "RTX2000ada-16G",
+          "wifi": "NO",
+          "configuration_parameters": "",
+          "weight": "",
+          "accessary": "",
+          "changing_config_price": "3-Year On-Site Service",
+          "discount_price": 12388.0,
+          "original_price": 13999.0,
+          "discount_rate": 0.1,
+          "product_link": ""
+        },
+        {
+          "configuration": "Standard",
+          "screen": "",
+          "cpu": "I7-14900K",
+          "memory": "64G",
+          "hard_disk": "1TSSD+4T机械",
+          "graphic_card": "RTX4000ada-20G",
+          "wifi": "NO",
+          "configuration_parameters": "",
+          "weight": "",
+          "accessary": "",
+          "changing_config_price": "3-Year On-Site Service",
+          "discount_price": 20619.0,
+          "original_price": 23299.0,
+          "discount_rate": 0.2,
+          "product_link": ""
+        }
+      ]
+    }
+  ]
+}

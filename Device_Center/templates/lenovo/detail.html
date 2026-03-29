@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ configuration.product.model }} {{ configuration.configuration }} - Lenovo</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Lenovo 品牌颜色变量 */
+        :root {
+            --lenovo-blue: #007db8;
+            --lenovo-dark: #1c1c1e;
+            --lenovo-gray: #f5f5f5;
+            --lenovo-border: #e5e5e5;
+            --lenovo-light-blue: #e8f4fc;
+        }
+        
+        /* 升级选项内容样式 */
+        .upgrade-content {
+            font-size: 14px;
+        }
+        
+        .upgrade-list {
+            margin-top: 0;
+        }
+        
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .upgrade-item:hover {
+            background: #ebebeb;
+        }
+        
+        .upgrade-item.selected {
+            background: var(--lenovo-light-blue);
+            border-color: var(--lenovo-blue);
+        }
+        
+        .upgrade-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .upgrade-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #86868b;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .upgrade-item.selected .upgrade-checkbox {
+            background: var(--lenovo-blue);
+            border-color: var(--lenovo-blue);
+        }
+        
+        .upgrade-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            display: none;
+        }
+        
+        .upgrade-item.selected .upgrade-checkbox::after {
+            display: block;
+        }
+        
+        .upgrade-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .upgrade-name {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .upgrade-price {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--lenovo-blue);
+            white-space: nowrap;
+            margin-left: 16px;
+        }
+        
+        .upgrade-item.has-price .upgrade-name {
+            color: #333;
+        }
+        
+        .upgrade-item.no-price {
+            cursor: default;
+        }
+        
+        .upgrade-item.no-price:hover {
+            background: #f5f5f5;
+        }
+        
+        .upgrade-divider {
+            border: none;
+            height: 1px;
+            background: #e5e5e5;
+            margin: 16px 0;
+        }
+        
+        /* 价格汇总样式 */
+        .price-summary {
+            background: var(--lenovo-gray);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .price-row-summary {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        
+        .price-row-summary:not(:last-child) {
+            border-bottom: 1px solid var(--lenovo-border);
+        }
+        
+        .price-row-summary.total {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--lenovo-dark);
+            border-bottom: none;
+            padding-top: 12px;
+        }
+        
+        .price-row-summary .label {
+            color: #6e6e73;
+        }
+        
+        .price-row-summary.total .label {
+            color: var(--lenovo-dark);
+        }
+        
+        .price-row-summary .value {
+            color: var(--lenovo-dark);
+        }
+        
+        .price-row-summary.total .value {
+            color: var(--lenovo-blue);
+        }
+        
+        .upgrade-summary {
+            background: #fff;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        
+        .upgrade-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+        
+        .upgrade-summary-item .name {
+            color: #6e6e73;
+        }
+        
+        .upgrade-summary-item .price {
+            color: var(--lenovo-blue);
+            font-weight: 500;
+        }
+        
+        .no-upgrade-selected {
+            color: #86868b;
+            font-style: italic;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'lenovo_index' %}">Lenovo</a> <span class="brand-separator">/</span> <a href="{% if device_type == 'Laptop' %}{% url 'lenovo_laptop' %}{% else %}{% url 'lenovo_desktop' %}{% endif %}">{{ device_type_name }}</a> <span class="brand-separator">/</span> <span class="current-brand">{{ configuration.product.model }}</span></h1>
+                <nav class="nav">
+                    <a href="{% url 'lenovo_laptop' %}">笔记本</a>
+                    <a href="{% url 'lenovo_desktop' %}">台式机</a>
+                    <span class="user-info">
+                        {% if user_name %}
+                            <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
+                                👤 {{ user_name }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <!-- 返回链接 -->
+            <div class="back-link">
+                <a href="javascript:history.back()">&larr; 返回列表</a>
+            </div>
+            
+            <div class="detail-layout">
+                <!-- 左侧：图片展示 -->
+                <div class="detail-gallery">
+                    <div class="main-image">
+                        <img id="mainImage" src="{{ main_image|default:'/static/images/product-placeholder.svg' }}" alt="{{ configuration.product.model }}">
+                    </div>
+                    <div class="thumbnail-list">
+                        {% for img in thumbnails %}
+                        <div class="thumbnail{% if forloop.first %} active{% endif %}" onclick="switchImage(this, '{{ img }}')">
+                            <img src="{{ img }}" alt="产品图片 {{ forloop.counter }}">
+                        </div>
+                        {% empty %}
+                        <!-- 默认缩略图占位 -->
+                        <div class="thumbnail active" onclick="switchImage(this, '/static/images/product-placeholder.svg')">
+                            <img src="/static/images/product-placeholder.svg" alt="默认图片">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- 右侧：产品信息 -->
+                <div class="detail-info">
+                    <div class="product-title">
+                        <h1>{{ configuration.product.model }} {{ configuration.configuration }}</h1>
+                    </div>
+                    
+                    <!-- 价格信息 -->
+                    <div class="price-section">
+                        {% if configuration.original_price > configuration.discount_price %}
+                        <div class="original-price">¥{{ configuration.original_price }} 元</div>
+                        <div class="current-price">
+                            ¥{{ configuration.discount_price }} 元
+                            <!-- <span class="discount-badge">省 {{ discount_percent }}%</span> -->
+                        </div>
+                        {% else %}
+                        <div class="current-price">¥{{ configuration.discount_price }} 元</div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 基础配置 -->
+                    <div class="config-section">
+                        <h3>基础配置</h3>
+                        <table class="config-table">
+                            <tr>
+                                <td class="config-label">芯片</td>
+                                <td class="config-value">{{ configuration.cpu }}</td>
+                            </tr>
+                            <tr>
+                                <td class="config-label">内存</td>
+                                <td class="config-value">{{ configuration.memory }}</td>
+                            </tr>
+                            <tr>
+                                <td class="config-label">存储</td>
+                                <td class="config-value">{{ configuration.hard_disk }}</td>
+                            </tr>
+                            <tr>
+                                <td class="config-label">显卡</td>
+                                <td class="config-value">{{ configuration.graphic_card }}</td>
+                            </tr>
+                            {% if configuration.screen %}
+                            <tr>
+                                <td class="config-label">显示屏</td>
+                                <td class="config-value">{{ configuration.screen }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if configuration.wifi %}
+                            <tr>
+                                <td class="config-label">无线网络</td>
+                                <td class="config-value">{{ configuration.wifi }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if configuration.weight %}
+                            <tr>
+                                <td class="config-label">重量</td>
+                                <td class="config-value">{{ configuration.weight }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if configuration.accessary %}
+                            <tr>
+                                <td class="config-label">配件</td>
+                                <td class="config-value">{{ configuration.accessary }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-lg btn-block" onclick="buyNow()">
+                            立即购买
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 详细参数和升级选项 -->
+            {% if configuration.configuration_parameters or configuration.changing_config_price %}
+            <div class="detail-tabs">
+                <div class="tab-header">
+                    {% if configuration.configuration_parameters %}
+                    <button class="tab-btn active" onclick="switchTab('params')">详细参数</button>
+                    {% endif %}
+                    {% if configuration.changing_config_price %}
+                    <button class="tab-btn {% if not configuration.configuration_parameters %}active{% endif %}" onclick="switchTab('upgrade')">升级选项</button>
+                    {% endif %}
+                </div>
+                <div class="tab-content">
+                    {% if configuration.configuration_parameters %}
+                    <div id="params" class="tab-pane active">
+                        <div class="params-content">
+                            {{ configuration_parameters_html|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if configuration.changing_config_price %}
+                    <div id="upgrade" class="tab-pane {% if not configuration.configuration_parameters %}active{% endif %}">
+                        <div class="upgrade-content">
+                            {{ configuration_upgrade_html|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- 订单确认弹窗 -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认订单</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <form id="orderForm" method="POST" action="#">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="order-summary">
+                        <h4>订单摘要</h4>
+                        <div id="orderDetails"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="remark">备注</label>
+                        <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="configId" name="configId" value="{{ configuration.id }}">
+                    <input type="hidden" id="modelName" name="modelName" value="{{ configuration.product.model }} {{ configuration.configuration }}">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+    // Django 模板变量，运行时会被正确替换
+    var brand = '{{ brand|escapejs }}';
+    var deviceType = '{{ device_type|escapejs }}';
+    var configId = {{ configuration.id }};
+    var configName = '{{ configuration.configuration|escapejs }}';
+    var modelName = '{{ configuration.product.model|escapejs }}';
+    var basePrice = {{ configuration.discount_price }};
+    
+    // 升级选项数据
+    var upgradeData = [];
+    var selectedUpgrades = [];
+    
+    // 初始化升级选项数据
+    document.addEventListener('DOMContentLoaded', function() {
+        const upgradeItems = document.querySelectorAll('.upgrade-item');
+        upgradeItems.forEach(function(item, index) {
+            const nameEl = item.querySelector('.upgrade-name');
+            const priceEl = item.querySelector('.upgrade-price');
+            
+            if (nameEl && priceEl) {
+                var name = nameEl.textContent.trim();
+                var priceText = priceEl.textContent.trim();
+                var price = 0;
+                
+                // 解析价格
+                if (priceText && priceText !== '包含') {
+                    var priceMatch = priceText.match(/[\d.]+/);
+                    if (priceMatch) {
+                        price = parseFloat(priceMatch[0]);
+                    }
+                }
+                
+                upgradeData.push({
+                    index: index,
+                    name: name,
+                    price: price,
+                    element: item
+                });
+                
+                // 只有有价格的选项才能点击选择
+                if (price > 0) {
+                    item.addEventListener('click', function() {
+                        toggleUpgrade(index);
+                    });
+                    item.classList.add('has-price');
+                } else {
+                    item.classList.add('no-price');
+                }
+            }
+        });
+    });
+    
+    // 切换升级选项的选中状态
+    function toggleUpgrade(index) {
+        var item = upgradeData[index].element;
+        var upgrade = upgradeData[index];
+        
+        var found = false;
+        for (var i = 0; i < selectedUpgrades.length; i++) {
+            if (selectedUpgrades[i].index === index) {
+                selectedUpgrades.splice(i, 1);
+                item.classList.remove('selected');
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            selectedUpgrades.push({
+                index: index,
+                name: upgrade.name,
+                price: upgrade.price
+            });
+            item.classList.add('selected');
+        }
+    }
+    
+    // 获取选中升级的HTML显示
+    function getSelectedUpgradesHtml() {
+        if (selectedUpgrades.length === 0) {
+            return '<span class="no-upgrade-selected">暂未选择升级选项</span>';
+        }
+        
+        var html = '<div class="upgrade-summary">';
+        selectedUpgrades.forEach(function(u) {
+            html += '<div class="upgrade-summary-item">';
+            html += '<span class="name">' + u.name + '</span>';
+            html += '<span class="price">+' + u.price.toFixed(2) + ' 元</span>';
+            html += '</div>';
+        });
+        html += '</div>';
+        return html;
+    }
+    
+    // 计算总价
+    function calculateTotal() {
+        var total = basePrice;
+        selectedUpgrades.forEach(function(u) {
+            total += u.price;
+        });
+        return total;
+    }
+    
+    function switchImage(thumbnail, imageUrl) {
+        document.getElementById('mainImage').src = imageUrl;
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        thumbnail.classList.add('active');
+    }
+    
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        document.querySelector('[onclick="switchTab(\'' + tabName + '\')"]').classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+    }
+    
+    function buyNow() {
+        // 检查用户是否已登录
+        var userName = '{{ user_name|escapejs }}';
+        if (!userName || userName === '') {
+            alert('请先登录后再提交订单');
+            window.location.href = '/login/';
+            return;
+        }
+        
+        var total = calculateTotal();
+        var upgradeTotal = 0;
+        selectedUpgrades.forEach(function(u) {
+            upgradeTotal += u.price;
+        });
+        
+        let html = `
+            <div class="summary-item">
+                <span>产品型号:</span>
+                <span>${modelName} ${configName}</span>
+            </div>
+            <div class="summary-item">
+                <span>芯片:</span>
+                <span>{{ configuration.cpu }}</span>
+            </div>
+            <div class="summary-item">
+                <span>内存:</span>
+                <span>{{ configuration.memory }}</span>
+            </div>
+            <div class="summary-item">
+                <span>存储:</span>
+                <span>{{ configuration.hard_disk }}</span>
+            </div>
+            <div class="summary-item">
+                <span>显卡:</span>
+                <span>{{ configuration.graphic_card }}</span>
+            </div>
+        `;
+        
+        {% if configuration.screen %}
+        html += `
+            <div class="summary-item">
+                <span>显示屏:</span>
+                <span>{{ configuration.screen }}</span>
+            </div>
+        `;
+        {% endif %}
+        
+        // 添加升级选项
+        html += `
+            <div class="summary-item">
+                <span>升级选项:</span>
+            </div>
+            ${getSelectedUpgradesHtml()}
+        `;
+        
+        // 价格汇总
+        html += `
+            <div class="price-summary">
+                <div class="price-row-summary">
+                    <span class="label">基础价格:</span>
+                    <span class="value">${basePrice.toFixed(2)} 元</span>
+                </div>
+                <div class="price-row-summary">
+                    <span class="label">升级费用:</span>
+                    <span class="value">+${upgradeTotal.toFixed(2)} 元</span>
+                </div>
+                <div class="price-row-summary total">
+                    <span class="label">总价:</span>
+                    <span class="value">${total.toFixed(2)} 元</span>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('orderDetails').innerHTML = html;
+        document.getElementById('orderModal').classList.add('show');
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.remove('show');
+    }
+    
+    function submitOrder() {
+        const configIdValue = document.getElementById('configId').value;
+        const modelNameValue = document.getElementById('modelName').value;
+        const remark = document.getElementById('remark').value;
+        const totalPrice = calculateTotal();
+        
+        const data = {
+            device_type: deviceType,
+            model_name: modelNameValue,
+            configuration_id: configIdValue,
+            remark: remark,
+            cpu: '{{ configuration.cpu }}',
+            memory: '{{ configuration.memory }}',
+            hard_disk: '{{ configuration.hard_disk }}',
+            graphic_card: '{{ configuration.graphic_card }}',
+            screen: '{{ configuration.screen }}',
+            base_price: basePrice,
+            selected_upgrades: selectedUpgrades,
+            upgrade_price: selectedUpgrades.reduce(function(sum, u) { return sum + u.price; }, 0),
+            total_price: totalPrice
+        };
+        
+        fetch('/api/' + brand + '/order/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('订单提交成功！订单号: ' + data.order_number);
+                closeModal();
+                window.location.reload();
+            } else {
+                alert('订单提交失败: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('订单提交失败，请重试');
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+        const modal = document.getElementById('orderModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+    </script>
+</body>
+</html>

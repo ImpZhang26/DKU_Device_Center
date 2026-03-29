@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配件 - Apple</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .form-group {
+            margin-bottom: 0;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dukekunshan-blue);
+            margin-bottom: 8px;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: var(--transition);
+        }
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--dukekunshan-blue);
+            box-shadow: 0 0 0 3px rgba(0, 51, 141, 0.1);
+        }
+        .summary-item span:first-child {
+            color: var(--gray-600);
+        }
+        .summary-item span:last-child {
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'apple_index' %}">Apple</a> <span class="brand-separator">/</span> <span class="current-brand">配件</span></h1>
+                <nav class="nav">
+                    <a href="{% url 'apple_laptop' %}">MacBook</a>
+                    <a href="{% url 'apple_desktop' %}">台式机</a>
+                    <a href="{% url 'apple_ipad' %}">iPad</a>
+                    <a href="{% url 'apple_accessories' %}" class="active">配件</a>
+                    <span class="user-info">
+                        {% if user_name %}
+                            <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
+                                👤 {{ user_name }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% for device_type, accessories in accessory_groups.items %}
+            <section class="accessory-section">
+                <h2 class="section-title">{{ device_type }}</h2>
+                <div class="accessory-grid">
+                    {% for accessory in accessories %}
+                    <div class="accessory-card">
+                        <div class="accessory-header">
+                            <h4>{{ accessory.model }}</h4>
+                            <span class="price-tag">{{ accessory.discount_price }} 元</span>
+                        </div>
+                        <p class="accessory-desc">{{ accessory.description }}</p>
+                        <div class="accessory-footer">
+                            <span class="original-price">{{ accessory.original_price }} 元</span>
+                            <!-- {% if accessory.discount_rate > 0 %}
+                            <span class="discount-badge">省 {{ accessory.discount_rate|floatformat:0 }}%</span>
+                            {% endif %} -->
+                        </div>
+                        <div class="accessory-actions">
+                            <button class="btn btn-primary" onclick="buyNow('{{ accessory.model|escapejs }}', {{ accessory.discount_price }}, '{{ accessory.device_type|escapejs }}')">
+                                立即购买
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% empty %}
+            <div class="empty-state">
+                <p>暂无配件数据</p>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- 订单确认弹窗 -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认订单</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="order-summary">
+                    <h4>配件订单摘要</h4>
+                    <div id="orderDetails"></div>
+                </div>
+                <div class="form-group">
+                    <label for="remark">备注</label>
+                    <textarea id="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const brand = '{{ brand }}';
+    let currentOrderData = null;
+    
+    function buyNow(modelName, price, deviceType) {
+        currentOrderData = {
+            modelName: modelName,
+            price: price,
+            deviceType: deviceType || 'Accessories'
+        };
+        
+        document.getElementById('orderDetails').innerHTML = `
+            <div class="summary-item">
+                <span>配件型号:</span>
+                <span>${modelName}</span>
+            </div>
+            <div class="summary-item">
+                <span>配件类型:</span>
+                <span>${deviceType}</span>
+            </div>
+            <div class="summary-item total">
+                <span>总价:</span>
+                <span>${price} 元</span>
+            </div>
+        `;
+        
+        document.getElementById('remark').value = '';
+        document.getElementById('orderModal').classList.add('show');
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.remove('show');
+        currentOrderData = null;
+    }
+    
+    function submitOrder() {
+        if (!currentOrderData) return;
+        
+        const remark = document.getElementById('remark').value;
+        const data = {
+            device_type: currentOrderData.deviceType,
+            model_name: currentOrderData.modelName,
+            total_price: currentOrderData.price,
+            remark: remark || '配件立即购买'
+        };
+        
+        fetch('/api/' + brand + '/order/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('订单创建成功！\n\n订单号：' + data.order_number + '\n\n请前往管理后台查看订单详情。');
+                closeModal();
+            } else {
+                alert('购买失败：' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('购买失败，请重试');
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+        const orderModal = document.getElementById('orderModal');
+        if (event.target === orderModal) {
+            closeModal();
+        }
+    }
+    </script>
+</body>
+</html>

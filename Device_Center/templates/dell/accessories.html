@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dell 配件选配 - Dell</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Dell 品牌风格增强 */
+        .dell-brand-color {
+            --dell-blue: #007db8;
+            --dell-dark: #1c1c1e;
+            --dell-gray: #f5f5f7;
+            --dell-border: #e5e5e5;
+        }
+        
+        /* 页面标题区域 */
+        .page-header {
+            text-align: center;
+            padding: 48px 0 32px;
+            background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+            border-bottom: 1px solid var(--dell-border);
+            margin-bottom: 40px;
+        }
+        
+        .page-header h2 {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--dell-dark);
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        /* 产品卡片网格 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+            padding: 20px 0;
+        }
+        
+        /* 产品卡片样式 - Dell 风格 */
+        .product-card {
+            background: #ffffff;
+            border: 1px solid var(--dell-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 125, 184, 0.15);
+            transform: translateY(-4px);
+            border-color: var(--dell-blue);
+        }
+        
+        /* 卡片顶部 - 产品信息 */
+        .card-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--dell-gray);
+        }
+        
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dell-dark);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .card-series-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e8f4fc;
+            color: var(--dell-blue);
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        
+        /* 价格区域 */
+        .price-section {
+            padding: 16px 24px;
+            background: #fafafa;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+        
+        .current-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dell-dark);
+        }
+        
+        .price-unit {
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+        }
+        
+        .original-price {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+        }
+        
+        /* 配置规格区域 */
+        .specs-section {
+            padding: 20px 24px;
+        }
+        
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .spec-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--dell-gray);
+            border-radius: 8px;
+        }
+        
+        .spec-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: var(--dell-blue);
+        }
+        
+        .spec-content {
+            flex: 1;
+        }
+        
+        .spec-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .spec-value {
+            font-size: 14px;
+            color: var(--dell-dark);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        
+        /* 特性标签 */
+        .features-row {
+            padding: 12px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-top: 1px solid var(--dell-gray);
+        }
+        
+        .feature-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: #f0f0f0;
+            color: #555;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        
+        .feature-tag svg {
+            width: 14px;
+            height: 14px;
+            color: var(--dell-blue);
+        }
+        
+        /* 操作按钮 */
+        .card-actions {
+            padding: 16px 24px 24px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .card-actions .btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .card-actions .btn-primary {
+            background: var(--dell-blue);
+            color: #fff;
+            border: none;
+        }
+        
+        .card-actions .btn-primary:hover {
+            background: #006da3;
+        }
+        
+        .card-actions .btn-outline {
+            background: transparent;
+            color: var(--dell-blue);
+            border: 1px solid var(--dell-blue);
+        }
+        
+        .card-actions .btn-outline:hover {
+            background: #f0f8fc;
+        }
+        
+        /* 缺货状态 */
+        .product-card.out-of-stock {
+            opacity: 0.7;
+        }
+        
+        .product-card.out-of-stock .card-actions .btn-primary {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        /* 快捷配置信息 */
+        .quick-config {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #007db8 0%, #005a8c 100%);
+            color: #fff;
+        }
+        
+        .quick-config-title {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .quick-config-value {
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header {
+                padding: 32px 0 24px;
+            }
+            
+            .page-header h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">配件</span></h1>
+                <nav class="nav">
+                    <a href="{% url 'dell_notebook' %}">笔记本</a>
+                    <a href="{% url 'dell_laptop' %}">高性能本</a>
+                    <a href="{% url 'dell_desktop' %}">台式机</a>
+                    <a href="{% url 'dell_monitor' %}">显示器</a>
+                    <a href="{% url 'dell_accessories' %}" class="active">配件</a>
+                    <span class="user-info">
+                        {% if user_name %}
+                            👤 {{ user_name }}
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main dell-brand-color">
+        <div class="container">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <h2>Dell 配件 - 扩展坞 / 转接器</h2>
+                <p>提升您的工作效率</p>
+            </div>
+            
+            {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                <div class="product-card">
+                    <!-- 产品名称 -->
+                    <div class="quick-config">
+                        <div class="quick-config-title">产品名称</div>
+                        <div class="quick-config-value">{{ product.model }}</div>
+                    </div>
+                    
+                    <!-- 卡片头部 -->
+                    <div class="card-header">
+                        {% if 'WD19' in product.model %}
+                            <span class="card-series-tag">WD19 系列</span>
+                        {% elif 'DA310' in product.model %}
+                            <span class="card-series-tag">DA310 转接器</span>
+                        {% elif 'MH30' in product.model or 'MH31' in product.model %}
+                            <span class="card-series-tag">MH 系列</span>
+                        {% elif 'MS5320' in product.model %}
+                            <span class="card-series-tag">MS 系列</span>
+                        {% else %}
+                            <span class="card-series-tag">配件产品</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 价格区域 -->
+                    <div class="price-section">
+                        <span class="current-price">{{ product.price|floatformat:0 }}</span>
+                        <span class="price-unit">元</span>
+                        {% if product.original_price and product.original_price > product.price %}
+                        <span class="original-price">{{ product.original_price|floatformat:0 }} 元</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 配置规格 - 使用 basic_config -->
+                    <div class="specs-section">
+                        <div class="specs-grid">
+                            <div class="spec-item">
+                                <svg class="spec-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
+                                </svg>
+                                <div class="spec-content">
+                                    <div class="spec-label">基本配置</div>
+                                    <div class="spec-value" title="{{ product.basic_config }}">{{ product.basic_config }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 特性标签 -->
+                    <div class="features-row">
+                        {% if product.basic_config %}
+                        <span class="feature-tag">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            Dell 原厂
+                        </span>
+                        {% endif %}
+                        <span class="feature-tag">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            官方质保
+                        </span>
+                        <span class="feature-tag">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
+                            </svg>
+                            即插即用
+                        </span>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="card-actions">
+                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">查看详情</a>
+                        <button class="btn btn-primary" onclick="buyNow('{{ product.model|escapejs }}', {{ forloop.counter0 }})">立即购买</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>暂无产品信息</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- 订单确认弹窗 -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认订单</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="order-summary">
+                    <h4>订单摘要</h4>
+                    <div id="orderDetails"></div>
+                </div>
+                <div class="form-group">
+                    <label for="remark">备注</label>
+                    <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="modelName" name="modelName">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    const brand = '{{ brand }}';
+    const products = {{ products_json|safe }};
+    
+    function buyNow(modelName, index) {
+        const product = products[index];
+        document.getElementById('modelName').value = modelName;
+        
+        document.getElementById('orderDetails').innerHTML = `
+            <div class="summary-item">
+                <span>产品型号:</span>
+                <span>${modelName}</span>
+            </div>
+            <div class="summary-item">
+                <span>基本配置:</span>
+                <span>${product.basic_config || '-'}</span>
+            </div>
+            <div class="summary-item total">
+                <span>总价:</span>
+                <span>${product.price} 元</span>
+            </div>
+        `;
+        
+        document.getElementById('orderModal').classList.add('show');
+    }
+    
+    function closeModal() {
+        document.getElementById('orderModal').classList.remove('show');
+    }
+    
+    function submitOrder() {
+        const modelName = document.getElementById('modelName').value;
+        const remark = document.getElementById('remark').value;
+        
+        const data = {
+            device_type: 'Accessories',
+            model_name: modelName,
+            remark: remark,
+            basic_config: document.querySelector('#orderDetails .summary-item:nth-child(2) span:last-child').textContent,
+            total_price: parseFloat(document.querySelector('#orderDetails .total span:last-child').textContent)
+        };
+        
+        fetch('/api/' + brand + '/order/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('订单提交成功！订单号: ' + data.order_number);
+                closeModal();
+                window.location.reload();
+            } else {
+                alert('订单提交失败: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('订单提交失败，请重试');
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+        const modal = document.getElementById('orderModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+    </script>
+</body>
+</html>

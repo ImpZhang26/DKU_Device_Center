@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple 设备选配 - 学校电脑设备选配中心</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .apple-hero {
+            padding: 120px 20px 80px;
+            text-align: center;
+            background: linear-gradient(180deg, #1d1d1f 0%, #2c2c2e 100%);
+            color: white;
+        }
+        
+        .apple-hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .apple-hero p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 32px;
+        }
+        
+        .device-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .device-nav-item {
+            padding: 12px 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .device-nav-item:hover,
+        .device-nav-item.active {
+            background: white;
+            color: var(--text-primary);
+        }
+        
+        .selection-section {
+            padding: 80px 20px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .section-header p {
+            font-size: 17px;
+            color: var(--text-secondary);
+        }
+        
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .model-card {
+            background: var(--card-background);
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .model-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .model-card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        
+        .model-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .model-tag {
+            font-size: 13px;
+            color: var(--primary-color);
+            background: rgba(0, 113, 227, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+        
+        .model-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .model-image svg {
+            width: 100px;
+            height: 100px;
+            fill: #86868b;
+        }
+        
+        .model-config-preview {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .config-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .config-item svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-secondary);
+        }
+        
+        .model-price {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .price-current {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .price-original {
+            font-size: 15px;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+        }
+        
+        .model-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .model-actions .btn {
+            flex: 1;
+        }
+        
+        .feature-banner {
+            background: #f5f5f7;
+            padding: 80px 20px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 900px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .feature-item {
+            text-align: center;
+        }
+        
+        .feature-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #0071e3 0%, #0077ed 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feature-icon svg {
+            width: 36px;
+            height: 36px;
+            fill: white;
+        }
+        
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .services-list {
+            background: var(--card-background);
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 48px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .services-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .services-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f5f5f7;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        
+        .service-item svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--success-color);
+        }
+        
+        /* 型号选择器样式 */
+        .model-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+        
+        .model-option {
+            padding: 12px 24px;
+            background: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .model-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .model-option.active {
+            border-color: var(--primary-color);
+            background: rgba(0, 113, 227, 0.05);
+            color: var(--primary-color);
+        }
+        
+        .products-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar" style="background: rgba(29, 29, 31, 0.8);">
+        <div class="navbar-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand" style="color: white;">设备选配中心</a>
+            <ul class="navbar-nav">
+                <li><a href="{{ url_for('apple_center') }}" style="color: white;">Apple</a></li>
+                <li><a href="#" style="color: rgba(255,255,255,0.6);">Dell</a></li>
+                <li><a href="#" style="color: rgba(255,255,255,0.6);">Lenovo</a></li>
+            </ul>
+            <div class="user-info" id="user-info" style="background: rgba(255,255,255,0.1); color: white;">
+                <span id="user-name"></span>
+                <a href="#" onclick="logout(); return false;" style="color: #2997ff;">退出</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero区域 -->
+    <section class="apple-hero">
+        <h1>Apple 设备选配中心</h1>
+        <p>选择最适合您的 Apple 设备，开启高效工作之旅</p>
+        
+        <div class="device-nav">
+            <a href="{{ url_for('apple_laptop') }}" class="device-nav-item active">笔记本电脑</a>
+            <a href="{{ url_for('apple_desktop') }}" class="device-nav-item">台式机</a>
+            <a href="{{ url_for('apple_ipad') }}" class="device-nav-item">iPad</a>
+            <a href="{{ url_for('apple_accessories') }}" class="device-nav-item">配件</a>
+        </div>
+    </section>
+    
+    <!-- 笔记本电脑选配 -->
+    <section class="selection-section" id="laptop-section">
+        <div class="section-header">
+            <h2>选择您的 MacBook</h2>
+            <p>点击型号开始配置您专属的设备</p>
+        </div>
+        
+        <div class="model-selector" id="laptop-models">
+            <!-- 型号选项将通过API加载 -->
+        </div>
+        
+        <div class="products-container" id="laptop-products">
+            <!-- 产品卡片将通过API加载 -->
+            <div class="text-center" style="padding: 60px 20px; color: var(--text-secondary);">
+                <span class="loading"></span>
+                <p style="margin-top: 16px;">加载中...</p>
+            </div>
+        </div>
+        
+        <!-- 服务说明 -->
+        <div class="services-list" id="laptop-services">
+            <h3 class="services-title">包含服务</h3>
+            <div class="services-items">
+                <div class="service-item">
+                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    三年有限保修
+                </div>
+                <div class="service-item">
+                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    90天免费技术支持
+                </div>
+                <div class="service-item">
+                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    免费送货上门
+                </div>
+                <div class="service-item">
+                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    分期付款支持
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 功能特性 -->
+    <section class="feature-banner">
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+                </div>
+                <h3 class="feature-title">教育优惠</h3>
+                <p class="feature-desc">在校教职工可享受专属教育优惠价格</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                </div>
+                <h3 class="feature-title">定制配置</h3>
+                <p class="feature-desc">可根据需求选择不同内存、存储、处理器配置</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h3 class="feature-title">正品保障</h3>
+                <p class="feature-desc">官方授权渠道，确保正品质量</p>
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        // 全局变量
+        let currentModel = '';
+        let currentDeviceType = 'Laptop';
+        
+        // 检查登录状态
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/api/check-login');
+                const data = await response.json();
+                
+                const userInfo = document.getElementById('user-info');
+                const userName = document.getElementById('user-name');
+                
+                if (data.logged_in) {
+                    userInfo.style.display = 'flex';
+                    
+                    if (data.user.name) {
+                        userName.textContent = '欢迎，' + data.user.name;
+                    } else if (data.user.netid) {
+                        userName.textContent = '欢迎，' + data.user.netid;
+                    }
+                } else {
+                    userInfo.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('检查登录状态失败:', error);
+            }
+        }
+        
+        // 退出登录
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('退出登录失败:', error);
+            }
+        }
+        
+        // 加载型号列表
+        async function loadModels() {
+            try {
+                const response = await fetch(`/api/apple/models/${currentDeviceType}`);
+                const data = await response.json();
+                
+                const container = document.getElementById(currentDeviceType.toLowerCase() + '-models');
+                
+                if (data.success && data.data.length > 0) {
+                    container.innerHTML = data.data.map(model => `
+                        <div class="model-option ${model === currentModel ? 'active' : ''}" 
+                             data-model="${model}" onclick="selectModel('${model}')">
+                            ${model}
+                        </div>
+                    `).join('');
+                    
+                    // 默认选择第一个型号
+                    if (!currentModel) {
+                        selectModel(data.data[0]);
+                    } else {
+                        loadProducts(currentModel);
+                    }
+                } else {
+                    container.innerHTML = '<p style="color: var(--text-secondary);">暂无型号数据</p>';
+                }
+            } catch (error) {
+                console.error('加载型号列表失败:', error);
+            }
+        }
+        
+        // 选择型号
+        function selectModel(model) {
+            currentModel = model;
+            
+            // 更新选中状态
+            document.querySelectorAll('.model-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.model === model);
+            });
+            
+            loadProducts(model);
+        }
+        
+        // 加载产品配置
+        async function loadProducts(modelName) {
+            const container = document.getElementById(currentDeviceType.toLowerCase() + '-products');
+            container.innerHTML = `
+                <div class="text-center" style="padding: 60px 20px; color: var(--text-secondary);">
+                    <span class="loading"></span>
+                    <p style="margin-top: 16px;">加载配置中...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`/api/apple/configurations?model_name=${encodeURIComponent(modelName)}&device_type=${currentDeviceType}`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    container.innerHTML = data.data.map(config => `
+                        <div class="model-card" onclick="showConfigModal('${modelName}', ${config.id})">
+                            <div class="model-card-header">
+                                <div>
+                                    <div class="model-name">${modelName}</div>
+                                    <span class="model-tag">${config.configuration || '标准配置'}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="model-image">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.21-1.96 1.08-3.11-1.06.05-2.36.69-3.14 1.55-.68.75-1.26 1.94-1.1 3.07 1.19.09 2.41-.79 3.16-1.51z"/>
+                                </svg>
+                            </div>
+                            
+                            <div class="model-config-preview">
+                                ${config.cpu ? `<div class="config-item"><svg viewBox="0 0 24 24"><path d="M9 2v6h2l-4 7V5H9z"/></svg>${config.cpu}</div>` : ''}
+                                ${config.memory ? `<div class="config-item"><svg viewBox="0 0 24 24"><path d="M2 4h20v2H2V4zm0 14h20v2H2v-2z"/></svg>${config.memory}</div>` : ''}
+                                ${config.hard_disk ? `<div class="config-item"><svg viewBox="0 0 24 24"><path d="M2 20h20v-4H2v4zm2-3h2v2H4v-2zM2 4v4h20V4H2zm4 3H4V5h2v2zm-4 7h20v-4H2v4zm2-3h2v2H4v-2z"/></svg>${config.hard_disk}</div>` : ''}
+                                ${config.screen ? `<div class="config-item"><svg viewBox="0 0 24 24"><path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7l-2 3v1h8v-1l-2-3h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/></svg>${config.screen}</div>` : ''}
+                            </div>
+                            
+                            <div class="model-price">
+                                <span class="price-current">¥${formatPrice(config.discount_price)} <small>起</small></span>
+                                ${config.original_price && config.original_price > config.discount_price ? 
+                                    `<span class="price-original">¥${formatPrice(config.original_price)}</span>` : ''}
+                            </div>
+                            
+                            <div class="model-actions">
+                                <button class="btn btn-primary">开始选配</button>
+                                <button class="btn btn-secondary" onclick="event.stopPropagation(); addToCart('${modelName}', ${config.id})">加入购物车</button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="model-card" style="text-align: center; padding: 60px 20px;">
+                            <p style="color: var(--text-secondary); margin-bottom: 16px;">暂无配置信息</p>
+                            <button class="btn btn-primary" onclick="alert('请联系管理员添加产品配置')">联系管理员</button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('加载产品配置失败:', error);
+                container.innerHTML = '<p style="text-align: center; color: var(--error-color);">加载失败，请刷新重试</p>';
+            }
+        }
+        
+        // 格式化价格
+        function formatPrice(price) {
+            if (!price) return '--';
+            return Number(price).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+        
+        // 显示配置详情弹窗
+        function showConfigModal(modelName, configId) {
+            window.location.href = `/apple/laptop?model=${encodeURIComponent(modelName)}&config=${configId}`;
+        }
+        
+        // 加入购物车
+        async function addToCart(modelName, configId) {
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        brand: 'Apple',
+                        device_type: currentDeviceType.toLowerCase(),
+                        model_name: modelName,
+                        configuration_id: configId,
+                        selected_config: {}
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('已加入购物车');
+                } else {
+                    alert(data.message || '加入购物车失败');
+                }
+            } catch (error) {
+                alert('网络错误，请重试');
+            }
+        }
+        
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            loadModels();
+        });
+    </script>
+</body>
+</html>

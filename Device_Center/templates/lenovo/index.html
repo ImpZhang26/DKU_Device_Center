@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lenovo 选配中心</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <span class="current-brand">Lenovo</span></h1>
+                <nav class="nav">
+                    <a href="{% url 'lenovo_laptop' %}">笔记本</a>
+                    <a href="{% url 'lenovo_desktop' %}">台式机</a>
+                    <span class="user-info">
+                        {% if user_name %}
+                            <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
+                                👤 {{ user_name }}
+                            </a>
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="{% url 'login' %}">[登录]</a>
+                        {% endif %}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="hero-section">
+                <h2>Lenovo 设备选配中心</h2>
+                <p>选择您需要的产品类型，开始个性化配置</p>
+            </section>
+
+            <div class="product-categories">
+                <a href="{% url 'lenovo_laptop' %}" class="category-card">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+                            <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+                        </svg>
+                    </div>
+                    <h3>笔记本</h3>
+                    <p>ThinkPad X / ThinkPad T / ThinkPad P</p>
+                </a>
+                
+                <a href="{% url 'lenovo_desktop' %}" class="category-card">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+                            <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
+                        </svg>
+                    </div>
+                    <h3>台式机</h3>
+                    <p>ThinkStation / ThinkCentre</p>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

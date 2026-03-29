@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 学校电脑设备选配中心</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .admin-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #1d1d1f; color: white; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-logo { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .sidebar-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); }
+        .sidebar-nav { padding: 20px 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 20px; color: rgba(255,255,255,0.8); font-size: 15px; cursor: pointer; transition: var(--transition); border-left: 3px solid transparent; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: rgba(255,255,255,0.08); color: white; border-left-color: #2997ff; }
+        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
+        .main-content { flex: 1; margin-left: 260px; background: #f5f5f7; min-height: 100vh; }
+        .header { background: white; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 50; }
+        .header-title { font-size: 20px; font-weight: 600; }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
+        .user-dropdown { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #f5f5f7; border-radius: 24px; font-size: 14px; cursor: pointer; }
+        .page-content { padding: 32px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 36px; font-weight: 600; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; color: var(--text-secondary); }
+        .stat-change { font-size: 13px; margin-top: 8px; }
+        .stat-change.positive { color: var(--success-color); }
+        .stat-change.negative { color: var(--error-color); }
+        .card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+        .card-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-size: 18px; font-weight: 600; }
+        .card-body { padding: 24px; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #f5f5f7; }
+        .table th { font-size: 13px; font-weight: 500; color: var(--text-secondary); background: #f9f9f9; }
+        .table tr:hover { background: #fafafa; }
+        .status-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .status-pending { background: rgba(255,204,0,0.2); color: #997b00; }
+        .status-approved { background: rgba(40,205,65,0.1); color: var(--success-color); }
+        .status-rejected { background: rgba(255,59,48,0.1); color: var(--error-color); }
+        .action-btn { padding: 6px 12px; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; transition: var(--transition); margin-right: 8px; }
+        .action-btn:hover { opacity: 0.8; }
+        .btn-view { background: var(--primary-color); color: white; }
+        .btn-approve { background: var(--success-color); color: white; }
+        .btn-reject { background: var(--error-color); color: white; }
+        .quick-actions { display: flex; gap: 12px; margin-top: 24px; }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">设备选配中心</div>
+                <div class="sidebar-subtitle">管理系统</div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item active" onclick="showPage('dashboard')">
+                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                    <span>数据概览</span>
+                </div>
+                <div class="nav-item" onclick="showPage('orders')">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    <span>订单管理</span>
+                </div>
+                <div class="nav-item" onclick="showPage('products')">
+                    <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                    <span>产品管理</span>
+                </div>
+                <div class="nav-item" onclick="showPage('users')">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <span>用户管理</span>
+                </div>
+                <div class="nav-item" onclick="showPage('settings')">
+                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <span>系统设置</span>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- 主内容 -->
+        <main class="main-content">
+            <header class="header">
+                <h1 class="header-title" id="page-title">数据概览</h1>
+                <div class="header-actions">
+                    <div class="user-dropdown" onclick="logout()">
+                        <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: var(--text-secondary);"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                        <span id="admin-name">管理员</span>
+                        <span style="color: var(--text-secondary); margin-left: 4px;">退出</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="page-content">
+                <!-- 数据概览页面 -->
+                <div id="page-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-orders">0</div>
+                            <div class="stat-label">总订单数</div>
+                            <div class="stat-change positive">待处理: <span id="stat-pending">0</span></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-users">0</div>
+                            <div class="stat-label">用户数</div>
+                            <div class="stat-change">活跃用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-apple">0</div>
+                            <div class="stat-label">Apple 订单</div>
+                            <div class="stat-change positive">占比最高</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-amount">¥0</div>
+                            <div class="stat-label">订单总金额</div>
+                            <div class="stat-change">本月数据</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">最新订单</h3>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="showPage('orders')">查看全部</button>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>订单号</th>
+                                        <th>用户</th>
+                                        <th>品牌</th>
+                                        <th>型号</th>
+                                        <th>金额</th>
+                                        <th>状态</th>
+                                        <th>时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-orders">
+                                    <tr><td colspan="7" style="text-align: center; padding: 40px;"><span class="loading"></span> 加载中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 订单管理页面 -->
+                <div id="page-orders" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">订单列表</h3>
+                            <select class="form-input" style="width: auto; padding: 8px 16px;" id="order-filter" onchange="loadOrders()">
+                                <option value="">全部状态</option>
+                                <option value="pending">待处理</option>
+                                <option value="approved">已通过</option>
+                                <option value="rejected">已拒绝</option>
+                                <option value="completed">已完成</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>订单号</th>
+                                        <th>用户</th>
+                                        <th>品牌</th>
+                                        <th>型号</th>
+                                        <th>配置</th>
+                                        <th>金额</th>
+                                        <th>状态</th>
+                                        <th>时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-list">
+                                    <tr><td colspan="9" style="text-align: center; padding: 40px;"><span class="loading"></span> 加载中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 产品管理页面 -->
+                <div id="page-products" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">产品管理</h3>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;">添加产品</button>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: var(--text-secondary); text-align: center; padding: 40px;">产品管理功能开发中...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户管理页面 -->
+                <div id="page-users" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">用户列表</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>NETID</th>
+                                        <th>姓名</th>
+                                        <th>邮箱</th>
+                                        <th>部门</th>
+                                        <th>角色</th>
+                                        <th>注册时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-list">
+                                    <tr><td colspan="7" style="text-align: center; padding: 40px;"><span class="loading"></span> 加载中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 系统设置页面 -->
+                <div id="page-settings" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">系统设置</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">默认折扣率</label>
+                                <input type="number" class="form-input" value="10" placeholder="输入折扣率百分比">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">系统维护模式</label>
+                                <select class="form-input">
+                                    <option value="off">关闭</option>
+                                    <option value="on">开启</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary">保存设置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentPage = 'dashboard';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdmin();
+        });
+        
+        async function checkAdmin() {
+            try {
+                const response = await fetch('/api/check-login');
+                const data = await response.json();
+                if (!data.logged_in || data.login_type !== 'admin') {
+                    window.location.href = '/login';
+                    return;
+                }
+                document.getElementById('admin-name').textContent = data.user.name || data.user.username;
+                loadDashboard();
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        }
+        
+        async function logout() {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+        
+        function showPage(page) {
+            document.getElementById('page-dashboard').style.display = page === 'dashboard' ? 'block' : 'none';
+            document.getElementById('page-orders').style.display = page === 'orders' ? 'block' : 'none';
+            document.getElementById('page-products').style.display = page === 'products' ? 'block' : 'none';
+            document.getElementById('page-users').style.display = page === 'users' ? 'block' : 'none';
+            document.getElementById('page-settings').style.display = page === 'settings' ? 'block' : 'none';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.textContent.includes(page === 'dashboard' ? '数据概览' : 
+                    page === 'orders' ? '订单管理' : 
+                    page === 'products' ? '产品管理' : 
+                    page === 'users' ? '用户管理' : '系统设置')) {
+                    item.classList.add('active');
+                }
+            });
+            
+            const titles = { dashboard: '数据概览', orders: '订单管理', products: '产品管理', users: '用户管理', settings: '系统设置' };
+            document.getElementById('page-title').textContent = titles[page] || '管理后台';
+            
+            currentPage = page;
+            if (page === 'dashboard') loadDashboard();
+            if (page === 'orders') loadOrders();
+            if (page === 'users') loadUsers();
+        }
+        
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const orders = data.data;
+                    const totalAmount = orders.reduce((sum, o) => sum + (o.total_price || 0), 0);
+                    const pendingOrders = orders.filter(o => o.status === 'pending').length;
+                    const appleOrders = orders.filter(o => o.brand === 'Apple').length;
+                    
+                    document.getElementById('stat-orders').textContent = orders.length;
+                    document.getElementById('stat-pending').textContent = pendingOrders;
+                    document.getElementById('stat-apple').textContent = appleOrders;
+                    document.getElementById('stat-amount').textContent = '¥' + totalAmount.toLocaleString('zh-CN');
+                    
+                    const recentOrders = orders.slice(0, 5);
+                    document.getElementById('recent-orders').innerHTML = recentOrders.length > 0 ? recentOrders.map(order => `
+                        <tr>
+                            <td>${order.order_number}</td>
+                            <td>${order.user_id || '用户' + order.user_id}</td>
+                            <td>${order.brand}</td>
+                            <td>${order.model_name}</td>
+                            <td>¥${(order.total_price || 0).toLocaleString('zh-CN')}</td>
+                            <td><span class="status-tag status-${order.status}">${getStatusText(order.status)}</span></td>
+                            <td>${new Date(order.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `).join('') : '<tr><td colspan="7" style="text-align: center; padding: 40px;">暂无订单</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载仪表盘数据失败:', error);
+            }
+        }
+        
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    let orders = data.data;
+                    const filter = document.getElementById('order-filter').value;
+                    if (filter) orders = orders.filter(o => o.status === filter);
+                    
+                    document.getElementById('orders-list').innerHTML = orders.length > 0 ? orders.map(order => `
+                        <tr>
+                            <td>${order.order_number}</td>
+                            <td>用户${order.user_id}</td>
+                            <td>${order.brand}</td>
+                            <td>${order.model_name}</td>
+                            <td>${order.selected_cpu || '-'} / ${order.selected_memory || '-'}</td>
+                            <td>¥${(order.total_price || 0).toLocaleString('zh-CN')}</td>
+                            <td><span class="status-tag status-${order.status}">${getStatusText(order.status)}</span></td>
+                            <td>${new Date(order.created_at).toLocaleDateString()}</td>
+                            <td>
+                                <button class="action-btn btn-view" onclick="viewOrder('${order.order_number}')">查看</button>
+                                ${order.status === 'pending' ? `
+                                    <button class="action-btn btn-approve" onclick="updateOrderStatus('${order.order_number}', 'approved')">通过</button>
+                                    <button class="action-btn btn-reject" onclick="updateOrderStatus('${order.order_number}', 'rejected')">拒绝</button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `).join('') : '<tr><td colspan="9" style="text-align: center; padding: 40px;">暂无订单</td></tr>';
+                }
+            } catch (error) {
+                console.error('加载订单失败:', error);
+            }
+        }
+        
+        async function loadUsers() {
+            document.getElementById('users-list').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;"><span class="loading"></span> 加载中...</td></tr>';
+            document.getElementById('users-list').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">用户列表开发中...</td></tr>';
+        }
+        
+        function getStatusText(status) {
+            const texts = { pending: '待处理', approved: '已通过', rejected: '已拒绝', completed: '已完成' };
+            return texts[status] || status;
+        }
+        
+        function viewOrder(orderNumber) {
+            alert('查看订单: ' + orderNumber);
+        }
+        
+        async function updateOrderStatus(orderNumber, status) {
+            if (!confirm(`确定要${status === 'approved' ? '通过' : '拒绝'}订单 ${orderNumber} 吗？`)) return;
+            alert('订单状态更新功能开发中');
+        }
+    </script>
+</body>
+</html>

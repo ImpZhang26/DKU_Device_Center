@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 阻止 favicon.ico 404 错误 -->
+    <link rel="icon" href="data:,">
+    <title>登录 - Device Center</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* 登录标签选中状态样式 */
+        .tab-label {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-label input {
+            display: none;
+        }
+        
+        .tab-label span {
+            display: block;
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        /* 未选中状态 - 透明背景 */
+        .tab-label:not(.active) span {
+            background: transparent;
+            color: #757575;
+        }
+        
+        /* 选中状态 - 蓝色背景 */
+        .tab-label.active span {
+            background: linear-gradient(135deg, #00338D 0%);
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 51, 141, 0.3);
+        }
+        
+        /* 使用 CSS :checked 伪类来切换状态 */
+        .tab-label input:checked + span {
+            background: linear-gradient(135deg, #00338D 0%);
+            color: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 51, 141, 0.3);
+        }
+    </style>
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="login-title">Device Center</h1>
+            <p class="login-subtitle">设备选配中心</p>
+            
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="login-tabs">
+                    <label class="tab-label {% if login_type == 'netid' or not login_type %}active{% endif %}">
+                        <input type="radio" name="login_type" value="netid" {% if not login_type or login_type == 'netid' %}checked{% endif %}>
+                        <span>NETID 登录</span>
+                    </label>
+                    <label class="tab-label {% if login_type == 'admin' %}active{% endif %}">
+                        <input type="radio" name="login_type" value="admin" {% if login_type == 'admin' %}checked{% endif %}>
+                        <span>管理员登录</span>
+                    </label>
+                </div>
+                
+                <div class="form-group" id="netid-group">
+                    <label for="netid">NETID</label>
+                    <input type="text" id="netid" name="netid" placeholder="请输入您的NETID" required>
+                </div>
+                
+                <div class="form-group admin-fields" style="display: none;">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" placeholder="请输入管理员用户名">
+                </div>
+                
+                <div class="form-group admin-fields" style="display: none;">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" placeholder="请输入密码">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">登录</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>请确保您输入的NETID是正确的,否则会导致设备延期交付</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginTypeInputs = document.querySelectorAll('input[name="login_type"]');
+            const netidGroup = document.getElementById('netid-group');
+            const netidInput = document.getElementById('netid');
+            const adminFields = document.querySelectorAll('.admin-fields');
+            const adminUsername = document.getElementById('username');
+            const adminPassword = document.getElementById('password');
+            const tabLabels = document.querySelectorAll('.tab-label');
+            
+            // 初始化标签选中状态
+            function updateTabState() {
+                loginTypeInputs.forEach(input => {
+                    if (input.checked) {
+                        input.closest('.tab-label').classList.add('active');
+                    } else {
+                        input.closest('.tab-label').classList.remove('active');
+                    }
+                });
+            }
+            
+            // 初始化显示/隐藏字段
+            function updateForm() {
+                const selectedType = document.querySelector('input[name="login_type"]:checked').value;
+                if (selectedType === 'admin') {
+                    netidGroup.style.display = 'none';
+                    netidInput.required = false;
+                    adminFields.forEach(el => el.style.display = 'block');
+                } else {
+                    netidGroup.style.display = 'block';
+                    netidInput.required = true;
+                    adminFields.forEach(el => el.style.display = 'none');
+                    adminUsername.required = false;
+                    adminPassword.required = false;
+                }
+            }
+            
+            loginTypeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    updateTabState();
+                    updateForm();
+                });
+            });
+            
+            // 初始化
+            updateTabState();
+            updateForm();
+        });
+    </script>
+</body>
+</html>
