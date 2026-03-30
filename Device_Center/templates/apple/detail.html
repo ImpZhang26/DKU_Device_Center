@@ -129,9 +129,13 @@
                     <a href="{% url 'apple_desktop' %}">iMac/Mac mini</a>
                     <a href="{% url 'apple_ipad' %}">iPad</a>
                     <a href="{% url 'apple_accessories' %}">配件</a>
-                    <span class="user-info">
-                        {% if user_name %}&#128100; {{ user_name }} <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
-                        {% else %}<a href="{% url 'login' %}">[登录]</a>{% endif %}
+                <span class="user-info">
+                        {% if request.session.is_admin or request.session.user_id %}
+                            &#128100; {{ request.session.admin_name|default:request.session.user_name }} 
+                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
+                        {% else %}
+                            <a href="/login/" class="btn-link">[管理员登录]</a>
+                        {% endif %}
                     </span>
                 </nav>
             </div>
@@ -240,6 +244,14 @@
                 <div class="order-summary">
                     <h4>订单摘要</h4>
                     <div id="orderDetails"></div>
+                </div>
+                <div class="form-group">
+                    <label for="netid">NETID <span style="color:red;">*</span></label>
+                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                </div>
+                <div class="form-group">
+                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <input type="email" id="user_email" placeholder="your@email.com" required>
                 </div>
                 <div class="form-group">
                     <label for="remark">备注</label>
@@ -379,99 +391,100 @@
         if (targetPane) { targetPane.classList.add('active'); }
     }
     
-    function buyNow() {
-        // 检查用户是否已登录
-        var userName = '{{ user_name|escapejs }}';
-        if (!userName || userName === '') {
-            alert('请先登录后再提交订单');
-            window.location.href = '/login/';
-            return;
+        function buyNow() {
+            document.getElementById('configId').value = configId;
+            document.getElementById('modelName').value = modelName + ' ' + configName;
+            
+            var total = calculateTotal();
+            var upgradeTotal = 0;
+            for (var i = 0; i < selectedUpgrades.length; i++) {
+                upgradeTotal += selectedUpgrades[i].price;
+            }
+            
+            var html = '<div class="summary-item"><span>产品型号:</span><span>' + modelName + ' ' + configName + '</span></div>';
+            html += '<div class="summary-item"><span>芯片:</span><span>{{ configuration.cpu }}</span></div>';
+            html += '<div class="summary-item"><span>内存:</span><span>{{ configuration.memory }}</span></div>';
+            html += '<div class="summary-item"><span>存储:</span><span>{{ configuration.hard_disk }}</span></div>';
+            html += '<div class="summary-item"><span>显卡:</span><span>{{ configuration.graphic_card }}</span></div>';
+            
+            {% if configuration.screen %}
+            html += '<div class="summary-item"><span>显示屏:</span><span>{{ configuration.screen }}</span></div>';
+            {% endif %}
+            
+            html += '<div class="summary-item"><span>升级选项:</span></div>';
+            html += getSelectedUpgradesHtml();
+            
+            html += '<div class="price-summary">';
+            html += '<div class="price-row-summary"><span class="label">基础价格:</span><span class="value">' + basePrice.toFixed(2) + ' 元</span></div>';
+            html += '<div class="price-row-summary"><span class="label">升级费用:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' 元</span></div>';
+            html += '<div class="price-row-summary total"><span class="label">总价:</span><span class="value">' + total.toFixed(2) + ' 元</span></div>';
+            html += '</div>';
+            
+            document.getElementById('orderDetails').innerHTML = html;
+            document.getElementById('orderModal').classList.add('show');
         }
-        
-        document.getElementById('configId').value = configId;
-        document.getElementById('modelName').value = modelName + ' ' + configName;
-        
-        var total = calculateTotal();
-        var upgradeTotal = 0;
-        for (var i = 0; i < selectedUpgrades.length; i++) {
-            upgradeTotal += selectedUpgrades[i].price;
-        }
-        
-        var html = '<div class="summary-item"><span>产品型号:</span><span>' + modelName + ' ' + configName + '</span></div>';
-        html += '<div class="summary-item"><span>芯片:</span><span>{{ configuration.cpu }}</span></div>';
-        html += '<div class="summary-item"><span>内存:</span><span>{{ configuration.memory }}</span></div>';
-        html += '<div class="summary-item"><span>存储:</span><span>{{ configuration.hard_disk }}</span></div>';
-        html += '<div class="summary-item"><span>显卡:</span><span>{{ configuration.graphic_card }}</span></div>';
-        
-        {% if configuration.screen %}
-        html += '<div class="summary-item"><span>显示屏:</span><span>{{ configuration.screen }}</span></div>';
-        {% endif %}
-        
-        html += '<div class="summary-item"><span>升级选项:</span></div>';
-        html += getSelectedUpgradesHtml();
-        
-        html += '<div class="price-summary">';
-        html += '<div class="price-row-summary"><span class="label">基础价格:</span><span class="value">' + basePrice.toFixed(2) + ' 元</span></div>';
-        html += '<div class="price-row-summary"><span class="label">升级费用:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' 元</span></div>';
-        html += '<div class="price-row-summary total"><span class="label">总价:</span><span class="value">' + total.toFixed(2) + ' 元</span></div>';
-        html += '</div>';
-        
-        document.getElementById('orderDetails').innerHTML = html;
-        document.getElementById('orderModal').classList.add('show');
-    }
     
     function closeModal() {
         document.getElementById('orderModal').classList.remove('show');
     }
     
-    function submitOrder() {
-        var modelNameValue = document.getElementById('modelName').value;
-        var remark = document.getElementById('remark').value;
-        var totalPrice = calculateTotal();
-        var upgradePrice = 0;
-        for (var i = 0; i < selectedUpgrades.length; i++) {
-            upgradePrice += selectedUpgrades[i].price;
-        }
-        
-        var data = {
-            device_type: '{{ device_type }}',
-            model_name: modelNameValue,
-            configuration_id: configId,
-            remark: remark,
-            cpu: '{{ configuration.cpu }}',
-            memory: '{{ configuration.memory }}',
-            hard_disk: '{{ configuration.hard_disk }}',
-            graphic_card: '{{ configuration.graphic_card }}',
-            screen: '{{ configuration.screen }}',
-            base_price: basePrice,
-            selected_upgrades: selectedUpgrades,
-            upgrade_price: upgradePrice,
-            total_price: totalPrice
-        };
-        
-        fetch('/api/' + brand + '/order/create/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify(data)
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(data) {
-            if (data.success) {
-                alert('订单提交成功!订单号: ' + data.order_number);
-                closeModal();
-                window.location.reload();
-            } else {
-                alert('订单提交失败: ' + data.message);
+        function submitOrder() {
+            var modelNameValue = document.getElementById('modelName').value;
+            var netid = document.getElementById('netid').value.trim();
+            var userEmail = document.getElementById('user_email').value.trim();
+            var remark = document.getElementById('remark').value;
+            var totalPrice = calculateTotal();
+            var upgradePrice = 0;
+            for (var i = 0; i < selectedUpgrades.length; i++) {
+                upgradePrice += selectedUpgrades[i].price;
             }
-        })
-        .catch(function(error) {
-            console.error('Error:', error);
-            alert('订单提交失败，请重试');
-        });
-    }
+            
+            if (!netid || !userEmail) {
+                alert('请填写NETID和邮箱');
+                return;
+            }
+            
+            var data = {
+                device_type: '{{ device_type }}',
+                model_name: modelNameValue,
+                configuration_id: configId,
+                netid: netid,
+                user_email: userEmail,
+                remark: remark,
+                cpu: '{{ configuration.cpu }}',
+                memory: '{{ configuration.memory }}',
+                hard_disk: '{{ configuration.hard_disk }}',
+                graphic_card: '{{ configuration.graphic_card }}',
+                screen: '{{ configuration.screen }}',
+                base_price: basePrice,
+                selected_upgrades: selectedUpgrades,
+                upgrade_price: upgradePrice,
+                total_price: totalPrice
+            };
+            
+            fetch('/api/' + brand + '/order/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('订单提交成功!订单号: ' + data.order_number + '\n请留意邮箱通知');
+                    closeModal();
+                    window.location.reload();
+                } else {
+                    alert('订单提交失败: ' + data.message);
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                alert('订单提交失败，请重试');
+            });
+        }
     
     function getCookie(name) {
         var value = null;

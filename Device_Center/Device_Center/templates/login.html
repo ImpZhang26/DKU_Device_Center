@@ -158,30 +158,8 @@
             
             <div id="message-container"></div>
             
-            <div class="login-tabs">
-                <button class="login-tab active" data-tab="netid">NETID 登录</button>
-                <button class="login-tab" data-tab="admin">管理员登录</button>
-            </div>
-            
-            <!-- NETID登录表单 -->
-            <form id="netid-form" class="login-form active">
-                <div class="form-group">
-                    <label class="form-label" for="netid">NETID</label>
-                    <input type="text" id="netid" class="form-input" 
-                           placeholder="请输入学校NETID" autocomplete="off">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block btn-large" id="netid-submit">
-                    一键登录
-                </button>
-                
-                <div class="netid-hint">
-                    <strong>提示：</strong>请使用学校统一身份认证（NETID）登录<br>
-                    无需注册，输入NETID即可自动登录
-                </div>
-            </form>
-            
-            <!-- 管理员登录表单 -->
-            <form id="admin-form" class="login-form">
+            <!-- Admin login form only (default active) -->
+            <form id="admin-form" class="login-form active">
                 <div class="form-group">
                     <label class="form-label" for="username">用户名</label>
                     <input type="text" id="username" class="form-input" 
@@ -196,9 +174,7 @@
                     登录
                 </button>
                 
-                <div class="admin-login-link">
-                    <a href="#" onclick="showNetidLogin(); return false;">返回教职工登录</a>
-                </div>
+
             </form>
             
             <div class="divider-text">
@@ -212,76 +188,12 @@
     </div>
     
     <script>
-        // 标签切换
-        document.querySelectorAll('.login-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                const tabName = this.dataset.tab;
-                
-                // 更新标签状态
-                document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                // 更新表单状态
-                document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
-                document.getElementById(tabName + '-form').classList.add('active');
-                
-                // 清空消息
-                document.getElementById('message-container').innerHTML = '';
-            });
-        });
-        
-        function showNetidLogin() {
-            document.querySelectorAll('.login-tab')[0].click();
-        }
-        
         function showMessage(type, message) {
             const container = document.getElementById('message-container');
             container.innerHTML = `<div class="message message-${type}">${message}</div>`;
         }
         
-        // NETID登录
-        document.getElementById('netid-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const netid = document.getElementById('netid').value.trim();
-            const submitBtn = document.getElementById('netid-submit');
-            
-            if (!netid) {
-                showMessage('error', '请输入NETID');
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading"></span> 登录中...';
-            
-            try {
-                const response = await fetch('/api/netid-login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ netid })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showMessage('success', '登录成功，正在跳转...');
-                    setTimeout(() => {
-                        window.location.href = '/apple';
-                    }, 1000);
-                } else {
-                    showMessage('error', data.message || '登录失败');
-                }
-            } catch (error) {
-                showMessage('error', '网络错误，请重试');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '一键登录';
-            }
-        });
-        
-        // 管理员登录
+        // Admin login
         document.getElementById('admin-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -298,23 +210,68 @@
             submitBtn.innerHTML = '<span class="loading"></span> 登录中...';
             
             try {
-                const response = await fetch('/api/admin-login', {
+                const response = await fetch('/login/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: JSON.stringify({ username, password })
+                    body: new URLSearchParams({
+                        'username': username,
+                        'password': password
+                    })
                 });
                 
-                const data = await response.json();
-                
-                if (data.success) {
+                if (response.ok) {
                     showMessage('success', '登录成功，正在跳转...');
                     setTimeout(() => {
-                        window.location.href = '/admin';
+                        window.location.href = '/manage/';
                     }, 1000);
                 } else {
-                    showMessage('error', data.message || '用户名或密码错误');
+                    showMessage('error', '用户名或密码错误');
+                }
+            } catch (error) {
+                showMessage('error', '网络错误，请重试');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '登录';
+            }
+        });
+        
+        // Admin login
+        document.getElementById('admin-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const submitBtn = document.getElementById('admin-submit');
+            
+            if (!username || !password) {
+                showMessage('error', '请输入用户名和密码');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> 登录中...';
+            
+            try {
+                const response = await fetch('/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'username': username,
+                        'password': password
+                    })
+                });
+                
+                if (response.ok) {
+                    showMessage('success', '登录成功，正在跳转...');
+                    setTimeout(() => {
+                        window.location.href = '/manage/';
+                    }, 1000);
+                } else {
+                    showMessage('error', '用户名或密码错误');
                 }
             } catch (error) {
                 showMessage('error', '网络错误，请重试');

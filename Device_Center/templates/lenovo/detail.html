@@ -202,13 +202,13 @@
                     <a href="{% url 'lenovo_laptop' %}">笔记本</a>
                     <a href="{% url 'lenovo_desktop' %}">台式机</a>
                     <span class="user-info">
-                        {% if user_name %}
+                        {% if is_logged_in %}
                             <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
-                                👤 {{ user_name }}
+                                👤 {{ user_display }}
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="/login/" class="btn-link">[管理员登录]</a>
                         {% endif %}
                     </span>
                 </nav>

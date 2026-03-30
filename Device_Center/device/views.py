@@ -65,44 +65,29 @@ def index(request):
 # ==================== 认证相关 ====================
 
 def login_view(request):
-    """登录页面"""
+    """登录页面 - Admin only"""
     if request.method == 'POST':
-        login_type = request.POST.get('login_type', 'netid')
+        # Admin login only
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
         
-        if login_type == 'admin':
-            # 管理员登录
-            username = request.POST.get('username', '')
-            password = request.POST.get('password', '')
+        try:
+            admin = Admin.objects.get(username=username, is_active=True)
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
             
-            try:
-                admin = Admin.objects.get(username=username, is_active=True)
-                password_hash = hashlib.sha256(password.encode()).hexdigest()
-                
-                if admin.password_hash == password_hash:
-                    # 创建session
-                    request.session['admin_id'] = admin.id
-                    request.session['admin_name'] = admin.name
-                    request.session['is_admin'] = True
-                    return redirect('manage')
-                else:
-                    return render(request, 'login.html', {'error': '密码错误'})
-            except Admin.DoesNotExist:
-                return render(request, 'login.html', {'error': '管理员账号不存在'})
-        
-        else:
-            # NETID登录
-            netid = request.POST.get('netid', '').strip()
-            
-            if netid:
-                # 创建或更新session
-                request.session['user_id'] = netid
-                request.session['user_name'] = netid
-                request.session['is_admin'] = False
-                request.session.modified = True
-                return redirect('apple_index')
-            
-            return render(request, 'login.html', {'error': '请输入NETID'})
+            if admin.password_hash == password_hash:
+                # Create admin session
+                request.session['admin_id'] = admin.id
+                request.session['admin_name'] = admin.name
+                request.session['is_admin'] = True
+                request.session['user_id'] = username  # For orders compat
+                return redirect('manage')
+            else:
+                return render(request, 'login.html', {'error': '密码错误'})
+        except Admin.DoesNotExist:
+            return render(request, 'login.html', {'error': '管理员账号不存在'})
     
+    # GET: Show admin login page
     return render(request, 'login.html')
 
 
@@ -459,20 +444,22 @@ def api_cart_list(request, brand):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_order_create(request, brand):
-    """创建订单"""
+    """创建订单 - Accept netid/email from form"""
     try:
         data = json.loads(request.body)
         
-        # 检查用户是否已通过NETID登录
-        user_id = request.session.get('user_id')
-        if not user_id:
+        # Get netid and email from form data
+        netid = data.get('netid', '').strip()
+        user_email = data.get('user_email', '').strip()
+        
+        if not netid or not user_email:
             return JsonResponse({
                 'success': False, 
-                'message': '请先登录后再提交订单',
-                'code': 'not_logged_in'
-            }, status=401)
+                'message': '请填写NETID和邮箱',
+            }, status=400)
         
-        user_key = user_id  # 使用已登录的用户ID
+        user_id = netid
+        user_name = netid
         
         # 生成订单号
         order_number = f"{brand.upper()}{timezone.now().strftime('%Y%m%d%H%M%S')}{random.randint(1000, 9999)}"
@@ -487,9 +474,9 @@ def api_order_create(request, brand):
         
         order = Order.objects.create(
             order_number=order_number,
-            user_id=user_key,
-            user_name=request.session.get('user_name', ''),
-            user_email=request.session.get('user_email', ''),
+            user_id=user_id,
+            user_name=user_name,
+            user_email=user_email,
             brand=brand,
             device_type=data.get('device_type', ''),
             model_name=data.get('model_name', ''),
@@ -505,12 +492,12 @@ def api_order_create(request, brand):
             remark=data.get('remark', ''),
         )
 
-        # 发送订单确认邮件
+        # 发送订单确认邮件 (user + admin)
         order_email_data = {
             'order_number': order_number,
-            'user_id': user_key,
-            'user_name': request.session.get('user_name', ''),
-            'user_email': request.session.get('user_email', ''),
+            'user_id': user_id,
+            'user_name': user_name,
+            'user_email': user_email,
             'brand': brand,
             'model_name': data.get('model_name', ''),
             'cpu': data.get('cpu', ''),
@@ -552,13 +539,14 @@ def api_orders(request, brand):
 
 @require_http_methods(["GET"])
 def my_orders(request):
-    """我的订单页面 - 包含所有品牌的订单"""
-    # 检查用户是否已通过NETID登录
+    """我的订单页面 - 包含所有品牌的订单 (session-only)"""
+    # 检查用户是否已登录 (admin or netid)
     user_id = request.session.get('user_id')
-    if not user_id:
-        return redirect('login')
+    is_admin = request.session.get('is_admin', False)
+    if not user_id and not is_admin:
+        return redirect('index')
     
-    user_name = request.session.get('user_name', '')
+    user_name = request.session.get('user_name', request.session.get('admin_name', 'Admin'))
     
     # 获取用户的所有订单（不区分品牌）
     orders = Order.objects.filter(user_id=user_id).order_by('-created_at')
