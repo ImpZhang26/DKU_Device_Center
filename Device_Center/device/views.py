@@ -469,7 +469,7 @@ def api_order_create(request, brand):
         upgrade_price = data.get('upgrade_price', 0)
         base_price = data.get('base_price', 0)
         
-        # 将升级选项转换为JSON字符串存储
+        # 将升级选项转换为JSON字符串Storage
         upgrades_json = json.dumps(selected_upgrades, ensure_ascii=False) if selected_upgrades else ''
         
         order = Order.objects.create(
@@ -791,16 +791,16 @@ def export_orders_excel(request):
             '用户姓名',
             '用户邮箱',
             '品牌',
-            '产品型号',
+            'Model',
             'CPU',
-            '内存',
+            'Memory',
             '硬盘',
-            '显卡',
+            'GPU',
             '屏幕',
-            '基础价格(元)',
-            '升级费用(元)',
+            '基础价格(RMB)',
+            '升级费用(RMB)',
             '升级选项',
-            '总价(元)',
+            'Total Price(RMB)',
             '状态',
             '创建时间',
         ]
@@ -874,7 +874,7 @@ def export_orders_excel(request):
             bottom=Side(style='thin')
         )
         
-        # 为所有数据单元格添加边框
+        # 为所有数据单RMB格添加边框
         for row in ws.iter_rows(min_row=1, max_row=len(orders) + 1, min_col=1, max_col=len(headers)):
             for cell in row:
                 cell.border = thin_border
@@ -907,11 +907,11 @@ def export_orders_excel(request):
 
 # ============ 产品管理 API ============
 
-# Apple 产品型号管理
+# Apple Model管理
 @csrf_exempt
 @require_admin
 def api_admin_apple_models(request):
-    """获取/添加 Apple 产品型号列表"""
+    """获取/添加 Apple Model列表"""
     if request.method == 'GET':
         models = ProductModel.objects.select_related('device_type').all().order_by('device_type', 'model_name')
         data = [{
@@ -942,7 +942,7 @@ def api_admin_apple_models(request):
 @csrf_exempt
 @require_admin
 def api_admin_apple_model(request, model_id):
-    """编辑/删除 Apple 产品型号"""
+    """编辑/删除 Apple Model"""
     try:
         model = ProductModel.objects.get(id=model_id)
     except ProductModel.DoesNotExist:

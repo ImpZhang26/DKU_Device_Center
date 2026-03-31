@@ -190,7 +190,7 @@
                 } else {
                     let html = '';
                     if (options.memory && options.memory.length > 0) html += createConfigGroup('容量', 'memory', options.memory);
-                    if (options.hard_disk && options.hard_disk.length > 0) html += createConfigGroup('存储', 'hard_disk', options.hard_disk);
+                    if (options.hard_disk && options.hard_disk.length > 0) html += createConfigGroup('Storage', 'hard_disk', options.hard_disk);
                     container.innerHTML = html || '<div class="empty-state"><p>暂无可选配置</p></div>';
                 }
                 updateOrderSummary();
@@ -231,8 +231,8 @@
                     <div class="product-info"><h4>${selectedModel}</h4><p>${config.configuration || '标准配置'}</p></div></div>`;
                 configItems = [
                     { label: '处理器', value: config.cpu || '-' },
-                    { label: '内存', value: config.memory || '-' },
-                    { label: '存储', value: config.hard_disk || '-' },
+                    { label: 'Memory', value: config.memory || '-' },
+                    { label: 'Storage', value: config.hard_disk || '-' },
                     { label: '屏幕', value: config.screen || '-' },
                     { label: '颜色', value: config.color_option || '默认' }
                 ];

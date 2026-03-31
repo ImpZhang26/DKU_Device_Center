@@ -32,11 +32,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="productconfiguration",
             name="weight",
-            field=models.CharField(blank=True, max_length=50, verbose_name="重量"),
+            field=models.CharField(blank=True, max_length=50, verbose_name="Weight"),
         ),
         migrations.AddField(
             model_name="productconfiguration",
             name="wifi",
-            field=models.CharField(blank=True, max_length=100, verbose_name="无线网络"),
+            field=models.CharField(blank=True, max_length=100, verbose_name="Wi-Fi"),
         ),
     ]

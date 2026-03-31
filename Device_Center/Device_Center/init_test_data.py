@@ -21,7 +21,7 @@ def init_test_data():
     
     # 产品类型
     product_types = [
-        ('Laptop', '笔记本电脑', 'MacBook Pro、MacBook Air'),
+        ('Laptop', 'Laptop', 'MacBook Pro、MacBook Air'),
         ('Desktop', '台式机', 'iMac、Mac mini、Mac Studio、Mac Pro'),
         ('iPad', '平板电脑', 'iPad Pro、iPad Air、iPad、iPad mini'),
         ('Accessories', '配件', '键盘、鼠标、触控板等配件')
@@ -31,12 +31,12 @@ def init_test_data():
         product_types
     )
     
-    # 型号数据 - 笔记本电脑
+    # 型号数据 - Laptop
     laptops = [
-        ('MacBook Pro 14"', 'Laptop', 'M3 Pro/Max芯片，14.2英寸Liquid Retina XDR显示屏'),
-        ('MacBook Pro 16"', 'Laptop', 'M3 Pro/Max芯片，16.2英寸Liquid Retina XDR显示屏'),
-        ('MacBook Air 13"', 'Laptop', 'M3芯片，13.6英寸Liquid Retina显示屏'),
-        ('MacBook Air 15"', 'Laptop', 'M3芯片，15.3英寸Liquid Retina显示屏'),
+        ('MacBook Pro 14"', 'Laptop', 'M3 Pro/MaxCPU，14.2英寸Liquid Retina XDRDisplay'),
+        ('MacBook Pro 16"', 'Laptop', 'M3 Pro/MaxCPU，16.2英寸Liquid Retina XDRDisplay'),
+        ('MacBook Air 13"', 'Laptop', 'M3CPU，13.6英寸Liquid RetinaDisplay'),
+        ('MacBook Air 15"', 'Laptop', 'M3CPU，15.3英寸Liquid RetinaDisplay'),
     ]
     for model, dtype, desc in laptops:
         cursor.execute('INSERT OR REPLACE INTO product_models (model_name, device_type, description) VALUES (?, ?, ?)',
@@ -44,10 +44,10 @@ def init_test_data():
     
     # 型号数据 - 台式机
     desktops = [
-        ('iMac 24"', 'Desktop', 'M3芯片，24英寸4.5K Retina显示屏'),
-        ('Mac mini', 'Desktop', 'M2/M2 Pro芯片，小巧机身强劲性能'),
-        ('Mac Studio', 'Desktop', 'M2 Max/Ultra芯片，专业工作室级性能'),
-        ('Mac Pro', 'Desktop', 'M2 Ultra芯片，最强性能专业工作站'),
+        ('iMac 24"', 'Desktop', 'M3CPU，24英寸4.5K RetinaDisplay'),
+        ('Mac mini', 'Desktop', 'M2/M2 ProCPU，小巧机身强劲性能'),
+        ('Mac Studio', 'Desktop', 'M2 Max/UltraCPU，专业工作室级性能'),
+        ('Mac Pro', 'Desktop', 'M2 UltraCPU，最强性能专业工作站'),
     ]
     for model, dtype, desc in desktops:
         cursor.execute('INSERT OR REPLACE INTO product_models (model_name, device_type, description) VALUES (?, ?, ?)',
@@ -55,11 +55,11 @@ def init_test_data():
     
     # 型号数据 - iPad
     ipads = [
-        ('iPad Pro 12.9"', 'iPad', 'M2芯片，12.9英寸Liquid Retina XDR显示屏'),
-        ('iPad Pro 11"', 'iPad', 'M2芯片，11英寸Liquid Retina显示屏'),
-        ('iPad Air', 'iPad', 'M1芯片，10.9英寸Liquid Retina显示屏'),
-        ('iPad', 'iPad', 'A14芯片，10.9英寸Retina显示屏'),
-        ('iPad mini', 'iPad', 'A15芯片，8.3英寸Liquid Retina显示屏'),
+        ('iPad Pro 12.9"', 'iPad', 'M2CPU，12.9英寸Liquid Retina XDRDisplay'),
+        ('iPad Pro 11"', 'iPad', 'M2CPU，11英寸Liquid RetinaDisplay'),
+        ('iPad Air', 'iPad', 'M1CPU，10.9英寸Liquid RetinaDisplay'),
+        ('iPad', 'iPad', 'A14CPU，10.9英寸RetinaDisplay'),
+        ('iPad mini', 'iPad', 'A15CPU，8.3英寸Liquid RetinaDisplay'),
     ]
     for model, dtype, desc in ipads:
         cursor.execute('INSERT OR REPLACE INTO product_models (model_name, device_type, description) VALUES (?, ?, ?)',
@@ -107,7 +107,7 @@ def init_test_data():
     
     # 配置数据 - iMac 24"
     imac_configs = [
-        ('M3/8GB/256GB', model_ids[('iMac 24"', 'Desktop')], 'M3 (8核CPU/8核GPU)', '8GB', '256GB SSD', '集成显卡', '24英寸4.5K Retina', 10999, 12999, 0.15),
+        ('M3/8GB/256GB', model_ids[('iMac 24"', 'Desktop')], 'M3 (8核CPU/8核GPU)', '8GB', '256GB SSD', '集成GPU', '24英寸4.5K Retina', 10999, 12999, 0.15),
         ('M3/16GB/512GB', model_ids[('iMac 24"', 'Desktop')], 'M3 (8核CPU/10核GPU)', '16GB', '512GB SSD', '10核GPU', '24英寸4.5K Retina', 14999, 17499, 0.14),
     ]
     cursor.executemany(

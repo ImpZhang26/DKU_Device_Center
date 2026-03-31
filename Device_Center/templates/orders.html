@@ -290,10 +290,10 @@
                                 <div class="product-info">
                                     <h3>{{ order.model_name }}</h3>
                                     <div class="product-config">
-                                        {% if order.selected_cpu %}<span>芯片：{{ order.selected_cpu }}</span>{% endif %}
-                                        {% if order.selected_memory %}<span>内存：{{ order.selected_memory }}</span>{% endif %}
-                                        {% if order.selected_hard_disk %}<span>存储：{{ order.selected_hard_disk }}</span>{% endif %}
-                                        {% if order.selected_graphic_card %}<span>显卡：{{ order.selected_graphic_card }}</span>{% endif %}
+                                        {% if order.selected_cpu %}<span>CPU：{{ order.selected_cpu }}</span>{% endif %}
+                                        {% if order.selected_memory %}<span>Memory：{{ order.selected_memory }}</span>{% endif %}
+                                        {% if order.selected_hard_disk %}<span>Storage：{{ order.selected_hard_disk }}</span>{% endif %}
+                                        {% if order.selected_graphic_card %}<span>GPU：{{ order.selected_graphic_card }}</span>{% endif %}
                                         {% if order.selected_screen %}<span>屏幕：{{ order.selected_screen }}</span>{% endif %}
                                         <span>类型：{{ order.device_type }}</span>
                                     </div>

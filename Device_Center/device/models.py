@@ -45,7 +45,7 @@ class ProductImage(models.Model):
 
 
 class ProductType(models.Model):
-    """产品类型（如：笔记本电脑、台式机、平板、配件）"""
+    """产品类型（如：Laptop、台式机、平板、配件）"""
     device_type = models.CharField(max_length=50, unique=True, verbose_name='设备类型')
     name = models.CharField(max_length=100, verbose_name='名称')
     description = models.TextField(blank=True, verbose_name='描述')
@@ -62,7 +62,7 @@ class ProductType(models.Model):
 
 
 class ProductModel(models.Model):
-    """产品型号（如：MacBook Pro 14"、iPad Pro）"""
+    """Model（如：MacBook Pro 14"、iPad Pro）"""
     model_name = models.CharField(max_length=200, verbose_name='型号名称')
     device_type = models.ForeignKey(ProductType, on_delete=models.CASCADE, verbose_name='设备类型')
     description = models.TextField(blank=True, verbose_name='描述')
@@ -71,8 +71,8 @@ class ProductModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
     class Meta:
-        verbose_name = '产品型号'
-        verbose_name_plural = '产品型号'
+        verbose_name = 'Model'
+        verbose_name_plural = 'Model'
         unique_together = ['model_name', 'device_type']
         db_table = 'product_models'
 
@@ -85,9 +85,9 @@ class ProductConfiguration(models.Model):
     model = models.ForeignKey(ProductModel, on_delete=models.CASCADE, related_name='configurations', verbose_name='型号')
     configuration = models.CharField(max_length=200, verbose_name='配置名称')
     cpu = models.CharField(max_length=200, blank=True, verbose_name='CPU')
-    memory = models.CharField(max_length=100, blank=True, verbose_name='内存')
+    memory = models.CharField(max_length=100, blank=True, verbose_name='Memory')
     hard_disk = models.CharField(max_length=100, blank=True, verbose_name='硬盘')
-    graphic_card = models.CharField(max_length=200, blank=True, verbose_name='显卡')
+    graphic_card = models.CharField(max_length=200, blank=True, verbose_name='GPU')
     screen = models.CharField(max_length=200, blank=True, verbose_name='屏幕')
     original_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='原价')
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='优惠价')
@@ -96,8 +96,8 @@ class ProductConfiguration(models.Model):
     color_option = models.TextField(blank=True, verbose_name='颜色选项')
     configuration_parameters = models.TextField(blank=True, verbose_name='配置参数')
     changing_config_price = models.TextField(blank=True, verbose_name='配置价格变更')
-    weight = models.CharField(max_length=50, blank=True, verbose_name='重量')
-    wifi = models.CharField(max_length=100, blank=True, verbose_name='无线网络')
+    weight = models.CharField(max_length=50, blank=True, verbose_name='Weight')
+    wifi = models.CharField(max_length=100, blank=True, verbose_name='Wi-Fi')
     product_link = models.CharField(max_length=500, blank=True, verbose_name='产品链接')
     is_active = models.BooleanField(default=True, verbose_name='是否启用')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
@@ -190,9 +190,9 @@ class Order(models.Model):
     device_type = models.CharField(max_length=50, blank=True, verbose_name='设备类型')
     model_name = models.CharField(max_length=200, verbose_name='型号名称')
     selected_cpu = models.CharField(max_length=200, blank=True, verbose_name='CPU')
-    selected_memory = models.CharField(max_length=100, blank=True, verbose_name='内存')
+    selected_memory = models.CharField(max_length=100, blank=True, verbose_name='Memory')
     selected_hard_disk = models.CharField(max_length=100, blank=True, verbose_name='硬盘')
-    selected_graphic_card = models.CharField(max_length=200, blank=True, verbose_name='显卡')
+    selected_graphic_card = models.CharField(max_length=200, blank=True, verbose_name='GPU')
     selected_screen = models.CharField(max_length=200, blank=True, verbose_name='屏幕')
     
     # 升级配置
@@ -200,7 +200,7 @@ class Order(models.Model):
     upgrade_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='升级费用')
     
     base_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='基础价格')
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='总价')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Total Price')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='状态')
     remark = models.TextField(blank=True, verbose_name='备注')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
@@ -253,14 +253,14 @@ class DellProduct(models.Model):
     
     # 硬件配置
     cpu = models.CharField(max_length=500, blank=True, verbose_name='处理器')
-    memory = models.CharField(max_length=200, blank=True, verbose_name='内存')
+    memory = models.CharField(max_length=200, blank=True, verbose_name='Memory')
     hard_disk = models.CharField(max_length=200, blank=True, verbose_name='硬盘')
-    graphic_card = models.CharField(max_length=500, blank=True, verbose_name='显卡')
-    wifi = models.CharField(max_length=500, blank=True, verbose_name='无线网络')
+    graphic_card = models.CharField(max_length=500, blank=True, verbose_name='GPU')
+    wifi = models.CharField(max_length=500, blank=True, verbose_name='Wi-Fi')
     
     # 详细配置
     configuration_parameters = models.TextField(blank=True, verbose_name='配置参数（接口/端口）')
-    weight = models.TextField(blank=True, verbose_name='重量/尺寸')
+    weight = models.TextField(blank=True, verbose_name='Weight/尺寸')
     official_link = models.CharField(max_length=500, blank=True, verbose_name='官方链接')
     
     # 价格信息
@@ -305,14 +305,14 @@ class LenovoProduct(models.Model):
     
     # 硬件配置
     cpu = models.CharField(max_length=500, blank=True, verbose_name='处理器')
-    memory = models.CharField(max_length=200, blank=True, verbose_name='内存')
+    memory = models.CharField(max_length=200, blank=True, verbose_name='Memory')
     hard_disk = models.CharField(max_length=200, blank=True, verbose_name='硬盘')
-    graphic_card = models.CharField(max_length=500, blank=True, verbose_name='显卡')
+    graphic_card = models.CharField(max_length=500, blank=True, verbose_name='GPU')
     
     # 其他配置
     screen = models.CharField(max_length=200, blank=True, verbose_name='屏幕')
-    wifi = models.CharField(max_length=500, blank=True, verbose_name='无线网络')
-    weight = models.CharField(max_length=100, blank=True, verbose_name='重量')
+    wifi = models.CharField(max_length=500, blank=True, verbose_name='Wi-Fi')
+    weight = models.CharField(max_length=100, blank=True, verbose_name='Weight')
     accessary = models.CharField(max_length=500, blank=True, verbose_name='配件')
     
     # 详细配置

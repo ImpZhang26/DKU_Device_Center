@@ -236,8 +236,8 @@
                 } else {
                     let html = '';
                     if (options.cpu && options.cpu.length > 0) html += createConfigGroup('处理器', 'cpu', options.cpu);
-                    if (options.memory && options.memory.length > 0) html += createConfigGroup('内存', 'memory', options.memory);
-                    if (options.hard_disk && options.hard_disk.length > 0) html += createConfigGroup('存储', 'hard_disk', options.hard_disk);
+                    if (options.memory && options.memory.length > 0) html += createConfigGroup('Memory', 'memory', options.memory);
+                    if (options.hard_disk && options.hard_disk.length > 0) html += createConfigGroup('Storage', 'hard_disk', options.hard_disk);
                     container.innerHTML = html || '<div class="empty-state"><p>暂无可选配置</p></div>';
                 }
                 updateOrderSummary();
@@ -280,9 +280,9 @@
                     <div class="product-info"><h4>${selectedModel}</h4><p>${config.configuration || '标准配置'}</p></div></div>`;
                 configItems = [
                     { label: '处理器', value: config.cpu || '-' },
-                    { label: '内存', value: config.memory || '-' },
-                    { label: '存储', value: config.hard_disk || '-' },
-                    { label: '显卡', value: config.graphic_card || '-' },
+                    { label: 'Memory', value: config.memory || '-' },
+                    { label: 'Storage', value: config.hard_disk || '-' },
+                    { label: 'GPU', value: config.graphic_card || '-' },
                     { label: '屏幕', value: config.screen || '-' }
                 ];
                 totalPrice = config.discount_price || 0;

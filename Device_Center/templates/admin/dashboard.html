@@ -861,7 +861,7 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <span class="stat-value">{{ total_revenue }} 元</span>
+                        <span class="stat-value">{{ total_revenue }} RMB</span>
                         <span class="stat-label">金额总计</span>
                     </div>
                 </div>
@@ -964,7 +964,7 @@
                 <div class="product-brand-section active" id="apple-products">
                     <div class="product-toolbar">
                         <div class="product-search">
-                            <input type="text" id="apple-search" placeholder="搜索产品型号..." onkeyup="filterProducts('apple')">
+                            <input type="text" id="apple-search" placeholder="搜索Model..." onkeyup="filterProducts('apple')">
                         </div>
                         <button class="btn btn-primary" onclick="showAddAppleModel()">+ 添加型号</button>
                     </div>
@@ -999,7 +999,7 @@
                         <table class="product-table">
                             <thead>
                                 <tr>
-                                    <th>产品型号</th>
+                                    <th>Model</th>
                                     <th>设备类型</th>
                                     <th>基本配置</th>
                                     <th>价格</th>
@@ -1027,7 +1027,7 @@
                         <table class="product-table">
                             <thead>
                                 <tr>
-                                    <th>产品型号</th>
+                                    <th>Model</th>
                                     <th>设备类型</th>
                                     <th>配置版本</th>
                                     <th>CPU</th>
@@ -1150,27 +1150,27 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="appleConfigCpu">芯片</label>
+                        <label for="appleConfigCpu">CPU</label>
                         <input type="text" id="appleConfigCpu" placeholder="如: Apple M3 Pro">
                     </div>
                     <div class="form-group">
-                        <label for="appleConfigMemory">内存</label>
+                        <label for="appleConfigMemory">Memory</label>
                         <input type="text" id="appleConfigMemory" placeholder="如: 18GB">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="appleConfigStorage">存储</label>
+                        <label for="appleConfigStorage">Storage</label>
                         <input type="text" id="appleConfigStorage" placeholder="如: 512GB SSD">
                     </div>
                     <div class="form-group">
-                        <label for="appleConfigGpu">显卡</label>
+                        <label for="appleConfigGpu">GPU</label>
                         <input type="text" id="appleConfigGpu" placeholder="如: 14核GPU">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="appleConfigScreen">显示屏</label>
+                        <label for="appleConfigScreen">Display</label>
                         <input type="text" id="appleConfigScreen" placeholder="如: 14.2英寸 Liquid Retina XDR">
                     </div>
                     <div class="form-group">
@@ -1256,7 +1256,7 @@
                 <input type="hidden" id="dellProductId">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="dellProductModel">产品型号</label>
+                        <label for="dellProductModel">Model</label>
                         <input type="text" id="dellProductModel" placeholder="如: XPS 15">
                     </div>
                     <div class="form-group">
@@ -1276,17 +1276,17 @@
                         <input type="text" id="dellProductCpu" placeholder="如: Intel Core i7-13700H">
                     </div>
                     <div class="form-group">
-                        <label for="dellProductMemory">内存</label>
+                        <label for="dellProductMemory">Memory</label>
                         <input type="text" id="dellProductMemory" placeholder="如: 32GB DDR5">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="dellProductStorage">存储</label>
+                        <label for="dellProductStorage">Storage</label>
                         <input type="text" id="dellProductStorage" placeholder="如: 1TB SSD">
                     </div>
                     <div class="form-group">
-                        <label for="dellProductGpu">显卡</label>
+                        <label for="dellProductGpu">GPU</label>
                         <input type="text" id="dellProductGpu" placeholder="如: NVIDIA RTX 4060">
                     </div>
                 </div>
@@ -1325,7 +1325,7 @@
                 <input type="hidden" id="lenovoProductId">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="lenovoProductModel">产品型号</label>
+                        <label for="lenovoProductModel">Model</label>
                         <input type="text" id="lenovoProductModel" placeholder="如: ThinkPad X1 Carbon">
                     </div>
                     <div class="form-group">
@@ -1348,11 +1348,11 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="lenovoProductMemory">内存</label>
+                        <label for="lenovoProductMemory">Memory</label>
                         <input type="text" id="lenovoProductMemory" placeholder="如: 32GB LPDDR5X">
                     </div>
                     <div class="form-group">
-                        <label for="lenovoProductStorage">存储</label>
+                        <label for="lenovoProductStorage">Storage</label>
                         <input type="text" id="lenovoProductStorage" placeholder="如: 1TB PCIe SSD">
                     </div>
                 </div>
@@ -1786,7 +1786,7 @@
         };
         
         if (!data.model) {
-            showToast('请输入产品型号', 'error');
+            showToast('请输入Model', 'error');
             return;
         }
         
@@ -1953,7 +1953,7 @@
         };
         
         if (!data.model) {
-            showToast('请输入产品型号', 'error');
+            showToast('请输入Model', 'error');
             return;
         }
         
@@ -2144,9 +2144,9 @@
                                 <h4>配置信息</h4>
                                 <div class="detail-grid">
                                     ${order.selected_cpu ? `<div class="detail-item"><span class="detail-label">CPU</span><span class="detail-value">${order.selected_cpu}</span></div>` : ''}
-                                    ${order.selected_memory ? `<div class="detail-item"><span class="detail-label">内存</span><span class="detail-value">${order.selected_memory}</span></div>` : ''}
+                                    ${order.selected_memory ? `<div class="detail-item"><span class="detail-label">Memory</span><span class="detail-value">${order.selected_memory}</span></div>` : ''}
                                     ${order.selected_hard_disk ? `<div class="detail-item"><span class="detail-label">硬盘</span><span class="detail-value">${order.selected_hard_disk}</span></div>` : ''}
-                                    ${order.selected_graphic_card ? `<div class="detail-item"><span class="detail-label">显卡</span><span class="detail-value">${order.selected_graphic_card}</span></div>` : ''}
+                                    ${order.selected_graphic_card ? `<div class="detail-item"><span class="detail-label">GPU</span><span class="detail-value">${order.selected_graphic_card}</span></div>` : ''}
                                     ${order.selected_screen ? `<div class="detail-item full-width"><span class="detail-label">屏幕</span><span class="detail-value">${order.selected_screen}</span></div>` : ''}
                                 </div>
                             </div>
@@ -2202,7 +2202,7 @@
                                 </div>
                                 ` : ''}
                                 <div class="price-row total">
-                                    <span>总价</span>
+                                    <span>Total Price</span>
                                     <span>¥${parseFloat(order.total_price).toFixed(2)}</span>
                                 </div>
                             </div>
@@ -2210,7 +2210,7 @@
                     } else {
                         priceHtml = `
                             <div class="price-row total">
-                                <span>总价</span>
+                                <span>Total Price</span>
                                 <span>¥${parseFloat(order.total_price || 0).toFixed(2)}</span>
                             </div>
                         `;
@@ -2237,7 +2237,7 @@
                                     <span class="detail-value">${order.device_type || '-'}</span>
                                 </div>
                                 <div class="detail-item full-width">
-                                    <span class="detail-label">产品型号</span>
+                                    <span class="detail-label">Model</span>
                                     <span class="detail-value">${order.model_name}</span>
                                 </div>
                                 <div class="detail-item full-width">
@@ -2329,7 +2329,7 @@
     
     // ============ 图片管理功能 ============
     
-    // 图片数据存储
+    // 图片数据Storage
     let productImagesData = {
         mainImage: null,
         galleryImages: []

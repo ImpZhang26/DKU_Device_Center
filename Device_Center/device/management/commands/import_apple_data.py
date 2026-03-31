@@ -54,7 +54,7 @@ class Command(BaseCommand):
         # 显示统计
         self.stdout.write(f"\n📊 数据库统计：")
         self.stdout.write(f"  - 产品类型: {ProductType.objects.count()}")
-        self.stdout.write(f"  - 产品型号: {ProductModel.objects.count()}")
+        self.stdout.write(f"  - Model: {ProductModel.objects.count()}")
         self.stdout.write(f"  - 产品配置: {ProductConfiguration.objects.count()}")
         self.stdout.write(f"  - 配件: {Accessory.objects.count()}")
     
@@ -62,7 +62,7 @@ class Command(BaseCommand):
         """导入产品分类数据"""
 
         device_type_map = {
-            'Laptop': ('Laptop', '笔记本电脑'),
+            'Laptop': ('Laptop', 'Laptop'),
             'Desktop': ('Desktop', '台式机'),
             'iPad': ('iPad', '平板电脑'),
         }
@@ -76,12 +76,12 @@ class Command(BaseCommand):
         if created:
             self.stdout.write(f"  ✓ 创建产品类型: {device_type_cn}")
 
-        # 导入每个产品型号
+        # 导入每个Model
         for product in products:
             model_name = product.get('model', '')
             description = f"{product.get('brand', 'Apple')} {model_name}"
 
-            # 创建产品型号
+            # 创建Model
             model, created = ProductModel.objects.get_or_create(
                 model_name=model_name,
                 device_type=ptype,

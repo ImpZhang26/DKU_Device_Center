@@ -7,7 +7,7 @@ import os
 import sqlite3
 from pathlib import Path
 
-# 数据库存储目录
+# 数据库Storage目录
 DATABASES_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Device_Center', 'databases')
 
 def ensure_databases_dir():
@@ -325,7 +325,7 @@ def init_apple_data(cursor):
     
     # 插入产品类型
     product_types = [
-        ('Laptop', '笔记本电脑', 'MacBook Pro、MacBook Air'),
+        ('Laptop', 'Laptop', 'MacBook Pro、MacBook Air'),
         ('Desktop', '台式机', 'iMac、Mac mini、Mac Studio、Mac Pro'),
         ('iPad', '平板电脑', 'iPad Pro、iPad Air、iPad、iPad mini'),
         ('Accessories', '配件', '键盘、鼠标、触控板等配件')
@@ -337,14 +337,14 @@ def init_apple_data(cursor):
     
     # 插入型号
     models = [
-        ('MacBook Pro 14"', 'Laptop', 'M3 Pro/Max芯片，14.2英寸Liquid Retina XDR显示屏'),
-        ('MacBook Pro 16"', 'Laptop', 'M3 Pro/Max芯片，16.2英寸Liquid Retina XDR显示屏'),
-        ('MacBook Air 13"', 'Laptop', 'M3芯片，13.6英寸Liquid Retina显示屏'),
-        ('iMac 24"', 'Desktop', 'M3芯片，24英寸4.5K Retina显示屏'),
-        ('Mac mini', 'Desktop', 'M2/M2 Pro芯片，小巧机身强劲性能'),
-        ('iPad Pro 12.9"', 'iPad', 'M2芯片，12.9英寸Liquid Retina XDR显示屏'),
-        ('iPad Air', 'iPad', 'M1芯片，10.9英寸Liquid Retina显示屏'),
-        ('iPad', 'iPad', 'A14芯片，10.9英寸Retina显示屏'),
+        ('MacBook Pro 14"', 'Laptop', 'M3 Pro/MaxCPU，14.2英寸Liquid Retina XDRDisplay'),
+        ('MacBook Pro 16"', 'Laptop', 'M3 Pro/MaxCPU，16.2英寸Liquid Retina XDRDisplay'),
+        ('MacBook Air 13"', 'Laptop', 'M3CPU，13.6英寸Liquid RetinaDisplay'),
+        ('iMac 24"', 'Desktop', 'M3CPU，24英寸4.5K RetinaDisplay'),
+        ('Mac mini', 'Desktop', 'M2/M2 ProCPU，小巧机身强劲性能'),
+        ('iPad Pro 12.9"', 'iPad', 'M2CPU，12.9英寸Liquid Retina XDRDisplay'),
+        ('iPad Air', 'iPad', 'M1CPU，10.9英寸Liquid RetinaDisplay'),
+        ('iPad', 'iPad', 'A14CPU，10.9英寸RetinaDisplay'),
     ]
     cursor.executemany(
         'INSERT OR IGNORE INTO product_models (model_name, device_type, description) VALUES (?, ?, ?)',
@@ -367,7 +367,7 @@ def init_apple_data(cursor):
         ('M3/8GB/256GB', model_ids[('MacBook Air 13"', 'Laptop')], 'M3 (8核CPU/8核GPU)', '8GB', '256GB SSD', '8核GPU', '13.6英寸Retina', 8999, 7999, 0.11),
         ('M3/16GB/512GB', model_ids[('MacBook Air 13"', 'Laptop')], 'M3 (8核CPU/8核GPU)', '16GB', '512GB SSD', '8核GPU', '13.6英寸Retina', 12499, 10999, 0.12),
         # iMac 24"
-        ('M3/8GB/256GB', model_ids[('iMac 24"', 'Desktop')], 'M3 (8核CPU/8核GPU)', '8GB', '256GB SSD', '集成显卡', '24英寸4.5K', 12999, 10999, 0.15),
+        ('M3/8GB/256GB', model_ids[('iMac 24"', 'Desktop')], 'M3 (8核CPU/8核GPU)', '8GB', '256GB SSD', '集成GPU', '24英寸4.5K', 12999, 10999, 0.15),
         ('M3/16GB/512GB', model_ids[('iMac 24"', 'Desktop')], 'M3 (8核CPU/10核GPU)', '16GB', '512GB SSD', '10核GPU', '24英寸4.5K', 17499, 14999, 0.14),
         # iPad
         ('256GB', model_ids[('iPad Pro 12.9"', 'iPad')], 'M2', '8GB', '256GB', '-', '12.9英寸XDR', 9999, 9299, 0.07),

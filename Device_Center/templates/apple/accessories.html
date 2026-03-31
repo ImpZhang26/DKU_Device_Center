@@ -76,18 +76,18 @@
                     <div class="accessory-card">
                         <div class="accessory-header">
                             <h4>{{ accessory.model }}</h4>
-                            <span class="price-tag">{{ accessory.discount_price }} 元</span>
+                            <span class="price-tag">{{ accessory.discount_price }} RMB</span>
                         </div>
                         <p class="accessory-desc">{{ accessory.description }}</p>
                         <div class="accessory-footer">
-                            <span class="original-price">{{ accessory.original_price }} 元</span>
+                            <span class="original-price">{{ accessory.original_price }} RMB</span>
                             <!-- {% if accessory.discount_rate > 0 %}
                             <span class="discount-badge">省 {{ accessory.discount_rate|floatformat:0 }}%</span>
                             {% endif %} -->
                         </div>
                         <div class="accessory-actions">
                             <button class="btn btn-primary" onclick="buyNow('{{ accessory.model|escapejs }}', {{ accessory.discount_price }}, '{{ accessory.device_type|escapejs }}')">
-                                立即购买
+                                Confirm Configuration
                             </button>
                         </div>
                     </div>
@@ -153,8 +153,8 @@
                 <span>${deviceType}</span>
             </div>
             <div class="summary-item total">
-                <span>总价:</span>
-                <span>${price} 元</span>
+                <span>Total Price:</span>
+                <span>${price} RMB</span>
             </div>
         `;
         
@@ -175,7 +175,7 @@
             device_type: currentOrderData.deviceType,
             model_name: currentOrderData.modelName,
             total_price: currentOrderData.price,
-            remark: remark || '配件立即购买'
+            remark: remark || '配件Confirm Configuration'
         };
         
         fetch('/api/' + brand + '/order/create/', {

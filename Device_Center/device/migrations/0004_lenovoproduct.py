@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "memory",
-                    models.CharField(blank=True, max_length=200, verbose_name="内存"),
+                    models.CharField(blank=True, max_length=200, verbose_name="Memory"),
                 ),
                 (
                     "hard_disk",
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "graphic_card",
-                    models.CharField(blank=True, max_length=500, verbose_name="显卡"),
+                    models.CharField(blank=True, max_length=500, verbose_name="GPU"),
                 ),
                 (
                     "screen",
@@ -62,11 +62,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "wifi",
-                    models.CharField(blank=True, max_length=500, verbose_name="无线网络"),
+                    models.CharField(blank=True, max_length=500, verbose_name="Wi-Fi"),
                 ),
                 (
                     "weight",
-                    models.CharField(blank=True, max_length=100, verbose_name="重量"),
+                    models.CharField(blank=True, max_length=100, verbose_name="Weight"),
                 ),
                 (
                     "accessary",

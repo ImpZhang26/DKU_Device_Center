@@ -14,9 +14,9 @@
                 <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'apple_index' %}">Apple</a> <span class="brand-separator">/</span> <span class="current-brand">MacBook</span></h1>
                 <nav class="nav">
                     <a href="{% url 'apple_laptop' %}" class="active">MacBook</a>
-                    <a href="{% url 'apple_desktop' %}">台式机</a>
+                    <a href="{% url 'apple_desktop' %}">iMac</a>
                     <a href="{% url 'apple_ipad' %}">iPad</a>
-                    <a href="{% url 'apple_accessories' %}">配件</a>
+                    <a href="{% url 'apple_accessories' %}">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
@@ -24,7 +24,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -37,7 +37,7 @@
             <div class="config-layout">
                 <!-- 左侧：型号选择 -->
                 <aside class="config-sidebar">
-                    <h3>选择型号</h3>
+                    <h3>Select Model</h3>
                     <ul class="model-list">
                         {% for model in models %}
                         <li>
@@ -63,36 +63,36 @@
                         <div class="config-card" data-config='{{ config.id }}'>
                             <div class="config-header">
                                 <h4>{{ config.configuration }}</h4>
-                                <span class="price-tag">{{ config.discount_price }} 元</span>
+                                <span class="price-tag">{{ config.discount_price }} RMB</span>
                             </div>
                             <div class="config-specs">
                                 <div class="spec-item">
-                                    <span class="spec-label">芯片</span>
+                                    <span class="spec-label">Chip</span>
                                     <span class="spec-value">{{ config.cpu }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">内存</span>
+                                    <span class="spec-label">Memory</span>
                                     <span class="spec-value">{{ config.memory }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">存储</span>
+                                    <span class="spec-label">Storage</span>
                                     <span class="spec-value">{{ config.hard_disk }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">显卡</span>
+                                    <span class="spec-label">GPU</span>
                                     <span class="spec-value">{{ config.graphic_card }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">显示屏</span>
+                                    <span class="spec-label">Display</span>
                                     <span class="spec-value">{{ config.screen }}</span>
                                 </div>
                             </div>
                             <div class="config-actions">
                                 <a href="{% url 'apple_detail' config.id %}" class="btn btn-primary">
-                                    查看详情
+                                    View Details
                                 </a>
                                 <button class="btn btn-secondary" onclick="buyNow({{ config.id }}, '{{ selected_model.model_name }}', '{{ config.configuration }}', {{ config.discount_price }}, '{{ config.cpu }}', '{{ config.memory }}', '{{ config.hard_disk }}', '{{ config.graphic_card }}', '{{ config.screen }}')">
-                                    立即购买
+                                    Confirm Configuration
                                 </button>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                     </div>
                     {% else %}
                     <div class="empty-state">
-                        <p>请从左侧选择一个型号开始配置</p>
+                        <p>Select a model on the left to start configuring.</p>
                     </div>
                     {% endif %}
                 </section>
@@ -112,26 +112,26 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>确认订单</h3>
+                <h3>Confirm Configuration</h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <form id="orderForm" method="POST" action="#">
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="order-summary">
-                        <h4>订单摘要</h4>
+                        <h4>Order Summary</h4>
                         <div id="orderDetails"></div>
                     </div>
                     <div class="form-group">
-                        <label for="remark">备注</label>
-                        <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                        <label for="remark">Remark</label>
+                        <textarea id="remark" name="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" id="configId" name="configId">
                     <input type="hidden" id="modelName" name="modelName">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
                 </div>
             </form>
         </div>
@@ -195,28 +195,28 @@
         
         document.getElementById('orderDetails').innerHTML = `
             <div class="summary-item">
-                <span>产品型号:</span>
+                <span>Model:</span>
                 <span>${modelName} ${configName}</span>
             </div>
             <div class="summary-item">
-                <span>芯片:</span>
+                <span>CPU:</span>
                 <span>${cpu}</span>
             </div>
             <div class="summary-item">
-                <span>内存:</span>
+                <span>Memory:</span>
                 <span>${memory}</span>
             </div>
             <div class="summary-item">
-                <span>存储:</span>
+                <span>Storage:</span>
                 <span>${hardDisk}</span>
             </div>
             <div class="summary-item">
-                <span>显卡:</span>
+                <span>GPU:</span>
                 <span>${graphicCard}</span>
             </div>
             <div class="summary-item total">
-                <span>总价:</span>
-                <span>${price} 元</span>
+                <span>Total Price:</span>
+                <span>${price} RMB</span>
             </div>
         `;
         

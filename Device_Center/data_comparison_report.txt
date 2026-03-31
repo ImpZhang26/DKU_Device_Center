@@ -72,7 +72,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: High
    屏幕: N/A
    CPU: M3 Ultra（28C CPU）
-   内存: 96GB
+   Memory: 96GB
    硬盘: 1TB SSD
    原价: 32999.0
    优惠价: 29039.0
@@ -81,7 +81,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: N/A
    CPU: M4 Max（14C CPU）
-   内存: 36GB
+   Memory: 36GB
    硬盘: 512GB SSD
    原价: 16499.0
    优惠价: 14519.0
@@ -90,7 +90,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: High
    屏幕: N/A
    CPU: M4 Pro（10C CPU）
-   内存: 24GB
+   Memory: 24GB
    硬盘: 512GB SSD
    原价: 10999.0
    优惠价: 9679.0
@@ -99,7 +99,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: N/A
    CPU: M4（10C CPU）
-   内存: 16GB
+   Memory: 16GB
    硬盘: 256GB SSD
    原价: 4499.0
    优惠价: 3959.0
@@ -108,7 +108,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: N/A
    CPU: M4（10C CPU）
-   内存: 16GB
+   Memory: 16GB
    硬盘: 512GB SSD
    原价: 5999.0
    优惠价: 5279.0
@@ -117,7 +117,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: N/A
    CPU: M4（10C CPU）
-   内存: 24GB
+   Memory: 24GB
    硬盘: 512GB SSD
    原价: 7499.0
    优惠价: 6599.0
@@ -126,7 +126,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: 13.6"
    CPU: M4（10C CPU）
-   内存: 16GB
+   Memory: 16GB
    硬盘: 256GB SSD
    原价: 7999.0
    优惠价: 7039.0
@@ -135,7 +135,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 14.2"
    CPU: M4 Pro（14C CPU）
-   内存: 24GB
+   Memory: 24GB
    硬盘: 1TB SSD
    原价: 19999.0
    优惠价: 17599.0
@@ -144,7 +144,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: 14.2"
    CPU: M4（10C CPU）
-   内存: 16GB
+   Memory: 16GB
    硬盘: 1TB SSD
    原价: 14499.0
    优惠价: 12759.0
@@ -153,7 +153,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Standard
    屏幕: 14.2"
    CPU: M4（10C CPU）
-   内存: 24GB
+   Memory: 24GB
    硬盘: 1TB SSD
    原价: 15999.0
    优惠价: 14079.0
@@ -162,7 +162,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: High
    屏幕: 16.2"
    CPU: M4 Max（16C CPU）
-   内存: 48GB
+   Memory: 48GB
    硬盘: 1TB SSD
    原价: 31999.0
    优惠价: 28159.0
@@ -171,7 +171,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 16.2"
    CPU: M4 Pro（14C CPU）
-   内存: 48GB
+   Memory: 48GB
    硬盘: 512GB SSD
    原价: 22999.0
    优惠价: 20239.0
@@ -180,7 +180,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 11"
    CPU: M3（8C CPU）
-   内存: 8GB
+   Memory: 8GB
    硬盘: 512GB SSD
    原价: 6999.0
    优惠价: 6509.0
@@ -189,7 +189,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 13"
    CPU: M3（8C CPU）
-   内存: 8GB
+   Memory: 8GB
    硬盘: 512GB SSD
    原价: 8699.0
    优惠价: 8090.0
@@ -198,7 +198,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 11"
    CPU: M4 (10C CPU）
-   内存: 16GB
+   Memory: 16GB
    硬盘: 1TB SSD
    原价: 14099.0
    优惠价: 13116.0
@@ -207,7 +207,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 13"
    CPU: M4 (10C CPU）
-   内存: 16GB
+   Memory: 16GB
    硬盘: 1TB SSD
    原价: 16599.0
    优惠价: 15437.0
@@ -216,7 +216,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 8.3"
    CPU: A17 Pro  （6C CPU）
-   内存: 8GB
+   Memory: 8GB
    硬盘: 512GB SSD
    原价: 6199.0
    优惠价: 5765.0
@@ -225,7 +225,7 @@ iPad （A16）                                   3          2         -1        
    配置名称: Medium
    屏幕: 11"
    CPU: A16 （5C CPU）
-   内存: N/A
+   Memory: N/A
    硬盘: 512GB SSD
    原价: 5199.0
    优惠价: 4835.0
@@ -334,7 +334,7 @@ iPad （A16）                                   3          2         -1        
 2. 主要问题:
    • Desktop类别中 Mac mini 和 Mac Studio 完全缺失配置数据
    • Laptop类别中 MacBook Pro 14.2" 和 MacBook Pro 16.2" 部分配置缺失
-   • 多个iPad型号存在512GB和1TB存储配置遗漏
+   • 多个iPad型号存在512GB和1TBStorage配置遗漏
    • 存在多个同名配置（如Standard、Medium）但参数不同的情况
 
 3. 建议操作:

@@ -38,7 +38,7 @@ class Command(BaseCommand):
         self.stdout.write('正在初始化产品类型...')
         
         types = [
-            ('Laptop', '笔记本电脑', 'MacBook Pro、MacBook Air'),
+            ('Laptop', 'Laptop', 'MacBook Pro、MacBook Air'),
             ('Desktop', '台式机', 'iMac、Mac mini、Mac Studio、Mac Pro'),
             ('iPad', '平板电脑', 'iPad Pro、iPad Air、iPad、iPad mini'),
             ('Accessories', '配件', '键盘、鼠标、触控板等配件')
@@ -54,28 +54,28 @@ class Command(BaseCommand):
 
     def init_models(self):
         """初始化型号"""
-        self.stdout.write('\n正在初始化产品型号...')
+        self.stdout.write('\n正在初始化Model...')
         
         laptop_type = ProductType.objects.get(device_type='Laptop')
         desktop_type = ProductType.objects.get(device_type='Desktop')
         ipad_type = ProductType.objects.get(device_type='iPad')
         
         models = [
-            # 笔记本电脑
-            ('MacBook Pro 14"', laptop_type, 'M3 Pro/Max芯片，14.2英寸Liquid Retina XDR显示屏'),
-            ('MacBook Pro 16"', laptop_type, 'M3 Pro/Max芯片，16.2英寸Liquid Retina XDR显示屏'),
-            ('MacBook Air 13"', laptop_type, 'M3芯片，13.6英寸Liquid Retina显示屏'),
+            # Laptop
+            ('MacBook Pro 14"', laptop_type, 'M3 Pro/MaxCPU，14.2英寸Liquid Retina XDRDisplay'),
+            ('MacBook Pro 16"', laptop_type, 'M3 Pro/MaxCPU，16.2英寸Liquid Retina XDRDisplay'),
+            ('MacBook Air 13"', laptop_type, 'M3CPU，13.6英寸Liquid RetinaDisplay'),
             # 台式机
-            ('iMac 24"', desktop_type, 'M3芯片，24英寸4.5K Retina显示屏'),
-            ('Mac mini', desktop_type, 'M2/M2 Pro芯片，小巧机身强劲性能'),
-            ('Mac Studio', desktop_type, 'M2 Max/Ultra芯片，专业工作室级性能'),
-            ('Mac Pro', desktop_type, 'M2 Ultra芯片，最强性能专业工作站'),
+            ('iMac 24"', desktop_type, 'M3CPU，24英寸4.5K RetinaDisplay'),
+            ('Mac mini', desktop_type, 'M2/M2 ProCPU，小巧机身强劲性能'),
+            ('Mac Studio', desktop_type, 'M2 Max/UltraCPU，专业工作室级性能'),
+            ('Mac Pro', desktop_type, 'M2 UltraCPU，最强性能专业工作站'),
             # iPad
-            ('iPad Pro 12.9"', ipad_type, 'M2芯片，12.9英寸Liquid Retina XDR显示屏'),
-            ('iPad Pro 11"', ipad_type, 'M2芯片，11英寸Liquid Retina显示屏'),
-            ('iPad Air', ipad_type, 'M1芯片，10.9英寸Liquid Retina显示屏'),
-            ('iPad', ipad_type, 'A14芯片，10.9英寸Retina显示屏'),
-            ('iPad mini', ipad_type, 'A15芯片，8.3英寸Liquid Retina显示屏'),
+            ('iPad Pro 12.9"', ipad_type, 'M2CPU，12.9英寸Liquid Retina XDRDisplay'),
+            ('iPad Pro 11"', ipad_type, 'M2CPU，11英寸Liquid RetinaDisplay'),
+            ('iPad Air', ipad_type, 'M1CPU，10.9英寸Liquid RetinaDisplay'),
+            ('iPad', ipad_type, 'A14CPU，10.9英寸RetinaDisplay'),
+            ('iPad mini', ipad_type, 'A15CPU，8.3英寸Liquid RetinaDisplay'),
         ]
         
         for model_name, device_type, description in models:
@@ -111,7 +111,7 @@ class Command(BaseCommand):
             {'model': mba13, 'config': 'M3/8GB/256GB', 'cpu': 'M3 (8核CPU/8核GPU)', 'memory': '8GB', 'hard_disk': '256GB SSD', 'graphic_card': '8核GPU', 'screen': '13.6英寸Retina', 'original': 8999, 'discount': 7999, 'rate': 0.11},
             {'model': mba13, 'config': 'M3/16GB/512GB', 'cpu': 'M3 (8核CPU/8核GPU)', 'memory': '16GB', 'hard_disk': '512GB SSD', 'graphic_card': '8核GPU', 'screen': '13.6英寸Retina', 'original': 12499, 'discount': 10999, 'rate': 0.12},
             # iMac 24"
-            {'model': imac24, 'config': 'M3/8GB/256GB', 'cpu': 'M3 (8核CPU/8核GPU)', 'memory': '8GB', 'hard_disk': '256GB SSD', 'graphic_card': '集成显卡', 'screen': '24英寸4.5K', 'original': 12999, 'discount': 10999, 'rate': 0.15},
+            {'model': imac24, 'config': 'M3/8GB/256GB', 'cpu': 'M3 (8核CPU/8核GPU)', 'memory': '8GB', 'hard_disk': '256GB SSD', 'graphic_card': '集成GPU', 'screen': '24英寸4.5K', 'original': 12999, 'discount': 10999, 'rate': 0.15},
             {'model': imac24, 'config': 'M3/16GB/512GB', 'cpu': 'M3 (8核CPU/10核GPU)', 'memory': '16GB', 'hard_disk': '512GB SSD', 'graphic_card': '10核GPU', 'screen': '24英寸4.5K', 'original': 17499, 'discount': 14999, 'rate': 0.14},
             # iPad
             {'model': ipad_pro_129, 'config': '256GB', 'cpu': 'M2', 'memory': '8GB', 'hard_disk': '256GB', 'graphic_card': '-', 'screen': '12.9英寸XDR', 'original': 9999, 'discount': 9299, 'rate': 0.07},

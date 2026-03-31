@@ -59,40 +59,40 @@
                         <div class="config-card" data-config='{{ config.id }}'>
                             <div class="config-header">
                                 <h4>{{ config.configuration }}</h4>
-                                <span class="price-tag">{{ config.discount_price }} 元</span>
+                                <span class="price-tag">{{ config.discount_price }} RMB</span>
                             </div>
                             <div class="config-specs">
                                 <div class="spec-item">
-                                    <span class="spec-label">芯片</span>
+                                    <span class="spec-label">CPU</span>
                                     <span class="spec-value">{{ config.cpu }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">内存</span>
+                                    <span class="spec-label">Memory</span>
                                     <span class="spec-value">{{ config.memory }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">存储</span>
+                                    <span class="spec-label">Storage</span>
                                     <span class="spec-value">{{ config.hard_disk }}</span>
                                 </div>
                                 <div class="spec-item">
-                                    <span class="spec-label">显卡</span>
+                                    <span class="spec-label">GPU</span>
                                     <span class="spec-value">{{ config.graphic_card }}</span>
                                 </div>
                                 {% if config.screen %}
                                 <div class="spec-item">
-                                    <span class="spec-label">显示屏</span>
+                                    <span class="spec-label">Display</span>
                                     <span class="spec-value">{{ config.screen }}</span>
                                 </div>
                                 {% endif %}
                                 {% if config.wifi %}
                                 <div class="spec-item">
-                                    <span class="spec-label">无线网络</span>
+                                    <span class="spec-label">Wi-Fi</span>
                                     <span class="spec-value">{{ config.wifi }}</span>
                                 </div>
                                 {% endif %}
                                 {% if config.weight %}
                                 <div class="spec-item">
-                                    <span class="spec-label">重量</span>
+                                    <span class="spec-label">Weight</span>
                                     <span class="spec-value">{{ config.weight }}</span>
                                 </div>
                                 {% endif %}
@@ -102,7 +102,7 @@
                                     查看详情
                                 </a>
                                 <button class="btn btn-secondary" onclick="buyNow({{ config.id }}, '{{ selected_product.model }}', '{{ config.configuration }}', {{ config.discount_price }}, '{{ config.cpu }}', '{{ config.memory }}', '{{ config.hard_disk }}', '{{ config.graphic_card }}', '{{ config.screen }}')">
-                                    立即购买
+                                    Confirm Configuration
                                 </button>
                             </div>
                         </div>
@@ -171,23 +171,23 @@
         
         let html = `
             <div class="summary-item">
-                <span>产品型号:</span>
+                <span>Model:</span>
                 <span>${modelName} ${configName}</span>
             </div>
             <div class="summary-item">
-                <span>芯片:</span>
+                <span>CPU:</span>
                 <span>${cpu}</span>
             </div>
             <div class="summary-item">
-                <span>内存:</span>
+                <span>Memory:</span>
                 <span>${memory}</span>
             </div>
             <div class="summary-item">
-                <span>存储:</span>
+                <span>Storage:</span>
                 <span>${hardDisk}</span>
             </div>
             <div class="summary-item">
-                <span>显卡:</span>
+                <span>GPU:</span>
                 <span>${graphicCard}</span>
             </div>
         `;
@@ -195,7 +195,7 @@
         if (screen) {
             html += `
                 <div class="summary-item">
-                    <span>显示屏:</span>
+                    <span>Display:</span>
                     <span>${screen}</span>
                 </div>
             `;
@@ -203,8 +203,8 @@
         
         html += `
             <div class="summary-item total">
-                <span>总价:</span>
-                <span>${price} 元</span>
+                <span>Total Price:</span>
+                <span>${price} RMB</span>
             </div>
         `;
         

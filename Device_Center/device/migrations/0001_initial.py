@@ -209,7 +209,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "selected_memory",
-                    models.CharField(blank=True, max_length=100, verbose_name="内存"),
+                    models.CharField(blank=True, max_length=100, verbose_name="Memory"),
                 ),
                 (
                     "selected_hard_disk",
@@ -217,7 +217,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "selected_graphic_card",
-                    models.CharField(blank=True, max_length=200, verbose_name="显卡"),
+                    models.CharField(blank=True, max_length=200, verbose_name="GPU"),
                 ),
                 (
                     "selected_screen",
@@ -226,7 +226,7 @@ class Migration(migrations.Migration):
                 (
                     "total_price",
                     models.DecimalField(
-                        decimal_places=2, default=0, max_digits=10, verbose_name="总价"
+                        decimal_places=2, default=0, max_digits=10, verbose_name="Total Price"
                     ),
                 ),
                 (
@@ -323,8 +323,8 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "产品型号",
-                "verbose_name_plural": "产品型号",
+                "verbose_name": "Model",
+                "verbose_name_plural": "Model",
                 "db_table": "product_models",
                 "unique_together": {("model_name", "device_type")},
             },
@@ -351,7 +351,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "memory",
-                    models.CharField(blank=True, max_length=100, verbose_name="内存"),
+                    models.CharField(blank=True, max_length=100, verbose_name="Memory"),
                 ),
                 (
                     "hard_disk",
@@ -359,7 +359,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "graphic_card",
-                    models.CharField(blank=True, max_length=200, verbose_name="显卡"),
+                    models.CharField(blank=True, max_length=200, verbose_name="GPU"),
                 ),
                 (
                     "screen",

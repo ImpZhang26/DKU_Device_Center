@@ -14,9 +14,9 @@
                 <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <span class="current-brand">Apple</span></h1>
                 <nav class="nav">
                     <a href="{% url 'apple_laptop' %}">MacBook</a>
-                    <a href="{% url 'apple_desktop' %}">台式机</a>
+                    <a href="{% url 'apple_desktop' %}">iMac</a>
                     <a href="{% url 'apple_ipad' %}">iPad</a>
-                    <a href="{% url 'apple_accessories' %}">配件</a>
+                    <a href="{% url 'apple_accessories' %}">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
@@ -24,7 +24,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -35,8 +35,8 @@
     <main class="main">
         <div class="container">
             <section class="hero-section">
-                <h2>Apple 设备选配中心</h2>
-                <p>选择您需要的产品类型，开始个性化配置</p>
+                <h2>Configure Your Apple Product</h2>
+                <p>Choose a product to start customizing.</p>
             </section>
 
             <div class="product-categories">
@@ -47,7 +47,7 @@
                         </svg>
                     </div>
                     <h3>MacBook</h3>
-                    <p>MacBook Pro / MacBook Air</p>
+                    <p>MacBook Pro, MacBook Air</p>
                 </a>
                 
                 <a href="{% url 'apple_desktop' %}" class="category-card">
@@ -56,8 +56,8 @@
                             <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
                         </svg>
                     </div>
-                    <h3>台式机</h3>
-                    <p>iMac / Mac mini / Mac Studio</p>
+                    <h3>iMac</h3>
+                    <p>iMac, Mac mini, Mac Studio</p>
                 </a>
                 
                 <a href="{% url 'apple_ipad' %}" class="category-card">
@@ -67,7 +67,7 @@
                         </svg>
                     </div>
                     <h3>iPad</h3>
-                    <p>iPad Pro / iPad Air / iPad</p>
+                    <p>iPad Pro, iPad Air, iPad</p>
                 </a>
                 
                 <a href="{% url 'apple_accessories' %}" class="category-card">
@@ -76,8 +76,8 @@
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                         </svg>
                     </div>
-                    <h3>配件</h3>
-                    <p>键盘、鼠标、耳机等</p>
+                    <h3>Accessories</h3>
+                    <p>Keyboards, mice, headsets, and more</p>
                 </a>
             </div>
         </div>

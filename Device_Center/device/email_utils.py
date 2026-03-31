@@ -127,9 +127,9 @@ def _build_user_email_html(order_data):
                 <tr><th>品牌</th><td>{brand_display}</td></tr>
                 <tr><th>型号</th><td><strong>{order_data.get("model_name", "N/A")}</strong></td></tr>
                 <tr><th>CPU</th><td>{order_data.get("cpu", "-")}</td></tr>
-                <tr><th>内存</th><td>{order_data.get("memory", "-")}</td></tr>
-                <tr><th>存储</th><td>{order_data.get("hard_disk", "-")}</td></tr>
-                <tr><th>显卡</th><td>{order_data.get("graphic_card", "-")}</td></tr>
+                <tr><th>Memory</th><td>{order_data.get("memory", "-")}</td></tr>
+                <tr><th>Storage</th><td>{order_data.get("hard_disk", "-")}</td></tr>
+                <tr><th>GPU</th><td>{order_data.get("graphic_card", "-")}</td></tr>
             </table>
             
             {upgrades_html or '<p>无升级选项</p>'}
@@ -178,8 +178,8 @@ def _build_admin_email_html(order_data):
         <p><strong>时间:</strong> {created_at}</p>
         <p><strong>品牌:</strong> {order_data.get("brand", "N/A").upper()}</p>
         <p><strong>型号:</strong> {order_data.get("model_name")}</p>
-        <p><strong>配置:</strong> CPU:{order_data.get("cpu", "-")} | 内存:{order_data.get("memory", "-")} | 存储:{order_data.get("hard_disk", "-")}</p>
-        <p><strong>升级费用:</strong> ¥{upgrade_price:,} | <strong>总价:</strong> ¥{total_price:,}</p>
+        <p><strong>配置:</strong> CPU:{order_data.get("cpu", "-")} | Memory:{order_data.get("memory", "-")} | Storage:{order_data.get("hard_disk", "-")}</p>
+        <p><strong>升级费用:</strong> ¥{upgrade_price:,} | <strong>Total Price:</strong> ¥{total_price:,}</p>
         {f'<p><strong>备注:</strong> {order_data.get("remark")}</p>' if order_data.get("remark") else ''}
         <hr style="margin: 30px 0;">
         <p style="color: #666; font-size: 14px;">请登录管理后台查看完整订单详情并处理。</p>

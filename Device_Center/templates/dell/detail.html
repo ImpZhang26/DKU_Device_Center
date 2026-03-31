@@ -168,28 +168,28 @@
                             {% if product.basic_config %}
                             <tr><td class="config-label">基本配置</td><td class="config-value">{{ product.basic_config }}</td></tr>
                             {% endif %}
-                            <tr><td class="config-label">芯片</td><td class="config-value">{{ product.cpu }}</td></tr>
-                            <tr><td class="config-label">内存</td><td class="config-value">{{ product.memory }}</td></tr>
-                            <tr><td class="config-label">存储</td><td class="config-value">{{ product.hard_disk }}</td></tr>
-                            <tr><td class="config-label">显卡</td><td class="config-value">{{ product.graphic_card }}</td></tr>
+                            <tr><td class="config-label">CPU</td><td class="config-value">{{ product.cpu }}</td></tr>
+                            <tr><td class="config-label">Memory</td><td class="config-value">{{ product.memory }}</td></tr>
+                            <tr><td class="config-label">Storage</td><td class="config-value">{{ product.hard_disk }}</td></tr>
+                            <tr><td class="config-label">GPU</td><td class="config-value">{{ product.graphic_card }}</td></tr>
                             {% if product.wifi %}
-                            <tr><td class="config-label">无线网络</td><td class="config-value">{{ product.wifi }}</td></tr>
+                            <tr><td class="config-label">Wi-Fi</td><td class="config-value">{{ product.wifi }}</td></tr>
                             {% endif %}
                             {% if product.weight %}
-                            <tr><td class="config-label">重量/尺寸</td><td class="config-value">{{ product.weight }}</td></tr>
+                            <tr><td class="config-label">Weight/尺寸</td><td class="config-value">{{ product.weight }}</td></tr>
                             {% endif %}
                         </table>
                     </div>
                     
                     <div class="price-section">
                         {% if product.original_price > product.price %}
-                        <div class="original-price">&#165;{{ product.original_price|floatformat:2 }} 元</div>
+                        <div class="original-price">&#165;{{ product.original_price|floatformat:2 }} RMB</div>
                         <div class="current-price">
-                            &#165;{{ product.price|floatformat:2 }} 元
+                            &#165;{{ product.price|floatformat:2 }} RMB
                             <!-- <span class="discount-badge">省 {{ discount_percent }}%</span> -->
                         </div>
                         {% else %}
-                        <div class="current-price">&#165;{{ product.price|floatformat:2 }} 元</div>
+                        <div class="current-price">&#165;{{ product.price|floatformat:2 }} RMB</div>
                         {% endif %}
                     </div>
                     
@@ -200,7 +200,7 @@
                     {% endif %}
                     
                     <div class="action-buttons">
-                        <button class="btn btn-primary btn-lg btn-block" onclick="buyNow()">立即购买</button>
+                        <button class="btn btn-primary btn-lg btn-block" onclick="buyNow()">Confirm Configuration</button>
                     </div>
                 </div>
             </div>
@@ -209,7 +209,7 @@
             <div class="detail-tabs">
                 <div class="tab-header">
                     {% if product.configuration_parameters %}
-                    <button class="tab-btn active" data-tab="params">详细参数</button>
+                    <button class="tab-btn active" data-tab="params">Details</button>
                     {% endif %}
                     {% if product.changing_config_price %}
                     <button class="tab-btn{% if not product.configuration_parameters %} active{% endif %}" data-tab="upgrade">升级选项</button>
@@ -344,7 +344,7 @@
             var u = selectedUpgrades[i];
             html += '<div class="upgrade-summary-item">';
             html += '<span class="name">' + u.name + '</span>';
-            html += '<span class="price">+' + u.price.toFixed(2) + ' 元</span>';
+            html += '<span class="price">+' + u.price.toFixed(2) + ' RMB</span>';
             html += '</div>';
         }
         html += '</div>';
@@ -394,28 +394,28 @@
                 upgradeTotal += selectedUpgrades[i].price;
             }
             
-            var html = '<div class="summary-item"><span>产品型号:</span><span>' + product.model + '</span></div>';
+            var html = '<div class="summary-item"><span>Model:</span><span>' + product.model + '</span></div>';
             
             if (product.cpu) {
-                html += '<div class="summary-item"><span>芯片:</span><span>' + product.cpu + '</span></div>';
+                html += '<div class="summary-item"><span>CPU:</span><span>' + product.cpu + '</span></div>';
             }
             if (product.memory) {
-                html += '<div class="summary-item"><span>内存:</span><span>' + product.memory + '</span></div>';
+                html += '<div class="summary-item"><span>Memory:</span><span>' + product.memory + '</span></div>';
             }
             if (product.hard_disk) {
-                html += '<div class="summary-item"><span>存储:</span><span>' + product.hard_disk + '</span></div>';
+                html += '<div class="summary-item"><span>Storage:</span><span>' + product.hard_disk + '</span></div>';
             }
             if (product.graphic_card) {
-                html += '<div class="summary-item"><span>显卡:</span><span>' + product.graphic_card + '</span></div>';
+                html += '<div class="summary-item"><span>GPU:</span><span>' + product.graphic_card + '</span></div>';
             }
             
-            html += '<div class="summary-item"><span>升级选项:</span></div>';
+            html += '<div class="summary-item"><span>Upgrade Options:</span></div>';
             html += getSelectedUpgradesHtml();
             
             html += '<div class="price-summary">';
-            html += '<div class="price-row-summary"><span class="label">基础价格:</span><span class="value">' + basePrice.toFixed(2) + ' 元</span></div>';
-            html += '<div class="price-row-summary"><span class="label">升级费用:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' 元</span></div>';
-            html += '<div class="price-row-summary total"><span class="label">总价:</span><span class="value">' + total.toFixed(2) + ' 元</span></div>';
+            html += '<div class="price-row-summary"><span class="label">基础价格:</span><span class="value">' + basePrice.toFixed(2) + ' RMB</span></div>';
+            html += '<div class="price-row-summary"><span class="label">升级费用:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' RMB</span></div>';
+            html += '<div class="price-row-summary total"><span class="label">Total Price:</span><span class="value">' + total.toFixed(2) + ' RMB</span></div>';
             html += '</div>';
             
             document.getElementById('orderDetails').innerHTML = html;

@@ -60,7 +60,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -71,7 +71,7 @@
     <main class="main">
         <div class="container">
             <section class="brand-selection">
-                <h2 class="section-title">选择品牌</h2>
+                <h2 class="section-title">Select Brand</h2>
                 <div class="brand-grid">
                     <a href="{% url 'apple_index' %}" class="brand-card apple">
                         <div class="brand-icon">
@@ -80,7 +80,7 @@
                             </svg>
                         </div>
                         <h3>Apple</h3>
-                        <p>MacBook、iMac、iPad 等</p>
+                        <p>MacBook, iMac, iPad, Accessories</p>
                     </a>
                     <a href="{% url 'dell_index' %}" class="brand-card dell">
                         <div class="brand-icon">
@@ -89,7 +89,7 @@
                             </svg>
                         </div>
                         <h3>Dell</h3>
-                        <p>笔记本、台式机、显示器等</p>
+                        <p>Laptop, Desktop, Monitor, Accessories</p>
                     </a>
                     <a href="{% url 'lenovo_index' %}" class="brand-card lenovo">
                         <div class="brand-icon">
@@ -98,7 +98,7 @@
                             </svg>
                         </div>
                         <h3>Lenovo</h3>
-                        <p>ThinkPad、ThinkStation 等</p>
+                        <p>ThinkPad, ThinkStation</p>
                     </a>
                 </div>
             </section>

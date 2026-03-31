@@ -155,7 +155,7 @@ def apple_center():
 
 @app.route('/apple/laptop')
 def apple_laptop():
-    """Apple笔记本电脑选配"""
+    """AppleLaptop选配"""
     return render_template('apple/laptop.html')
 
 @app.route('/apple/desktop')

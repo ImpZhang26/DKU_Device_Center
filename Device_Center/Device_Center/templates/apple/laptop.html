@@ -503,7 +503,7 @@
                 // 构建配置面板
                 let html = '';
                 
-                // 基础配置（CPU、内存、存储）- 如果有预定义配置列表
+                // Basic Configuration（CPU、Memory、Storage）- 如果有预定义配置列表
                 if (modelConfigs.length > 0) {
                     html += `
                         <div class="config-group">
@@ -530,10 +530,10 @@
                         html += createConfigGroup('处理器', 'cpu', options.cpu);
                     }
                     if (options.memory && options.memory.length > 0) {
-                        html += createConfigGroup('内存', 'memory', options.memory);
+                        html += createConfigGroup('Memory', 'memory', options.memory);
                     }
                     if (options.hard_disk && options.hard_disk.length > 0) {
-                        html += createConfigGroup('存储', 'hard_disk', options.hard_disk);
+                        html += createConfigGroup('Storage', 'hard_disk', options.hard_disk);
                     }
                 }
                 
@@ -628,9 +628,9 @@
                 
                 configItems = [
                     { label: '处理器', value: config.cpu || '-' },
-                    { label: '内存', value: config.memory || '-' },
-                    { label: '存储', value: config.hard_disk || '-' },
-                    { label: '显卡', value: config.graphic_card || '-' },
+                    { label: 'Memory', value: config.memory || '-' },
+                    { label: 'Storage', value: config.hard_disk || '-' },
+                    { label: 'GPU', value: config.graphic_card || '-' },
                     { label: '屏幕', value: config.screen || '-' }
                 ];
                 
@@ -651,7 +651,7 @@
                 `;
                 
                 // 显示已选择的配置
-                const configLabels = { cpu: '处理器', memory: '内存', hard_disk: '存储' };
+                const configLabels = { cpu: '处理器', memory: 'Memory', hard_disk: 'Storage' };
                 Object.entries(selectedConfig).forEach(([key, value]) => {
                     if (configLabels[key]) {
                         configItems.push({ label: configLabels[key], value });
