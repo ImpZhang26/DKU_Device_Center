@@ -113,7 +113,7 @@ def _build_user_email_html(order_data):
     </head>
     <body>
         <div class="header">
-            <h1>📱 订单确认</h1>
+            <h1>订单确认</h1>
             <p>您好，我们已收到您的订单！</p>
         </div>
         <div class="content">
@@ -136,8 +136,8 @@ def _build_user_email_html(order_data):
             
             <h3>结算信息</h3>
             <table>
-                <tr><th>基础价格</th><td>¥{int(base_price):,}</td></tr>
-                {'<tr><th>升级费用</th><td>¥{int(upgrade_price):,}</td></tr>' if upgrade_price > 0 else ''}
+            <tr><th>基础价格</th><td>¥{base_price:,.0f}</td></tr>
+                {f'<tr><th>升级费用</th><td>¥{upgrade_price:,.0f} </td></tr>' if upgrade_price > 0 else ''}
                 <tr><th style="font-size: 20px;">总计</th><td class="price">¥{int(total_price):,}</td></tr>
             </table>
             
@@ -172,14 +172,14 @@ def _build_admin_email_html(order_data):
     <html>
     <head><meta charset="UTF-8"></head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #d32f2f;">🚨 Device Center 收到新订单</h2>
+        <h2 style="color: #d32f2f;">Device Center 收到新订单</h2>
         <p><strong>订单号:</strong> {order_data.get("order_number")}</p>
         <p><strong>用户:</strong> {order_data.get("user_id")} / {order_data.get("user_name")} ({order_data.get("user_email")})</p>
         <p><strong>时间:</strong> {created_at}</p>
         <p><strong>品牌:</strong> {order_data.get("brand", "N/A").upper()}</p>
         <p><strong>型号:</strong> {order_data.get("model_name")}</p>
         <p><strong>配置:</strong> CPU:{order_data.get("cpu", "-")} | Memory:{order_data.get("memory", "-")} | Storage:{order_data.get("hard_disk", "-")}</p>
-        <p><strong>升级费用:</strong> ¥{upgrade_price:,} | <strong>Total Price:</strong> ¥{total_price:,}</p>
+    <p><strong>升级费用:</strong> ¥{f"{upgrade_price:,.0f}" if upgrade_price else 0} | <strong>Total Price:</strong> ¥{f"{total_price:,.0f}" if total_price else 0}</p>
         {f'<p><strong>备注:</strong> {order_data.get("remark")}</p>' if order_data.get("remark") else ''}
         <hr style="margin: 30px 0;">
         <p style="color: #666; font-size: 14px;">请登录管理后台查看完整订单详情并处理。</p>

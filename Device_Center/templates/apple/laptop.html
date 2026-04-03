@@ -122,10 +122,18 @@
                         <h4>Order Summary</h4>
                         <div id="orderDetails"></div>
                     </div>
-                    <div class="form-group">
-                        <label for="remark">Remark</label>
-                        <textarea id="remark" name="remark" rows="3" placeholder="Please note any special requests."></textarea>
-                    </div>
+                <div class="form-group">
+                    <label for="netid">NETID <span style="color:red;">*</span></label>
+                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                </div>
+                <div class="form-group">
+                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <input type="email" id="user_email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="remark">备注</label>
+                    <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                </div>
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" id="configId" name="configId">
@@ -182,13 +190,7 @@
     }
     
     function buyNow(configId, modelName, configName, price, cpu, memory, hardDisk, graphicCard, screen) {
-        // 检查用户是否已登录
-        var userName = '{{ user_name|escapejs }}';
-        if (!userName || userName === '') {
-            alert('请先登录后再提交订单');
-            window.location.href = '/login/';
-            return;
-        }
+
         
         document.getElementById('configId').value = configId;
         document.getElementById('modelName').value = modelName + ' ' + configName;
@@ -230,14 +232,22 @@
     function submitOrder() {
         const configId = document.getElementById('configId').value;
         const modelName = document.getElementById('modelName').value;
+        const netid = document.getElementById('netid').value.trim();
+        const userEmail = document.getElementById('user_email').value.trim();
         const remark = document.getElementById('remark').value;
+        
+        if (!netid || !userEmail) {
+            alert('请填写NETID和邮箱');
+            return;
+        }
         
         const data = {
             device_type: 'Laptop',
             model_name: modelName,
             configuration_id: configId,
+            netid: netid,
+            user_email: userEmail,
             remark: remark,
-            // 从页面获取完整配置信息
             cpu: document.querySelector('#orderDetails .summary-item:nth-child(2) span:last-child').textContent,
             memory: document.querySelector('#orderDetails .summary-item:nth-child(3) span:last-child').textContent,
             hard_disk: document.querySelector('#orderDetails .summary-item:nth-child(4) span:last-child').textContent,

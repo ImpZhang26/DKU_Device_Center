@@ -121,6 +121,14 @@
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
+                    <label for="netid">NETID <span style="color:red;">*</span></label>
+                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                </div>
+                <div class="form-group">
+                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <input type="email" id="user_email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
                     <label for="remark">备注</label>
                     <textarea id="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
                 </div>
@@ -171,9 +179,19 @@
         if (!currentOrderData) return;
         
         const remark = document.getElementById('remark').value;
+        const netid = document.getElementById('netid') ? document.getElementById('netid').value.trim() : '';
+        const userEmail = document.getElementById('user_email') ? document.getElementById('user_email').value.trim() : '';
+        
+        if (!netid || !userEmail) {
+            alert('请填写NETID和邮箱');
+            return;
+        }
+        
         const data = {
             device_type: currentOrderData.deviceType,
             model_name: currentOrderData.modelName,
+            netid: netid,
+            user_email: userEmail,
             total_price: currentOrderData.price,
             remark: remark || '配件Confirm Configuration'
         };

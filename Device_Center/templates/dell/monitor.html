@@ -460,6 +460,14 @@
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
+                    <label for="netid">NETID <span style="color:red;">*</span></label>
+                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                </div>
+                <div class="form-group">
+                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <input type="email" id="user_email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
                     <label for="remark">备注</label>
                     <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
                 </div>
@@ -522,11 +530,20 @@
     
     function submitOrder() {
         const modelName = document.getElementById('modelName').value;
+        const netid = document.getElementById('netid').value.trim();
+        const userEmail = document.getElementById('user_email').value.trim();
         const remark = document.getElementById('remark').value;
+        
+        if (!netid || !userEmail) {
+            alert('请填写NETID和邮箱');
+            return;
+        }
         
         const data = {
             device_type: 'Monitor',
             model_name: modelName,
+            netid: netid,
+            user_email: userEmail,
             remark: remark,
             cpu: '-',
             memory: '-',
