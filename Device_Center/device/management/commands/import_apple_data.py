@@ -63,8 +63,8 @@ class Command(BaseCommand):
 
         device_type_map = {
             'Laptop': ('Laptop', 'Laptop'),
-            'Desktop': ('Desktop', '台式机'),
-            'iPad': ('iPad', '平板电脑'),
+            'Desktop': ('Desktop', 'Desktop'),
+            'iPad': ('iPad', 'iPad'),
         }
 
         device_type_code, device_type_cn = device_type_map.get(device_type_name, (device_type_name, device_type_name))

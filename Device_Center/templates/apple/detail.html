@@ -128,13 +128,13 @@
                     <a href="{% url 'apple_laptop' %}">MacBook</a>
                     <a href="{% url 'apple_desktop' %}">iMac/Mac mini</a>
                     <a href="{% url 'apple_ipad' %}">iPad</a>
-                    <a href="{% url 'apple_accessories' %}">配件</a>
+                    <a href="{% url 'apple_accessories' %}">Accessories</a>
                 <span class="user-info">
                         {% if request.session.is_admin or request.session.user_id %}
                             &#128100; {{ request.session.admin_name|default:request.session.user_name }} 
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="/login/" class="btn-link">[管理员登录]</a>
+                            <a href="/login/" class="btn-link">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -144,7 +144,7 @@
 
     <main class="main">
         <div class="container">
-            <div class="back-link"><a href="javascript:history.back()">&#8592; 返回列表</a></div>
+            <div class="back-link"><a href="javascript:history.back()">&#8592; Back</a></div>
             
             <div class="detail-layout">
                 <div class="detail-gallery">
@@ -196,7 +196,7 @@
                             <tr><td class="config-label">Weight</td><td class="config-value">{{ configuration.weight }}</td></tr>
                             {% endif %}
                             {% if configuration.accessary %}
-                            <tr><td class="config-label">配件</td><td class="config-value">{{ configuration.accessary }}</td></tr>
+                            <tr><td class="config-label">Accessories</td><td class="config-value">{{ configuration.accessary }}</td></tr>
                             {% endif %}
                         </table>
                     </div>
@@ -237,32 +237,32 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>确认订单</h3>
+                <h3>Confirm Configuration</h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="order-summary">
-                    <h4>订单摘要</h4>
+                    <h4>Order Summary</h4>
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
                     <label for="netid">NETID <span style="color:red;">*</span></label>
-                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                    <input type="text" id="netid" placeholder="Please enter your NetID" required>
                 </div>
                 <div class="form-group">
-                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <label for="user_email">eMail <span style="color:red;">*</span></label>
                     <input type="email" id="user_email" placeholder="your@email.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="remark">备注</label>
-                    <textarea id="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    <label for="remark">Remark</label>
+                    <textarea id="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="configId" value="{{ configuration.id }}">
                 <input type="hidden" id="modelName" value="{{ configuration.model.model_name }} {{ configuration.configuration }}">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
             </div>
         </div>
     </div>
@@ -343,7 +343,7 @@
     
     function getSelectedUpgradesHtml() {
         if (selectedUpgrades.length === 0) {
-            return '<span class="no-upgrade-selected">暂未选择升级选项</span>';
+            return '<span class="no-upgrade-selected">No upgrade option selected</span>';
         }
         var html = '<div class="upgrade-summary">';
         for (var i = 0; i < selectedUpgrades.length; i++) {
@@ -415,8 +415,8 @@
             html += getSelectedUpgradesHtml();
             
             html += '<div class="price-summary">';
-            html += '<div class="price-row-summary"><span class="label">基础价格:</span><span class="value">' + basePrice.toFixed(2) + ' RMB</span></div>';
-            html += '<div class="price-row-summary"><span class="label">升级费用:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' RMB</span></div>';
+            html += '<div class="price-row-summary"><span class="label">Basic Price:</span><span class="value">' + basePrice.toFixed(2) + ' RMB</span></div>';
+            html += '<div class="price-row-summary"><span class="label">Upgrade Price:</span><span class="value">+' + upgradeTotal.toFixed(2) + ' RMB</span></div>';
             html += '<div class="price-row-summary total"><span class="label">Total Price:</span><span class="value">' + total.toFixed(2) + ' RMB</span></div>';
             html += '</div>';
             
@@ -440,7 +440,7 @@
             }
             
             if (!netid || !userEmail) {
-                alert('请填写NETID和邮箱');
+                alert('Please enter your NetID and eMail!');
                 return;
             }
             
@@ -473,16 +473,16 @@
             .then(function(response) { return response.json(); })
             .then(function(data) {
                 if (data.success) {
-                    alert('订单提交成功!订单号: ' + data.order_number + '\n请留意邮箱通知');
+                    alert('Order submitted successfully! Order No.: ' + data.order_number + '\nPlease check your email for notifications.');
                     closeModal();
                     window.location.reload();
                 } else {
-                    alert('订单提交失败: ' + data.message);
+                    alert('Order submission failed: ' + data.message);
                 }
             })
             .catch(function(error) {
                 console.error('Error:', error);
-                alert('订单提交失败，请重试');
+                alert('Order submission failed, please try again.');
             });
         }
     

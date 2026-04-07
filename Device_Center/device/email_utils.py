@@ -136,7 +136,6 @@ def _build_user_email_html(order_data):
             
             <h3>结算信息</h3>
             <table>
-            <tr><th>基础价格</th><td>¥{base_price:,.0f}</td></tr>
                 {f'<tr><th>升级费用</th><td>¥{upgrade_price:,.0f} </td></tr>' if upgrade_price > 0 else ''}
                 <tr><th style="font-size: 20px;">总计</th><td class="price">¥{int(total_price):,}</td></tr>
             </table>
