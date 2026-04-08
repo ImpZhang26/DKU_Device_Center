@@ -928,7 +928,7 @@
   "Accessories": [
     {
       "brand": "Apple",
-      "model": "APPLE PENCIL 1ST ",
+      "model": "APPLE PENCIL 1st ",
       "device_type": "Accessories",
       "original_price": 799.0,
       "discount_price": 743.0,
@@ -936,7 +936,7 @@
     },
     {
       "brand": "Apple",
-      "model": "APPLE PENCIL 2ND GEN\nApple Pencil (第二代)",
+      "model": "APPLE PENCIL 2ND GEN",
       "device_type": "Accessories",
       "original_price": 999.0,
       "discount_price": 929.0,
@@ -984,7 +984,7 @@
     },
     {
       "brand": "Apple",
-      "model": "USB-C DIGITAL AV MULTIPORT ADAPTER-FAE\nUSB-C 数字影音多端口转换器",
+      "model": "USB-C DIGITAL AV MULTIPORT ADAPTER-FAE",
       "device_type": "Accessories",
       "original_price": null,
       "discount_price": 450.0,
@@ -992,7 +992,7 @@
     },
     {
       "brand": "Apple",
-      "model": "USB-C TO MAGSAFE 3 CABLE (2M)-FAE\nUSB-C 转 MagSafe 3 连接线 (2 米)",
+      "model": "USB-C TO MAGSAFE 3 CABLE (2M)-FAE",
       "device_type": "Accessories",
       "original_price": null,
       "discount_price": 310.0,
@@ -1000,7 +1000,7 @@
     },
     {
       "brand": "Apple",
-      "model": "USB-C CHARGE CABLE (2M)-FAE USB-C 充电线 (2 米)",
+      "model": "USB-C CHARGE CABLE (2M)-FAE ",
       "device_type": "Accessories",
       "original_price": null,
       "discount_price": 130.0,
@@ -1008,7 +1008,7 @@
     },
     {
       "brand": "Apple",
-      "model": "35W DUAL USB-C POWER ADAPTER-CHN\n35W 双 USB-C 端口电源适配器",
+      "model": "35W DUAL USB-C POWER ADAPTER",
       "device_type": "Accessories",
       "original_price": null,
       "discount_price": 370.0,
@@ -1016,7 +1016,7 @@
     },
     {
       "brand": "Apple",
-      "model": "67W USB-C POWER ADAPTER-CHN 67W USB-C 电源适配器",
+      "model": "67W USB-C POWER ADAPTER",
       "device_type": "Accessories",
       "original_price": null,
       "discount_price": 370.0,
@@ -1024,7 +1024,7 @@
     },
     {
       "brand": "Apple",
-      "model": "30W USB-C POWER ADAPTER-CHN 30W USB‑C 电源适配器",
+      "model": "30W USB-C POWER ADAPTER",
       "device_type": "Accessories",
       "original_price": null,
       "discount_price": 230.0,

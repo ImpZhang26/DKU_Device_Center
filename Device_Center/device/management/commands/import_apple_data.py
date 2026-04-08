@@ -22,7 +22,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         # 从 /Device_Center/jsonData/ 读取 apple.json
-        json_path = '/Users/pawnsu/Desktop/new_school_system/Device_Center/jsonData/apple.json'
+        json_path = '/Users/tz138/Desktop/DKU_Device_Center/Device_Center/jsonData/apple.json'
         
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)

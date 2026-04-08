@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>配件 - Apple</title>
+    <title>Accessories - Apple</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         .form-group {
@@ -45,12 +45,12 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'apple_index' %}">Apple</a> <span class="brand-separator">/</span> <span class="current-brand">配件</span></h1>
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'apple_index' %}">Apple</a> <span class="brand-separator">/</span> <span class="current-brand">Accessories</span></h1>
                 <nav class="nav">
                     <a href="{% url 'apple_laptop' %}">MacBook</a>
-                    <a href="{% url 'apple_desktop' %}">台式机</a>
+                    <a href="{% url 'apple_desktop' %}">Desktop</a>
                     <a href="{% url 'apple_ipad' %}">iPad</a>
-                    <a href="{% url 'apple_accessories' %}" class="active">配件</a>
+                    <a href="{% url 'apple_accessories' %}" class="active">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
@@ -58,7 +58,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -96,7 +96,7 @@
             </section>
             {% empty %}
             <div class="empty-state">
-                <p>暂无配件数据</p>
+                <p>No accessory data available</p>
             </div>
             {% endfor %}
         </div>
@@ -112,30 +112,30 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>确认订单</h3>
+                <h3>Confirm Configuration</h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="order-summary">
-                    <h4>配件订单摘要</h4>
+                    <h4>Order Summary</h4>
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
                     <label for="netid">NETID <span style="color:red;">*</span></label>
-                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                    <input type="text" id="netid" placeholder="Please enter your NetID" required>
                 </div>
                 <div class="form-group">
-                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <label for="user_email">eMail <span style="color:red;">*</span></label>
                     <input type="email" id="user_email" placeholder="your@email.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="remark">备注</label>
-                    <textarea id="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    <label for="remark">Remark</label>
+                    <textarea id="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
             </div>
         </div>
     </div>
@@ -153,11 +153,11 @@
         
         document.getElementById('orderDetails').innerHTML = `
             <div class="summary-item">
-                <span>配件型号:</span>
+                <span>Model:</span>
                 <span>${modelName}</span>
             </div>
             <div class="summary-item">
-                <span>配件类型:</span>
+                <span>Accessory Type:</span>
                 <span>${deviceType}</span>
             </div>
             <div class="summary-item total">
@@ -183,7 +183,7 @@
         const userEmail = document.getElementById('user_email') ? document.getElementById('user_email').value.trim() : '';
         
         if (!netid || !userEmail) {
-            alert('请填写NETID和邮箱');
+            alert('Please enter your NetID and eMail');
             return;
         }
         
@@ -193,7 +193,7 @@
             netid: netid,
             user_email: userEmail,
             total_price: currentOrderData.price,
-            remark: remark || '配件Confirm Configuration'
+            remark: remark || 'Accessory Confirm Configuration'
         };
         
         fetch('/api/' + brand + '/order/create/', {

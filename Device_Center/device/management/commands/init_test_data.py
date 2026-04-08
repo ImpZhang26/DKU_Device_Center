@@ -142,12 +142,12 @@ class Command(BaseCommand):
         self.stdout.write('\n正在初始化配件...')
         
         accessories = [
-            ('Magic Keyboard', 'Keyboard', '带有Touch ID的妙控键盘', 899, 749, 0.17),
-            ('Magic Mouse', 'Mouse', '妙控鼠标', 699, 579, 0.17),
-            ('Magic Trackpad', 'Trackpad', '妙控触控板', 999, 849, 0.15),
-            ('AirPods Pro', 'Audio', 'AirPods Pro (第二代) 带USB-C充电盒', 1899, 1799, 0.05),
+            ('Magic Keyboard', 'Keyboard', 'Magic Keyboard with Touch ID', 899, 749, 0.17),
+            ('Magic Mouse', 'Mouse', 'Magic Keyboard', 699, 579, 0.17),
+            ('Magic Trackpad', 'Trackpad', 'Magic Trackpad', 999, 849, 0.15),
+            ('AirPods Pro', 'Audio', 'AirPods Pro 2 with USB-C charging case', 1899, 1799, 0.05),
             ('Apple Pencil Pro', 'Stylus', 'Apple Pencil Pro', 999, 999, 0.00),
-            ('USB-C to Lightning', 'Cable', 'USB-C转闪电连接线 (1米)', 289, 243, 0.16),
+            ('USB-C to Lightning', 'Cable', 'USB-C to Lightning cable (1 meter)', 289, 243, 0.16),
         ]
         
         for model, device_type, description, original, discount, rate in accessories:
