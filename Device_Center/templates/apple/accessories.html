@@ -207,15 +207,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('订单创建成功！\n\n订单号：' + data.order_number + '\n\n请前往管理后台查看订单详情。');
+                alert('Order submitted successfully!\nOrder No.:' + data.order_number );
                 closeModal();
             } else {
-                alert('购买失败：' + data.message);
+                alert('Order submission failed:' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('购买失败，请重试');
+            alert('Order submission failed, please try again.');
         });
     }
     

@@ -113,37 +113,37 @@ def _build_user_email_html(order_data):
     </head>
     <body>
         <div class="header">
-            <h1>订单确认</h1>
-            <p>您好，我们已收到您的订单！</p>
+            <h1>Configuration Info>
+            <p>Hello, we have received your configuration request!</p>
         </div>
         <div class="content">
-            <h2>订单详情如下</h2>
-            <p><strong>订单号:</strong> <span class="order-number">{order_data.get("order_number", "N/A")}</span></p>
-            <p><strong>下单时间:</strong> {created_at}</p>
-            <p><strong>状态:</strong> <span class="status">订单已提交</span></p>
+            <h2>Configurationtion Summary>
+            <p><strong>No.:</strong> <span class="order-number">{order_data.get("order_number", "N/A")}</span></p>
+            <p><strong>Time:</strong> {created_at}</p>
             
-            <h3>产品信息</h3>
+            
+            <h3>Product Info</h3>
             <table>
-                <tr><th>品牌</th><td>{brand_display}</td></tr>
-                <tr><th>型号</th><td><strong>{order_data.get("model_name", "N/A")}</strong></td></tr>
+                <tr><th>Brand</th><td>{brand_display}</td></tr>
+                <tr><th>Model</th><td><strong>{order_data.get("model_name", "N/A")}</strong></td></tr>
                 <tr><th>CPU</th><td>{order_data.get("cpu", "-")}</td></tr>
                 <tr><th>Memory</th><td>{order_data.get("memory", "-")}</td></tr>
                 <tr><th>Storage</th><td>{order_data.get("hard_disk", "-")}</td></tr>
                 <tr><th>GPU</th><td>{order_data.get("graphic_card", "-")}</td></tr>
             </table>
             
-            {upgrades_html or '<p>无升级选项</p>'}
+            {upgrades_html or '<p>No upgrade options</p>'}
             
-            <h3>结算信息</h3>
+            <h3>Reference Price</h3>
             <table>
-                {f'<tr><th>升级费用</th><td>¥{upgrade_price:,.0f} </td></tr>' if upgrade_price > 0 else ''}
-                <tr><th style="font-size: 20px;">总计</th><td class="price">¥{int(total_price):,}</td></tr>
+                {f'<tr><th>Upgrade Price</th><td>¥{upgrade_price:,.0f} </td></tr>' if upgrade_price > 0 else ''}
+                <tr><th style="font-size: 20px;">Total Price</th><td class="price">¥{int(total_price):,}</td></tr>
             </table>
             
-            {f'<h4>备注</h4><p>{order_data.get("remark")}</p>' if order_data.get("remark") else ''}
+            {f'<h4>Remark</h4><p>{order_data.get("remark")}</p>' if order_data.get("remark") else ''}
             
             <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p><strong>我们会尽快处理您的订单！</strong></p>
+                <p><strong>We will process your configuration request as soon as possible!</strong></p>
             </div>
         </div>
         <div class="footer">
@@ -193,7 +193,7 @@ def _send_user_email(order_data):
     if not user_email:
         return False
     
-    subject = f'订单确认 - {order_data.get("order_number", "N/A")}'
+    subject = f'Configuration Info - {order_data.get("order_number", "N/A")}'
     html_body = _build_user_email_html(order_data)
     
     msg = MIMEMultipart('alternative')
