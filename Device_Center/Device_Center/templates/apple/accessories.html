@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apple 配件 - 学校电脑设备选配中心</title>
+    <title>Apple Accessories - 学校电脑设备选配中心</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .page-header { padding: 120px 20px 60px; background: linear-gradient(180deg, #1d1d1f 0%, #2c2c2e 100%); color: white; text-align: center; }
@@ -50,17 +50,17 @@
         <div class="breadcrumb">
             <a href="{{ url_for('apple_center') }}">Apple</a>
             <span>/</span>
-            <span>配件</span>
+            <span>Accessories</span>
         </div>
-        <h1>Apple 配件</h1>
-        <p>精选配件，提升您的使用体验</p>
+        <h1>Apple Accessories</h1>
+        <p>精选Accessories，提升您的使用体验</p>
     </header>
     
     <div class="accessories-container">
         <div class="accessories-grid" id="accessories-grid">
             <div class="empty-state" style="grid-column: 1/-1;">
                 <span class="loading"></span>
-                <p style="margin-top: 16px;">加载配件中...</p>
+                <p style="margin-top: 16px;">加载Accessories中...</p>
             </div>
         </div>
     </div>
@@ -120,12 +120,12 @@
                     container.innerHTML = `
                         <div class="empty-state" style="grid-column: 1/-1;">
                             <svg viewBox="0 0 24 24"><path d="M9 2v6h2l-4 7V5H9z"/></svg>
-                            <p>暂无配件信息</p>
+                            <p>暂无Accessories信息</p>
                         </div>
                     `;
                 }
             } catch (error) {
-                console.error('加载配件失败:', error);
+                console.error('加载Accessories失败:', error);
                 document.getElementById('accessories-grid').innerHTML = '<p style="text-align: center; color: var(--error-color);">加载失败，请刷新重试</p>';
             }
         }

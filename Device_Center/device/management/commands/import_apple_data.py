@@ -56,7 +56,7 @@ class Command(BaseCommand):
         self.stdout.write(f"  - 产品类型: {ProductType.objects.count()}")
         self.stdout.write(f"  - Model: {ProductModel.objects.count()}")
         self.stdout.write(f"  - 产品配置: {ProductConfiguration.objects.count()}")
-        self.stdout.write(f"  - 配件: {Accessory.objects.count()}")
+        self.stdout.write(f"  - Accessories: {Accessory.objects.count()}")
     
     def import_category(self, products, device_type_name):
         """导入产品分类数据"""
@@ -168,7 +168,7 @@ class Command(BaseCommand):
             self.stdout.write(f"    → {model_name}: {new_config_count} 个新配置, {skip_config_count} 个已存在")
     
     def import_accessories(self, accessories):
-        """导入配件数据"""
+        """导入Accessories数据"""
         
         for acc in accessories:
             device_type_map = {
@@ -205,8 +205,8 @@ class Command(BaseCommand):
                     }
                 )
                 display_name = model_name[:50] + '...' if len(model_name) > 50 else model_name
-                self.stdout.write(f"  ✓ 配件: {display_name}")
+                self.stdout.write(f"  ✓ Accessories: {display_name}")
             except Exception as e:
-                self.stdout.write(self.style.WARNING(f"  ✗ 配件导入失败"))
+                self.stdout.write(self.style.WARNING(f"  ✗ Accessories导入失败"))
         
-        self.stdout.write(f"  → 共导入 {len(accessories)} 个配件")
+        self.stdout.write(f"  → 共导入 {len(accessories)} 个Accessories")

@@ -886,7 +886,7 @@
             <!-- 订单列表 -->
             <section class="order-list">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="margin: 0;">近期订单 <small style="font-weight: normal; color: var(--gray-500); font-size: 14px;">(点击"查看详情"查看完整订单信息)</small></h3>
+                    <h3 style="margin: 0;">近期订单 <small style="font-weight: normal; color: var(--gray-500); font-size: 14px;">(点击"View Details"查看完整订单信息)</small></h3>
                     <button class="btn btn-primary" onclick="exportOrdersExcel()" style="display: flex; align-items: center; gap: 6px;">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
@@ -927,7 +927,7 @@
                                 </td>
                                 <td>{{ order.created_at|date:"m-d H:i" }}</td>
                                 <td>
-                                    <button class="btn-detail" onclick="viewOrderDetail({{ order.id }})">查看详情</button>
+                                    <button class="btn-detail" onclick="viewOrderDetail({{ order.id }})">View Details</button>
                                     <select onchange="confirmStatusChange({{ order.id }}, this.value)" class="status-select" id="status-select-{{ order.id }}">
                                         <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>待处理</option>
                                         <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>处理中</option>
@@ -1001,7 +1001,7 @@
                                 <tr>
                                     <th>Model</th>
                                     <th>设备类型</th>
-                                    <th>基本配置</th>
+                                    <th>Basic Configuration</th>
                                     <th>价格</th>
                                     <th>产品图片</th>
                                     <th>状态</th>
@@ -1262,11 +1262,11 @@
                     <div class="form-group">
                         <label for="dellProductType">设备类型</label>
                         <select id="dellProductType">
-                            <option value="Notebook">笔记本</option>
-                            <option value="Laptop">高性能本</option>
-                            <option value="Desktop">台式机</option>
-                            <option value="Monitor">显示器</option>
-                            <option value="Docking">配件</option>
+                            <option value="Notebook">Laptop</option>
+                            <option value="Laptop">High-performance Laptop</option>
+                            <option value="Desktop">Desktop</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Docking">Accessories</option>
                         </select>
                     </div>
                 </div>
@@ -1331,8 +1331,8 @@
                     <div class="form-group">
                         <label for="lenovoProductType">设备类型</label>
                         <select id="lenovoProductType">
-                            <option value="Laptop">笔记本</option>
-                            <option value="Desktop">台式机</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="Desktop">Desktop</option>
                         </select>
                     </div>
                 </div>
@@ -1702,7 +1702,7 @@
         }
         
         const searchTerm = document.getElementById('dell-search').value.toLowerCase();
-        const typeMap = {'Notebook': '笔记本', 'Laptop': '高性能本', 'Desktop': '台式机', 'Monitor': '显示器', 'Docking': '配件'};
+        const typeMap = {'Notebook': 'Laptop', 'Laptop': 'High-performance Laptop', 'Desktop': 'Desktop', 'Monitor': 'Monitor', 'Docking': 'Accessories'};
         const filtered = products.filter(p => 
             p.model.toLowerCase().includes(searchTerm) ||
             p.device_type.toLowerCase().includes(searchTerm)
@@ -1868,7 +1868,7 @@
         }
         
         const searchTerm = document.getElementById('lenovo-search').value.toLowerCase();
-        const typeMap = {'Laptop': '笔记本', 'Desktop': '台式机'};
+        const typeMap = {'Laptop': 'Laptop', 'Desktop': 'Desktop'};
         const filtered = products.filter(p => 
             p.model.toLowerCase().includes(searchTerm) ||
             p.configuration.toLowerCase().includes(searchTerm) ||
@@ -2263,7 +2263,7 @@
                                     <span class="detail-value">${order.user_name || '-'}</span>
                                 </div>
                                 <div class="detail-item full-width">
-                                    <span class="detail-label">邮箱</span>
+                                    <span class="detail-label">eMail</span>
                                     <span class="detail-value">${order.user_email || '-'}</span>
                                 </div>
                             </div>
@@ -2274,8 +2274,8 @@
                         ${upgradesHtml}
 
                         <div class="detail-section">
-                            <h4>备注信息</h4>
-                            <div class="detail-value remark">${order.remark || '无备注'}</div>
+                            <h4>Remark信息</h4>
+                            <div class="detail-value remark">${order.remark || '无Remark'}</div>
                         </div>
                     `;
                 } else {

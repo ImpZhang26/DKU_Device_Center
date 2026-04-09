@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dell 显示器选配 - Dell</title>
+    <title>Dell Monitor Configuration</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         /* Dell 品牌风格增强 */
@@ -124,7 +124,7 @@
             border-radius: 4px;
         }
         
-        /* 配置规格区域 - 显示器专用 */
+        /* 配置规格区域 - Monitor专用 */
         .specs-section {
             padding: 20px 24px;
         }
@@ -249,7 +249,7 @@
             cursor: not-allowed;
         }
         
-        /* 快捷配置信息 - 显示器使用 basic_config */
+        /* 快捷配置信息 - Monitor使用 basic_config */
         .quick-config {
             padding: 12px 24px;
             background: linear-gradient(135deg, #007db8 0%, #005a8c 100%);
@@ -295,13 +295,13 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">显示器</span></h1>
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">Monitor</span></h1>
                 <nav class="nav">
-                    <a href="{% url 'dell_notebook' %}">笔记本</a>
-                    <a href="{% url 'dell_laptop' %}">高性能本</a>
-                    <a href="{% url 'dell_desktop' %}">台式机</a>
-                    <a href="{% url 'dell_monitor' %}" class="active">显示器</a>
-                    <a href="{% url 'dell_accessories' %}">配件</a>
+                    <a href="{% url 'dell_notebook' %}">Laptop</a>
+                    <a href="{% url 'dell_laptop' %}">High-performance Laptop</a>
+                    <a href="{% url 'dell_desktop' %}">Desktop</a>
+                    <a href="{% url 'dell_monitor' %}" class="active">Monitor</a>
+                    <a href="{% url 'dell_accessories' %}">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
@@ -309,7 +309,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -321,17 +321,17 @@
         <div class="container">
             <!-- 页面标题 -->
             <div class="page-header">
-                <h2>Dell 显示器 - UltraSharp / Pro 系列</h2>
-                <p>专业级显示器，适合商务办公和专业创作</p>
+                <h2>Dell Monitor - UltraSharp / Pro Series</h2>
+              
             </div>
             
             {% if products %}
             <div class="product-grid">
                 {% for product in products %}
                 <div class="product-card">
-                    <!-- 产品名称 -->
+                    <!-- Product Name -->
                     <div class="quick-config">
-                        <div class="quick-config-title">产品名称</div>
+                        <div class="quick-config-title">Product Name</div>
                         <div class="quick-config-value">{{ product.model }}</div>
                     </div>
                     
@@ -340,11 +340,11 @@
                         {% if 'UltraSharp' in product.model %}
                             <span class="card-series-tag">UltraSharp</span>
                         {% elif 'Pro' in product.model %}
-                            <span class="card-series-tag">Pro 系列</span>
+                            <span class="card-series-tag">Pro</span>
                         {% elif 'P' in product.model %}
-                            <span class="card-series-tag">P 系列</span>
+                            <span class="card-series-tag">P</span>
                         {% elif 'U' in product.model %}
-                            <span class="card-series-tag">U 系列</span>
+                            <span class="card-series-tag">U</span>
                         {% endif %}
                     </div>
                     
@@ -357,16 +357,16 @@
                         {% endif %}
                     </div>
                     
-                    <!-- 配置规格 - 显示器使用 basic_config -->
+                    <!-- 配置规格 - Monitor使用 basic_config -->
                     <div class="specs-section">
                         <div class="specs-grid">
-                            <!-- 基本配置 -->
+                            <!-- Basic Configuration -->
                             <div class="spec-item">
                                 <svg class="spec-icon" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M21 16H3c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h18c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zm-1 6H4v-4h16v4zM21 2H3c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h18c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm0 10H3V4h18v8z"/>
                                 </svg>
                                 <div class="spec-content">
-                                    <div class="spec-label">基本配置</div>
+                                    <div class="spec-label">Basic Configuration</div>
                                     <div class="spec-value" title="{{ product.basic_config }}">{{ product.basic_config|truncatechars:35 }}</div>
                                 </div>
                             </div>
@@ -376,7 +376,7 @@
                                     <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
                                 </svg>
                                 <div class="spec-content">
-                                    <div class="spec-label">屏幕尺寸</div>
+                                    <div class="spec-label">Screen size</div>
                                     <div class="spec-value">{{ product.screen_size|default:'-' }}</div>
                                 </div>
                             </div>
@@ -386,7 +386,7 @@
                                     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/>
                                 </svg>
                                 <div class="spec-content">
-                                    <div class="spec-label">分辨率</div>
+                                    <div class="spec-label">Resolution</div>
                                     <div class="spec-value">{{ product.resolution|default:'-' }}</div>
                                 </div>
                             </div>
@@ -396,7 +396,7 @@
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                                 </svg>
                                 <div class="spec-content">
-                                    <div class="spec-label">面板类型</div>
+                                    <div class="spec-label">Panel type</div>
                                     <div class="spec-value">{{ product.panel_type|default:'-' }}</div>
                                 </div>
                             </div>
@@ -433,7 +433,7 @@
                     
                     <!-- 操作按钮 -->
                     <div class="card-actions">
-                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">查看详情</a>
+                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">View Details</a>
                         <button class="btn btn-primary" onclick="buyNow('{{ product.model|escapejs }}', {{ forloop.counter0 }})">Confirm Configuration</button>
                     </div>
                 </div>
@@ -451,31 +451,31 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>确认订单</h3>
+                <h3>Confirm Configuration</h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="order-summary">
-                    <h4>订单摘要</h4>
+                    <h4>Summary</h4>
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
                     <label for="netid">NETID <span style="color:red;">*</span></label>
-                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                    <input type="text" id="netid" placeholder="Please enter your NetID." required>
                 </div>
                 <div class="form-group">
-                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <label for="user_email">eMail <span style="color:red;">*</span></label>
                     <input type="email" id="user_email" placeholder="your@email.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="remark">备注</label>
-                    <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    <label for="remark">Remark</label>
+                    <textarea id="remark" name="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="modelName" name="modelName">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
             </div>
         </div>
     </div>
@@ -500,19 +500,19 @@
                 <span>${modelName}</span>
             </div>
             <div class="summary-item">
-                <span>基本配置:</span>
+                <span>Basic Configuration:</span>
                 <span>${product.basic_config || '-'}</span>
             </div>
             <div class="summary-item">
-                <span>屏幕尺寸:</span>
+                <span>Screen size:</span>
                 <span>${product.screen_size || '-'}</span>
             </div>
             <div class="summary-item">
-                <span>分辨率:</span>
+                <span>Resolution:</span>
                 <span>${product.resolution || '-'}</span>
             </div>
             <div class="summary-item">
-                <span>面板类型:</span>
+                <span>Panel type:</span>
                 <span>${product.panel_type || '-'}</span>
             </div>
             <div class="summary-item total">
@@ -535,7 +535,7 @@
         const remark = document.getElementById('remark').value;
         
         if (!netid || !userEmail) {
-            alert('请填写NETID和邮箱');
+            alert('Please enter your NetID and email.');
             return;
         }
         
@@ -564,16 +564,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('订单提交成功！订单号: ' + data.order_number);
+                alert('Submitted successfully! \nOrder No. ' + data.order_number);
                 closeModal();
                 window.location.reload();
             } else {
-                alert('订单提交失败: ' + data.message);
+                alert('Submitted failed: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('订单提交失败，请重试');
+            alert('Submission failed, please try again.');
         });
     }
     

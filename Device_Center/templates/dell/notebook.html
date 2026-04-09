@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dell 笔记本选配 - Dell</title>
+    <title>Dell Laptop Configuration</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         /* Dell 品牌风格增强 */
@@ -295,19 +295,19 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">笔记本</span></h1>
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">Laptop</span></h1>
                 <nav class="nav">
-                    <a href="{% url 'dell_notebook' %}" class="active">笔记本</a>
-                    <a href="{% url 'dell_laptop' %}">高性能本</a>
-                    <a href="{% url 'dell_desktop' %}">台式机</a>
-                    <a href="{% url 'dell_monitor' %}">显示器</a>
-                    <a href="{% url 'dell_accessories' %}">配件</a>
+                    <a href="{% url 'dell_notebook' %}" class="active">Laptop</a>
+                    <a href="{% url 'dell_laptop' %}">High-performance Laptop</a>
+                    <a href="{% url 'dell_desktop' %}">Desktop</a>
+                    <a href="{% url 'dell_monitor' %}">Monitor</a>
+                    <a href="{% url 'dell_accessories' %}">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             👤 {{ user_name }}
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -319,17 +319,17 @@
         <div class="container">
             <!-- 页面标题 -->
             <div class="page-header">
-                <h2>Dell Pro / Pro Plus / Pro Max 系列</h2>
-                <p>选择适合您工作需求的轻薄笔记本</p>
+                <h2>Dell Pro / Pro Plus / Pro Max Series</h2>
+
             </div>
             
             {% if products %}
             <div class="product-grid">
                 {% for product in products %}
                 <div class="product-card">
-                    <!-- 产品名称 -->
+                    <!-- Product Name -->
                     <div class="quick-config">
-                        <div class="quick-config-title">产品名称</div>
+                        <div class="quick-config-title">Product name</div>
                         <div class="quick-config-value">{{ product.model }}</div>
                     </div>
                     
@@ -364,7 +364,7 @@
                                     <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
                                 </svg>
                                 <div class="spec-content">
-                                    <div class="spec-label">处理器</div>
+                                    <div class="spec-label">CPU</div>
                                     <div class="spec-value" title="{{ product.cpu }}">{{ product.cpu|truncatechars:35 }}</div>
                                 </div>
                             </div>
@@ -423,7 +423,7 @@
                     
                     <!-- 操作按钮 -->
                     <div class="card-actions">
-                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">查看详情</a>
+                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">View Details</a>
                         <button class="btn btn-primary" onclick="buyNow('{{ product.model|escapejs }}', {{ forloop.counter0 }})">Confirm Configuration</button>
                     </div>
                 </div>
@@ -441,31 +441,37 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>确认订单</h3>
+                <h3>Confirm Configuration</h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="order-summary">
-                    <h4>订单摘要</h4>
+                    <h4>Summary</h4>
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
                     <label for="netid">NETID <span style="color:red;">*</span></label>
-                    <input type="text" id="netid" placeholder="请输入学校NETID" required>
+                    <input type="text" id="netid" placeholder="Please enter your NetID." required>
                 </div>
                 <div class="form-group">
-                    <label for="user_email">邮箱 <span style="color:red;">*</span></label>
+                    <label for="user_email">eMail <span style="color:red;">*</span></label>
                     <input type="email" id="user_email" placeholder="your@email.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="remark">备注</label>
-                    <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    <label for="remark">Remark</label>
+                    <textarea id="remark" name="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                 </div>
+                <!-- Hidden fields to store product data -->
+                <input type="hidden" id="productCpu">
+                <input type="hidden" id="productMemory">
+                <input type="hidden" id="productHardDisk">
+                <input type="hidden" id="productGraphicCard">
+                <input type="hidden" id="productBasePrice">
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="modelName" name="modelName">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
             </div>
         </div>
     </div>
@@ -480,9 +486,18 @@
     const brand = '{{ brand }}';
     const products = {{ products_json|safe }};
     
+    let currentProduct = null; // Global to store selected product data
+    
     function buyNow(modelName, index) {
-        const product = products[index];
+        currentProduct = products[index];
         document.getElementById('modelName').value = modelName;
+        
+        // Store product specs in hidden fields
+        document.getElementById('productCpu').value = currentProduct.cpu || '-';
+        document.getElementById('productMemory').value = currentProduct.memory || '-';
+        document.getElementById('productHardDisk').value = currentProduct.hard_disk || '-';
+        document.getElementById('productGraphicCard').value = currentProduct.graphic_card || '-';
+        document.getElementById('productBasePrice').value = currentProduct.price;
         
         document.getElementById('orderDetails').innerHTML = `
             <div class="summary-item">
@@ -491,23 +506,23 @@
             </div>
             <div class="summary-item">
                 <span>CPU:</span>
-                <span>${product.cpu || '-'}</span>
+                <span>${currentProduct.cpu || '-'}</span>
             </div>
             <div class="summary-item">
                 <span>Memory:</span>
-                <span>${product.memory || '-'}</span>
+                <span>${currentProduct.memory || '-'}</span>
             </div>
             <div class="summary-item">
                 <span>Storage:</span>
-                <span>${product.hard_disk || '-'}</span>
+                <span>${currentProduct.hard_disk || '-'}</span>
             </div>
             <div class="summary-item">
                 <span>GPU:</span>
-                <span>${product.graphic_card || '-'}</span>
+                <span>${currentProduct.graphic_card || '-'}</span>
             </div>
             <div class="summary-item total">
                 <span>Total Price:</span>
-                <span>${product.price} RMB</span>
+                <span>${currentProduct.price} RMB</span>
             </div>
         `;
         
@@ -525,7 +540,12 @@
         const remark = document.getElementById('remark').value;
         
         if (!netid || !userEmail) {
-            alert('请填写NETID和邮箱');
+            alert('Please enter your NetID and eMail!');
+            return;
+        }
+        
+        if (!currentProduct) {
+            alert('Product data not found. Please select again.');
             return;
         }
         
@@ -535,13 +555,13 @@
             netid: netid,
             user_email: userEmail,
             remark: remark,
-            cpu: document.querySelector('#orderDetails .summary-item:nth-child(2) span:last-child').textContent,
-            memory: document.querySelector('#orderDetails .summary-item:nth-child(3) span:last-child').textContent,
-            hard_disk: document.querySelector('#orderDetails .summary-item:nth-child(4) span:last-child').textContent,
-            graphic_card: document.querySelector('#orderDetails .summary-item:nth-child(5) span:last-child').textContent,
-            base_price: products[index].price,
+            cpu: document.getElementById('productCpu').value,
+            memory: document.getElementById('productMemory').value,
+            hard_disk: document.getElementById('productHardDisk').value,
+            graphic_card: document.getElementById('productGraphicCard').value,
+            base_price: parseFloat(document.getElementById('productBasePrice').value),
             upgrade_price: 0,
-            total_price: products[index].price
+            total_price: parseFloat(document.getElementById('productBasePrice').value)
         };
         
         fetch('/api/' + brand + '/order/create/', {
@@ -555,16 +575,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('订单提交成功！订单号: ' + data.order_number);
+                alert('Submitted successfully!\nNo. ' + data.order_number);
                 closeModal();
                 window.location.reload();
             } else {
-                alert('订单提交失败: ' + data.message);
+                alert('Submission failed:' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('订单提交失败，请重试');
+            alert('Submitted failed! Please try again.');
         });
     }
     

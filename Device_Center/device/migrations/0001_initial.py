@@ -65,8 +65,8 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "配件",
-                "verbose_name_plural": "配件",
+                "verbose_name": "Accessories",
+                "verbose_name_plural": "Accessories",
                 "db_table": "accessories",
             },
         ),
@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=100, verbose_name="姓名")),
                 (
                     "email",
-                    models.CharField(blank=True, max_length=200, verbose_name="邮箱"),
+                    models.CharField(blank=True, max_length=200, verbose_name="eMail"),
                 ),
                 (
                     "role",
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "user_email",
-                    models.CharField(blank=True, max_length=200, verbose_name="用户邮箱"),
+                    models.CharField(blank=True, max_length=200, verbose_name="用户eMail"),
                 ),
                 (
                     "brand",
@@ -243,7 +243,7 @@ class Migration(migrations.Migration):
                         verbose_name="状态",
                     ),
                 ),
-                ("remark", models.TextField(blank=True, verbose_name="备注")),
+                ("remark", models.TextField(blank=True, verbose_name="Remark")),
                 (
                     "created_at",
                     models.DateTimeField(auto_now_add=True, verbose_name="创建时间"),

@@ -22,7 +22,7 @@ class Command(BaseCommand):
         # 初始化配置
         self.init_configurations()
         
-        # 初始化配件
+        # 初始化Accessories
         self.init_accessories()
         
         # 初始化管理员
@@ -39,9 +39,9 @@ class Command(BaseCommand):
         
         types = [
             ('Laptop', 'Laptop', 'MacBook Pro、MacBook Air'),
-            ('Desktop', '台式机', 'iMac、Mac mini、Mac Studio、Mac Pro'),
+            ('Desktop', 'Desktop', 'iMac、Mac mini、Mac Studio、Mac Pro'),
             ('iPad', '平板电脑', 'iPad Pro、iPad Air、iPad、iPad mini'),
-            ('Accessories', '配件', '键盘、鼠标、触控板等配件')
+            ('Accessories', 'Accessories', '键盘、鼠标、触控板等Accessories')
         ]
         
         for device_type, name, description in types:
@@ -65,7 +65,7 @@ class Command(BaseCommand):
             ('MacBook Pro 14"', laptop_type, 'M3 Pro/MaxCPU，14.2英寸Liquid Retina XDRDisplay'),
             ('MacBook Pro 16"', laptop_type, 'M3 Pro/MaxCPU，16.2英寸Liquid Retina XDRDisplay'),
             ('MacBook Air 13"', laptop_type, 'M3CPU，13.6英寸Liquid RetinaDisplay'),
-            # 台式机
+            # Desktop
             ('iMac 24"', desktop_type, 'M3CPU，24英寸4.5K RetinaDisplay'),
             ('Mac mini', desktop_type, 'M2/M2 ProCPU，小巧机身强劲性能'),
             ('Mac Studio', desktop_type, 'M2 Max/UltraCPU，专业工作室级性能'),
@@ -138,8 +138,8 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(' OK'))
 
     def init_accessories(self):
-        """初始化配件"""
-        self.stdout.write('\n正在初始化配件...')
+        """初始化Accessories"""
+        self.stdout.write('\n正在初始化Accessories...')
         
         accessories = [
             ('Magic Keyboard', 'Keyboard', 'Magic Keyboard with Touch ID', 899, 749, 0.17),

@@ -45,7 +45,7 @@ class ProductImage(models.Model):
 
 
 class ProductType(models.Model):
-    """产品类型（如：Laptop、台式机、平板、配件）"""
+    """产品类型（如：Laptop、Desktop、平板、Accessories）"""
     device_type = models.CharField(max_length=50, unique=True, verbose_name='设备类型')
     name = models.CharField(max_length=100, verbose_name='名称')
     description = models.TextField(blank=True, verbose_name='描述')
@@ -112,7 +112,7 @@ class ProductConfiguration(models.Model):
 
 
 class Accessory(models.Model):
-    """配件"""
+    """Accessories"""
     DEVICE_TYPES = [
         ('Keyboard', '键盘'),
         ('Mouse', '鼠标'),
@@ -133,8 +133,8 @@ class Accessory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
     class Meta:
-        verbose_name = '配件'
-        verbose_name_plural = '配件'
+        verbose_name = 'Accessories'
+        verbose_name_plural = 'Accessories'
         db_table = 'accessories'
 
     def __str__(self):
@@ -185,7 +185,7 @@ class Order(models.Model):
     order_number = models.CharField(max_length=50, unique=True, verbose_name='订单号')
     user_id = models.CharField(max_length=100, verbose_name='用户ID')
     user_name = models.CharField(max_length=200, blank=True, verbose_name='用户名')
-    user_email = models.CharField(max_length=200, blank=True, verbose_name='用户邮箱')
+    user_email = models.CharField(max_length=200, blank=True, verbose_name='用户eMail')
     brand = models.CharField(max_length=50, choices=BRAND_CHOICES, verbose_name='品牌')
     device_type = models.CharField(max_length=50, blank=True, verbose_name='设备类型')
     model_name = models.CharField(max_length=200, verbose_name='型号名称')
@@ -202,7 +202,7 @@ class Order(models.Model):
     base_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='基础价格')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Total Price')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='状态')
-    remark = models.TextField(blank=True, verbose_name='备注')
+    remark = models.TextField(blank=True, verbose_name='Remark')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
@@ -221,7 +221,7 @@ class Admin(models.Model):
     username = models.CharField(max_length=100, unique=True, verbose_name='用户名')
     password_hash = models.CharField(max_length=256, verbose_name='密码哈希')
     name = models.CharField(max_length=100, verbose_name='姓名')
-    email = models.CharField(max_length=200, blank=True, verbose_name='邮箱')
+    email = models.CharField(max_length=200, blank=True, verbose_name='eMail')
     role = models.CharField(max_length=50, default='admin', verbose_name='角色')
     is_active = models.BooleanField(default=True, verbose_name='是否启用')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
@@ -238,10 +238,10 @@ class Admin(models.Model):
 class DellProduct(models.Model):
     """Dell 产品"""
     DEVICE_TYPE_CHOICES = [
-        ('Notebook', '笔记本'),
-        ('Laptop', '高性能本'),
-        ('Desktop', '台式机'),
-        ('Monitor', '显示器'),
+        ('Notebook', 'Laptop'),
+        ('Laptop', 'High-performance Laptop'),
+        ('Desktop', 'Desktop'),
+        ('Monitor', 'Monitor'),
         ('Docking', '扩展坞'),
     ]
     
@@ -249,10 +249,10 @@ class DellProduct(models.Model):
     device_type = models.CharField(max_length=50, choices=DEVICE_TYPE_CHOICES, verbose_name='设备类型')
     brand = models.CharField(max_length=50, default='DELL', verbose_name='品牌')
     model = models.CharField(max_length=200, verbose_name='型号名称')
-    basic_config = models.TextField(blank=True, verbose_name='基本配置')
+    basic_config = models.TextField(blank=True, verbose_name='Basic Configuration')
     
     # 硬件配置
-    cpu = models.CharField(max_length=500, blank=True, verbose_name='处理器')
+    cpu = models.CharField(max_length=500, blank=True, verbose_name='CPU')
     memory = models.CharField(max_length=200, blank=True, verbose_name='Memory')
     hard_disk = models.CharField(max_length=200, blank=True, verbose_name='硬盘')
     graphic_card = models.CharField(max_length=500, blank=True, verbose_name='GPU')
@@ -273,7 +273,7 @@ class DellProduct(models.Model):
     image_url = models.CharField(max_length=500, blank=True, verbose_name='产品图片URL')
     
     # 其他
-    remark = models.TextField(blank=True, verbose_name='备注')
+    remark = models.TextField(blank=True, verbose_name='Remark')
     is_active = models.BooleanField(default=True, verbose_name='是否启用')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
@@ -291,8 +291,8 @@ class DellProduct(models.Model):
 class LenovoProduct(models.Model):
     """Lenovo 产品（包含型号和配置信息）"""
     DEVICE_TYPE_CHOICES = [
-        ('Laptop', '笔记本'),
-        ('Desktop', '台式机'),
+        ('Laptop', 'Laptop'),
+        ('Desktop', 'Desktop'),
     ]
     
     # 基本信息
@@ -304,7 +304,7 @@ class LenovoProduct(models.Model):
     configuration = models.CharField(max_length=200, blank=True, verbose_name='配置名称')
     
     # 硬件配置
-    cpu = models.CharField(max_length=500, blank=True, verbose_name='处理器')
+    cpu = models.CharField(max_length=500, blank=True, verbose_name='CPU')
     memory = models.CharField(max_length=200, blank=True, verbose_name='Memory')
     hard_disk = models.CharField(max_length=200, blank=True, verbose_name='硬盘')
     graphic_card = models.CharField(max_length=500, blank=True, verbose_name='GPU')
@@ -313,7 +313,7 @@ class LenovoProduct(models.Model):
     screen = models.CharField(max_length=200, blank=True, verbose_name='屏幕')
     wifi = models.CharField(max_length=500, blank=True, verbose_name='Wi-Fi')
     weight = models.CharField(max_length=100, blank=True, verbose_name='Weight')
-    accessary = models.CharField(max_length=500, blank=True, verbose_name='配件')
+    accessary = models.CharField(max_length=500, blank=True, verbose_name='Accessories')
     
     # 详细配置
     configuration_parameters = models.TextField(blank=True, verbose_name='配置参数（接口/端口）')

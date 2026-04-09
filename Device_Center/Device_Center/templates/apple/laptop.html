@@ -166,7 +166,7 @@
             color: var(--text-secondary);
         }
         
-        /* 订单摘要 */
+        /* Summary */
         .order-summary {
             background: var(--card-background);
             border-radius: 20px;
@@ -380,9 +380,9 @@
                 </div>
             </div>
             
-            <!-- 订单摘要 -->
+            <!-- Summary -->
             <div class="order-summary" id="order-summary">
-                <h3 class="summary-title">订单摘要</h3>
+                <h3 class="summary-title">Summary</h3>
                 <div class="empty-state" style="padding: 40px 20px;">
                     <p>选择型号和配置后<br>将显示订单详情</p>
                 </div>
@@ -527,7 +527,7 @@
                 } else {
                     // 无预定义配置，显示各个选项
                     if (options.cpu && options.cpu.length > 0) {
-                        html += createConfigGroup('处理器', 'cpu', options.cpu);
+                        html += createConfigGroup('CPU', 'cpu', options.cpu);
                     }
                     if (options.memory && options.memory.length > 0) {
                         html += createConfigGroup('Memory', 'memory', options.memory);
@@ -592,13 +592,13 @@
             updateOrderSummary();
         }
         
-        // 更新订单摘要
+        // 更新Summary
         function updateOrderSummary() {
             const container = document.getElementById('order-summary');
             
             if (!selectedModel) {
                 container.innerHTML = `
-                    <h3 class="summary-title">订单摘要</h3>
+                    <h3 class="summary-title">Summary</h3>
                     <div class="empty-state" style="padding: 40px 20px;">
                         <p>选择型号和配置后<br>将显示订单详情</p>
                     </div>
@@ -627,7 +627,7 @@
                 `;
                 
                 configItems = [
-                    { label: '处理器', value: config.cpu || '-' },
+                    { label: 'CPU', value: config.cpu || '-' },
                     { label: 'Memory', value: config.memory || '-' },
                     { label: 'Storage', value: config.hard_disk || '-' },
                     { label: 'GPU', value: config.graphic_card || '-' },
@@ -651,7 +651,7 @@
                 `;
                 
                 // 显示已选择的配置
-                const configLabels = { cpu: '处理器', memory: 'Memory', hard_disk: 'Storage' };
+                const configLabels = { cpu: 'CPU', memory: 'Memory', hard_disk: 'Storage' };
                 Object.entries(selectedConfig).forEach(([key, value]) => {
                     if (configLabels[key]) {
                         configItems.push({ label: configLabels[key], value });
@@ -661,7 +661,7 @@
             
             // 构建摘要HTML
             let summaryHtml = `
-                <h3 class="summary-title">订单摘要</h3>
+                <h3 class="summary-title">Summary</h3>
                 ${productHtml}
                 <div class="summary-config">
                     ${configItems.map(item => `

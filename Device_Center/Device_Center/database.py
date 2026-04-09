@@ -326,9 +326,9 @@ def init_apple_data(cursor):
     # 插入产品类型
     product_types = [
         ('Laptop', 'Laptop', 'MacBook Pro、MacBook Air'),
-        ('Desktop', '台式机', 'iMac、Mac mini、Mac Studio、Mac Pro'),
+        ('Desktop', 'Desktop', 'iMac、Mac mini、Mac Studio、Mac Pro'),
         ('iPad', '平板电脑', 'iPad Pro、iPad Air、iPad、iPad mini'),
-        ('Accessories', '配件', '键盘、鼠标、触控板等配件')
+        ('Accessories', 'Accessories', '键盘、鼠标、触控板等Accessories')
     ]
     cursor.executemany(
         'INSERT OR IGNORE INTO product_types (device_type, name, description) VALUES (?, ?, ?)',
@@ -379,7 +379,7 @@ def init_apple_data(cursor):
         configs
     )
     
-    # 插入配件
+    # 插入Accessories
     accessories = [
         ('Magic Keyboard', 'Keyboard', '带有Touch ID的妙控键盘', 899, 749, 0.17),
         ('Magic Mouse', 'Mouse', '妙控鼠标', 699, 579, 0.17),

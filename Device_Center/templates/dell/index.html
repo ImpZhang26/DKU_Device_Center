@@ -13,11 +13,11 @@
             <div class="header-content">
                 <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <span class="current-brand">Dell</span></h1>
                 <nav class="nav">
-                    <a href="{% url 'dell_notebook' %}">笔记本</a>
-                    <a href="{% url 'dell_laptop' %}">高性能本</a>
-                    <a href="{% url 'dell_desktop' %}">台式机</a>
-                    <a href="{% url 'dell_monitor' %}">显示器</a>
-                    <a href="{% url 'dell_accessories' %}">配件</a>
+                    <a href="{% url 'dell_notebook' %}">Laptop</a>
+                    <a href="{% url 'dell_laptop' %}">High-performance Laptop</a>
+                    <a href="{% url 'dell_desktop' %}">Desktop</a>
+                    <a href="{% url 'dell_monitor' %}">Monitor</a>
+                    <a href="{% url 'dell_accessories' %}">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             <a href="{% url 'my_orders' %}" class="user-link" title="我的订单">
@@ -25,7 +25,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -36,8 +36,8 @@
     <main class="main">
         <div class="container">
             <section class="hero-section">
-                <h2>Dell 设备选配中心</h2>
-                <p>选择您需要的产品类型，开始个性化配置</p>
+                <h2>Configure Your DELL Product</h2>
+                <p>Choose a product to start customizing.</p>
             </section>
 
             <div class="product-categories">
@@ -47,8 +47,8 @@
                             <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
                         </svg>
                     </div>
-                    <h3>笔记本</h3>
-                    <p>Pro / Pro Plus / Pro Max 轻薄本</p>
+                    <h3>Laptop</h3>
+                    <p>Pro, Pro Plus, Pro Max</p>
                 </a>
                 
                 <a href="{% url 'dell_laptop' %}" class="category-card">
@@ -57,8 +57,8 @@
                             <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
                         </svg>
                     </div>
-                    <h3>高性能本</h3>
-                    <p>Pro Max 高性能工作站</p>
+                    <h3>High-performance Laptop</h3>
+                    <p>Pro Max High-performance Workstation</p>
                 </a>
                 
                 <a href="{% url 'dell_desktop' %}" class="category-card">
@@ -67,8 +67,8 @@
                             <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
                         </svg>
                     </div>
-                    <h3>台式机</h3>
-                    <p>OptiPlex / Pro Tower / Precision 工作站</p>
+                    <h3>Desktop</h3>
+                    <p>OptiPlex, Pro Tower, Precision Workstation</p>
                 </a>
                 
                 <a href="{% url 'dell_monitor' %}" class="category-card">
@@ -77,8 +77,8 @@
                             <path d="M21 2H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H3V4h18v10z"/>
                         </svg>
                     </div>
-                    <h3>显示器</h3>
-                    <p>UltraSharp / Pro 专业显示器</p>
+                    <h3>Monitor</h3>
+                    <p>UltraSharp, Professional monitor</p>
                 </a>
                 
                 <a href="{% url 'dell_accessories' %}" class="category-card">
@@ -87,8 +87,8 @@
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                         </svg>
                     </div>
-                    <h3>配件</h3>
-                    <p>扩展坞、转接器等</p>
+                    <h3>Accessories</h3>
+                    <p>Dock, adapter, and more</p>
                 </a>
             </div>
         </div>

@@ -179,7 +179,7 @@ def _build_admin_email_html(order_data):
         <p><strong>型号:</strong> {order_data.get("model_name")}</p>
         <p><strong>配置:</strong> CPU:{order_data.get("cpu", "-")} | Memory:{order_data.get("memory", "-")} | Storage:{order_data.get("hard_disk", "-")}</p>
     <p><strong>升级费用:</strong> ¥{f"{upgrade_price:,.0f}" if upgrade_price else 0} | <strong>Total Price:</strong> ¥{f"{total_price:,.0f}" if total_price else 0}</p>
-        {f'<p><strong>备注:</strong> {order_data.get("remark")}</p>' if order_data.get("remark") else ''}
+        {f'<p><strong>Remark:</strong> {order_data.get("remark")}</p>' if order_data.get("remark") else ''}
         <hr style="margin: 30px 0;">
         <p style="color: #666; font-size: 14px;">请登录管理后台查看完整订单详情并处理。</p>
     </body>

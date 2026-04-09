@@ -790,7 +790,7 @@ a:hover {
     box-shadow: var(--shadow-sm);
 }
 
-/* ============ 配件页面 ============ */
+/* ============ Accessories页面 ============ */
 .accessory-section {
     margin-bottom: 48px;
 }
@@ -952,7 +952,7 @@ a:hover {
     font-weight: 600;
 }
 
-/* ============ 查看详情弹窗 ============ */
+/* ============ View Details弹窗 ============ */
 .detail-model {
     font-size: 20px;
     font-weight: 700;

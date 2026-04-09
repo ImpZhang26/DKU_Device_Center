@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dell 配件选配 - Dell</title>
+    <title>Dell Accessories选配 - Dell</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         /* Dell 品牌风格增强 */
@@ -277,19 +277,19 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">配件</span></h1>
+                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'dell_index' %}">Dell</a> <span class="brand-separator">/</span> <span class="current-brand">Accessories</span></h1>
                 <nav class="nav">
-                    <a href="{% url 'dell_notebook' %}">笔记本</a>
-                    <a href="{% url 'dell_laptop' %}">高性能本</a>
-                    <a href="{% url 'dell_desktop' %}">台式机</a>
-                    <a href="{% url 'dell_monitor' %}">显示器</a>
-                    <a href="{% url 'dell_accessories' %}" class="active">配件</a>
+                    <a href="{% url 'dell_notebook' %}">Laptop</a>
+                    <a href="{% url 'dell_laptop' %}">High-performance Laptop</a>
+                    <a href="{% url 'dell_desktop' %}">Desktop</a>
+                    <a href="{% url 'dell_monitor' %}">Monitor</a>
+                    <a href="{% url 'dell_accessories' %}" class="active">Accessories</a>
                     <span class="user-info">
                         {% if user_name %}
                             👤 {{ user_name }}
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -301,34 +301,21 @@
         <div class="container">
             <!-- 页面标题 -->
             <div class="page-header">
-                <h2>Dell 配件 - 扩展坞 / 转接器</h2>
-                <p>提升您的工作效率</p>
+                <h2>Dell Accessories - Dock/ Adapter</h2>
+
             </div>
             
             {% if products %}
             <div class="product-grid">
                 {% for product in products %}
                 <div class="product-card">
-                    <!-- 产品名称 -->
+                    <!-- Product Name -->
                     <div class="quick-config">
-                        <div class="quick-config-title">产品名称</div>
+                        <div class="quick-config-title">Product Name</div>
                         <div class="quick-config-value">{{ product.model }}</div>
                     </div>
                     
-                    <!-- 卡片头部 -->
-                    <div class="card-header">
-                        {% if 'WD19' in product.model %}
-                            <span class="card-series-tag">WD19 系列</span>
-                        {% elif 'DA310' in product.model %}
-                            <span class="card-series-tag">DA310 转接器</span>
-                        {% elif 'MH30' in product.model or 'MH31' in product.model %}
-                            <span class="card-series-tag">MH 系列</span>
-                        {% elif 'MS5320' in product.model %}
-                            <span class="card-series-tag">MS 系列</span>
-                        {% else %}
-                            <span class="card-series-tag">配件产品</span>
-                        {% endif %}
-                    </div>
+                   
                     
                     <!-- 价格区域 -->
                     <div class="price-section">
@@ -347,40 +334,18 @@
                                     <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
                                 </svg>
                                 <div class="spec-content">
-                                    <div class="spec-label">基本配置</div>
+                                    <div class="spec-label">Basic Configuration</div>
                                     <div class="spec-value" title="{{ product.basic_config }}">{{ product.basic_config }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- 特性标签 -->
-                    <div class="features-row">
-                        {% if product.basic_config %}
-                        <span class="feature-tag">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                            </svg>
-                            Dell 原厂
-                        </span>
-                        {% endif %}
-                        <span class="feature-tag">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
-                            官方质保
-                        </span>
-                        <span class="feature-tag">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
-                            </svg>
-                            即插即用
-                        </span>
-                    </div>
+                    
                     
                     <!-- 操作按钮 -->
                     <div class="card-actions">
-                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">查看详情</a>
+                        <a href="{% url 'dell_detail' product.model %}" class="btn btn-outline">View Details</a>
                         <button class="btn btn-primary" onclick="buyNow('{{ product.model|escapejs }}', {{ forloop.counter0 }})">Confirm Configuration</button>
                     </div>
                 </div>
@@ -398,23 +363,23 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>确认订单</h3>
+                <h3>Confirm Configuration</h3>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="order-summary">
-                    <h4>订单摘要</h4>
+                    <h4>Summary</h4>
                     <div id="orderDetails"></div>
                 </div>
                 <div class="form-group">
-                    <label for="remark">备注</label>
-                    <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请备注"></textarea>
+                    <label for="remark">Remark</label>
+                    <textarea id="remark" name="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <input type="hidden" id="modelName" name="modelName">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
             </div>
         </div>
     </div>
@@ -439,7 +404,7 @@
                 <span>${modelName}</span>
             </div>
             <div class="summary-item">
-                <span>基本配置:</span>
+                <span>Basic Configuration:</span>
                 <span>${product.basic_config || '-'}</span>
             </div>
             <div class="summary-item total">
@@ -478,16 +443,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('订单提交成功！订单号: ' + data.order_number);
+                alert('Submitted successfully! \nOrder No. ' + data.order_number);
                 closeModal();
                 window.location.reload();
             } else {
-                alert('订单提交失败: ' + data.message);
+                alert('Submitted failed: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('订单提交失败，请重试');
+            alert('Submission failed, please try again.');
         });
     }
     

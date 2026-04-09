@@ -237,7 +237,7 @@
         const remark = document.getElementById('remark').value;
         
         if (!netid || !userEmail) {
-            alert('请填写NETID和邮箱');
+            alert('Please enter your NetID and email.');
             return;
         }
         
@@ -266,16 +266,16 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('订单提交成功！订单号: ' + data.order_number);
+                alert('Submitted successfully! \nOrder No. ' + data.order_number);
                 closeModal();
                 window.location.reload();
             } else {
-                alert('订单提交失败: ' + data.message);
+                alert('Submitted failed: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('订单提交失败，请重试');
+            alert('Submission failed, please try again.');
         });
     }
     

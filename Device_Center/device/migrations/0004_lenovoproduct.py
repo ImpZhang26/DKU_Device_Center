@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 (
                     "device_type",
                     models.CharField(
-                        choices=[("Laptop", "笔记本"), ("Desktop", "台式机")],
+                        choices=[("Laptop", "Laptop"), ("Desktop", "Desktop")],
                         max_length=50,
                         verbose_name="设备类型",
                     ),
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "cpu",
-                    models.CharField(blank=True, max_length=500, verbose_name="处理器"),
+                    models.CharField(blank=True, max_length=500, verbose_name="CPU"),
                 ),
                 (
                     "memory",
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "accessary",
-                    models.CharField(blank=True, max_length=500, verbose_name="配件"),
+                    models.CharField(blank=True, max_length=500, verbose_name="Accessories"),
                 ),
                 (
                     "configuration_parameters",

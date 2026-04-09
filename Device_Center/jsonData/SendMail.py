@@ -19,18 +19,18 @@ TDTXT = '''
 
 
 def send_email(receivers,servermsg):
-    #发件人邮箱
+    #发件人eMail
     asender="ip_pingfail_alert@163.com"
-    #收件人邮箱
+    #收件人eMail
     areceiver=receivers
-    #抄送人邮箱
+    #抄送人eMail
     acc = 'tz138@duke.edu'
     #邮件主题
     asubject = 'Server Offline Warning'  
 
     #发件人地址
     from_addr = "ip_pingfail_alert@163.com"
-    #邮箱密码（授权码）
+    #eMail密码（授权码）
     password="EHJNGRYACAODBKMS"
     #邮件设置
     msg = MIMEMultipart()
@@ -98,12 +98,12 @@ def send_email(receivers,servermsg):
     xlsxpart.add_header('Content-Disposition', 'attachment', filename='ServerList.html')
     msg.attach(xlsxpart)    
 
-    # 设置邮箱服务器地址以及端口
+    # 设置eMail服务器地址以及端口
     smtp_server ="smtp.163.com"
     server = smtplib.SMTP(smtp_server, 25)
     server.set_debuglevel(1)
 
-    #登陆邮箱
+    #登陆eMail
     server.login(from_addr, password)
 
     #发送邮件

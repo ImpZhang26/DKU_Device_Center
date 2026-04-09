@@ -118,9 +118,9 @@
         <div class="breadcrumb">
             <a href="{{ url_for('apple_center') }}">Apple</a>
             <span>/</span>
-            <span>台式机选配</span>
+            <span>Desktop选配</span>
         </div>
-        <h1>Mac 台式机选配</h1>
+        <h1>Mac Desktop选配</h1>
         <p>iMac、Mac Studio、Mac Pro 专业选择</p>
     </header>
     
@@ -141,7 +141,7 @@
             </div>
             
             <div class="order-summary" id="order-summary">
-                <h3 class="summary-title">订单摘要</h3>
+                <h3 class="summary-title">Summary</h3>
                 <div class="empty-state" style="padding: 40px 20px;">
                     <p>选择型号和配置后<br>将显示订单详情</p>
                 </div>
@@ -235,7 +235,7 @@
                     selectedConfig = { idx: 0 };
                 } else {
                     let html = '';
-                    if (options.cpu && options.cpu.length > 0) html += createConfigGroup('处理器', 'cpu', options.cpu);
+                    if (options.cpu && options.cpu.length > 0) html += createConfigGroup('CPU', 'cpu', options.cpu);
                     if (options.memory && options.memory.length > 0) html += createConfigGroup('Memory', 'memory', options.memory);
                     if (options.hard_disk && options.hard_disk.length > 0) html += createConfigGroup('Storage', 'hard_disk', options.hard_disk);
                     container.innerHTML = html || '<div class="empty-state"><p>暂无可选配置</p></div>';
@@ -270,7 +270,7 @@
         function updateOrderSummary() {
             const container = document.getElementById('order-summary');
             if (!selectedModel) {
-                container.innerHTML = '<h3 class="summary-title">订单摘要</h3><div class="empty-state" style="padding: 40px 20px;"><p>选择型号和配置后<br>将显示订单详情</p></div>';
+                container.innerHTML = '<h3 class="summary-title">Summary</h3><div class="empty-state" style="padding: 40px 20px;"><p>选择型号和配置后<br>将显示订单详情</p></div>';
                 return;
             }
             let productHtml = '', configItems = [], totalPrice = 0, originalPrice = 0;
@@ -279,7 +279,7 @@
                 productHtml = `<div class="summary-product"><div class="product-image"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg></div>
                     <div class="product-info"><h4>${selectedModel}</h4><p>${config.configuration || '标准配置'}</p></div></div>`;
                 configItems = [
-                    { label: '处理器', value: config.cpu || '-' },
+                    { label: 'CPU', value: config.cpu || '-' },
                     { label: 'Memory', value: config.memory || '-' },
                     { label: 'Storage', value: config.hard_disk || '-' },
                     { label: 'GPU', value: config.graphic_card || '-' },
@@ -291,7 +291,7 @@
                 productHtml = `<div class="summary-product"><div class="product-image"><svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg></div>
                     <div class="product-info"><h4>${selectedModel}</h4><p>自定义配置</p></div></div>`;
             }
-            let summaryHtml = `<h3 class="summary-title">订单摘要</h3>${productHtml}<div class="summary-config">` +
+            let summaryHtml = `<h3 class="summary-title">Summary</h3>${productHtml}<div class="summary-config">` +
                 configItems.map(i => `<div class="config-item"><span class="config-item-label">${i.label}</span><span class="config-item-value">${i.value}</span></div>`).join('') +
                 '</div><div class="summary-divider"></div>';
             if (originalPrice > 0 && originalPrice > totalPrice) {

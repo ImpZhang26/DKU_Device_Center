@@ -1,5 +1,5 @@
 """
-Django 上下文处理器
+Django 上下文CPU
 为所有模板提供全局变量
 """
 from django.conf import settings

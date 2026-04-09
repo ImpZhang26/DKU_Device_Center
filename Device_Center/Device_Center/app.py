@@ -160,7 +160,7 @@ def apple_laptop():
 
 @app.route('/apple/desktop')
 def apple_desktop():
-    """Apple台式机选配"""
+    """AppleDesktop选配"""
     return render_template('apple/desktop.html')
 
 @app.route('/apple/ipad')
@@ -170,7 +170,7 @@ def apple_ipad():
 
 @app.route('/apple/accessories')
 def apple_accessories():
-    """Apple配件"""
+    """AppleAccessories"""
     return render_template('apple/accessories.html')
 
 # ==================== Apple API接口 ====================
@@ -242,7 +242,7 @@ def apple_configurations():
 
 @app.route('/api/apple/accessories')
 def apple_accessories_list():
-    """获取配件列表"""
+    """获取Accessories列表"""
     conn = get_connection('apple')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM accessories ORDER BY model')

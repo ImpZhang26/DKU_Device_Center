@@ -22,9 +22,9 @@ def init_test_data():
     # 产品类型
     product_types = [
         ('Laptop', 'Laptop', 'MacBook Pro、MacBook Air'),
-        ('Desktop', '台式机', 'iMac、Mac mini、Mac Studio、Mac Pro'),
+        ('Desktop', 'Desktop', 'iMac、Mac mini、Mac Studio、Mac Pro'),
         ('iPad', '平板电脑', 'iPad Pro、iPad Air、iPad、iPad mini'),
-        ('Accessories', '配件', '键盘、鼠标、触控板等配件')
+        ('Accessories', 'Accessories', '键盘、鼠标、触控板等Accessories')
     ]
     cursor.executemany(
         'INSERT OR REPLACE INTO product_types (device_type, name, description) VALUES (?, ?, ?)',
@@ -42,7 +42,7 @@ def init_test_data():
         cursor.execute('INSERT OR REPLACE INTO product_models (model_name, device_type, description) VALUES (?, ?, ?)',
                       (model, dtype, desc))
     
-    # 型号数据 - 台式机
+    # 型号数据 - Desktop
     desktops = [
         ('iMac 24"', 'Desktop', 'M3CPU，24英寸4.5K RetinaDisplay'),
         ('Mac mini', 'Desktop', 'M2/M2 ProCPU，小巧机身强劲性能'),
@@ -127,7 +127,7 @@ def init_test_data():
         ipad_configs
     )
     
-    # 配件数据
+    # Accessories数据
     accessories = [
         ('Magic Keyboard', 'Keyboard', '带有Touch ID的妙控键盘', 749, 899, 0.17),
         ('Magic Mouse', 'Mouse', '妙控鼠标', 579, 699, 0.17),

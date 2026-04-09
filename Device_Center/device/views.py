@@ -48,7 +48,7 @@ def get_user_key(request):
 
 
 def global_settings(request):
-    """全局上下文处理器"""
+    """全局上下文CPU"""
     return {
         'brand': 'Device Center',
         'current_year': datetime.now().year,
@@ -133,7 +133,7 @@ def apple_laptop(request):
 
 
 def apple_desktop(request):
-    """台式机选配"""
+    """Desktop选配"""
     device_type = ProductType.objects.get(device_type='Desktop')
     models = ProductModel.objects.filter(device_type=device_type, is_active=True)
     
@@ -185,7 +185,7 @@ def apple_ipad(request):
 
 
 def apple_accessories(request):
-    """配件页面"""
+    """Accessories页面"""
     accessories = Accessory.objects.filter(is_active=True)
     
     # 按类型分组
@@ -375,7 +375,7 @@ def api_configurations(request, brand, model_id):
 
 @csrf_exempt
 def api_accessories(request, brand):
-    """获取配件列表"""
+    """获取Accessories列表"""
     accessories = Accessory.objects.filter(is_active=True)
     data = [{
         'id': a.id,
@@ -455,7 +455,7 @@ def api_order_create(request, brand):
         if not netid or not user_email:
             return JsonResponse({
                 'success': False, 
-                'message': '请填写NETID和邮箱',
+                'message': 'Please enter your NetID and email.',
             }, status=400)
         
         user_id = netid
@@ -789,7 +789,7 @@ def export_orders_excel(request):
             '订单号',
             '用户ID',
             '用户姓名',
-            '用户邮箱',
+            '用户eMail',
             '品牌',
             'Model',
             'CPU',
@@ -1710,7 +1710,7 @@ def dell_index(request):
 
 
 def dell_notebook(request):
-    """Dell笔记本选配"""
+    """DellLaptop选配"""
     products = DellProduct.objects.filter(device_type='Notebook', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -1745,7 +1745,7 @@ def dell_notebook(request):
 
 
 def dell_laptop(request):
-    """Dell高性能本选配"""
+    """DellHigh-performance Laptop选配"""
     products = DellProduct.objects.filter(device_type='Laptop', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -1780,7 +1780,7 @@ def dell_laptop(request):
 
 
 def dell_desktop(request):
-    """Dell台式机选配"""
+    """DellDesktop选配"""
     products = DellProduct.objects.filter(device_type='Desktop', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -1815,7 +1815,7 @@ def dell_desktop(request):
 
 
 def dell_monitor(request):
-    """Dell显示器选配"""
+    """DellMonitor选配"""
     products = DellProduct.objects.filter(device_type='Monitor', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -1850,7 +1850,7 @@ def dell_monitor(request):
 
 
 def dell_accessories(request):
-    """Dell配件选配"""
+    """DellAccessories选配"""
     products = DellProduct.objects.filter(device_type='Docking', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -2052,7 +2052,7 @@ def lenovo_index(request):
 
 
 def lenovo_laptop(request):
-    """Lenovo笔记本选配"""
+    """LenovoLaptop选配"""
     products = LenovoProduct.objects.filter(device_type='Laptop', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -2088,7 +2088,7 @@ def lenovo_laptop(request):
 
 
 def lenovo_desktop(request):
-    """Lenovo台式机选配"""
+    """LenovoDesktop选配"""
     products = LenovoProduct.objects.filter(device_type='Desktop', is_active=True)
     user_name = request.session.get('user_name', '')
     
@@ -2243,7 +2243,7 @@ def lenovo_detail(request, config_id):
     
     # 获取设备类型名称
     device_type = config.device_type
-    device_type_name = '笔记本' if device_type == 'Laptop' else '台式机'
+    device_type_name = 'Laptop' if device_type == 'Laptop' else 'Desktop'
     
     return render(request, 'lenovo/detail.html', {
         'configuration': config,
