@@ -647,8 +647,13 @@ def admin_dashboard(request):
         total=models.Sum('total_price')
     )['total'] or 0
     
-    # 近期订单
-    recent_orders = Order.objects.all()[:10]
+    from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+    
+    # 分页订单 (20条/页)
+    orders = Order.objects.all().order_by('-created_at')
+    paginator = Paginator(orders, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # 按品牌统计
     brand_stats = Order.objects.values('brand').annotate(
@@ -661,7 +666,7 @@ def admin_dashboard(request):
         'pending_orders': pending_orders,
         'total_users': total_users,
         'total_revenue': total_revenue,
-        'recent_orders': recent_orders,
+        'page_obj': page_obj,
         'brand_stats': brand_stats,
     })
 

@@ -886,7 +886,7 @@
             <!-- 订单列表 -->
             <section class="order-list">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="margin: 0;">近期订单 <small style="font-weight: normal; color: var(--gray-500); font-size: 14px;">(点击"View Details"查看完整订单信息)</small></h3>
+                    <h3 style="margin: 0;">订单列表 <small style="font-weight: normal; color: var(--gray-500); font-size: 14px;">(共{{ page_obj.paginator.count }}条，第{{ page_obj.number }}页，每页10条) (点击"View Details"查看完整订单信息)</small></h3>
                     <button class="btn btn-primary" onclick="exportOrdersExcel()" style="display: flex; align-items: center; gap: 6px;">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
@@ -909,7 +909,7 @@
                             </tr>
                         </thead>
                         <tbody id="orderTableBody">
-                            {% for order in recent_orders %}
+                            {% for order in page_obj %}
                             <tr class="order-row {% if order.status == 'cancelled' %}order-row-cancelled{% endif %}" data-order-id="{{ order.id }}" data-status="{{ order.status }}">
                                 <td><code>{{ order.order_number }}</code></td>
                                 <td>{{ order.user_name }}</td>
@@ -943,6 +943,19 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- 分页控件 -->
+                <div style="margin-top: 24px; text-align: center; padding: 20px 0;">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline" style="margin-right: 12px;">上一页</a>
+                    {% endif %}
+                    <span style="font-weight: 600; color: var(--gray-700); margin: 0 20px;">
+                        第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页 (共 {{ page_obj.paginator.count }} 条)
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">下一页</a>
+                    {% endif %}
                 </div>
             </section>
         </div>
