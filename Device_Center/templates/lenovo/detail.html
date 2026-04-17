@@ -197,7 +197,7 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'lenovo_index' %}">Lenovo</a> <span class="brand-separator">/</span> <a href="{% if device_type == 'Laptop' %}{% url 'lenovo_laptop' %}{% else %}{% url 'lenovo_desktop' %}{% endif %}">{{ device_type_name }}</a> <span class="brand-separator">/</span> <span class="current-brand">{{ configuration.product.model }}</span></h1>
+                <h1 class="logo"><a href="/">Configuration Center</a> <span class="brand-separator">/</span> <a href="{% url 'lenovo_index' %}">Lenovo</a> <span class="brand-separator">/</span> <a href="{% if device_type == 'Laptop' %}{% url 'lenovo_laptop' %}{% else %}{% url 'lenovo_desktop' %}{% endif %}">{{ device_type_name }}</a> <span class="brand-separator">/</span> <span class="current-brand">{{ configuration.product.model }}</span></h1>
                 <nav class="nav">
                     <a href="{% url 'lenovo_laptop' %}">Laptop</a>
                     <a href="{% url 'lenovo_desktop' %}">Desktop</a>
@@ -208,7 +208,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="/login/" class="btn-link">[管理员登录]</a>
+                            <a href="/login/" class="btn-link">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -326,7 +326,7 @@
                     <button class="tab-btn active" onclick="switchTab('params')">Details</button>
                     {% endif %}
                     {% if configuration.changing_config_price %}
-                    <button class="tab-btn {% if not configuration.configuration_parameters %}active{% endif %}" onclick="switchTab('upgrade')">升级选项</button>
+                    <button class="tab-btn {% if not configuration.configuration_parameters %}active{% endif %}" onclick="switchTab('upgrade')">Upgrade Option</button>
                     {% endif %}
                 </div>
                 <div class="tab-content">
@@ -365,15 +365,23 @@
                         <div id="orderDetails"></div>
                     </div>
                     <div class="form-group">
+                        <label for="netid">NetID <span style="color:red;">*</span></label>
+                        <input type="text" id="netid" placeholder="Please enter your NetID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_email">eMail <span style="color:red;">*</span></label>
+                        <input type="email" id="user_email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
                         <label for="remark">Remark</label>
-                        <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请Remark"></textarea>
+                        <textarea id="remark" name="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" id="configId" name="configId" value="{{ configuration.id }}">
                     <input type="hidden" id="modelName" name="modelName" value="{{ configuration.product.model }} {{ configuration.configuration }}">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
                 </div>
             </form>
         </div>
@@ -381,7 +389,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+            <p>&copy; {{ current_year }} Configuration Center. All rights reserved.</p>
         </div>
     </footer>
 
@@ -466,7 +474,7 @@
     // 获取选中升级的HTML显示
     function getSelectedUpgradesHtml() {
         if (selectedUpgrades.length === 0) {
-            return '<span class="no-upgrade-selected">暂未选择升级选项</span>';
+            return '<span class="no-upgrade-selected">No Upgrade Selected.</span>';
         }
         
         var html = '<div class="upgrade-summary">';
@@ -503,13 +511,7 @@
     }
     
     function buyNow() {
-        // 检查用户是否已登录
-        var userName = '{{ user_name|escapejs }}';
-        if (!userName || userName === '') {
-            alert('请先登录后再提交订单');
-            window.location.href = '/login/';
-            return;
-        }
+
         
         var total = calculateTotal();
         var upgradeTotal = 0;
@@ -552,7 +554,7 @@
         // 添加升级选项
         html += `
             <div class="summary-item">
-                <span>升级选项:</span>
+                <span>Upgrade Option:</span>
             </div>
             ${getSelectedUpgradesHtml()}
         `;
@@ -561,11 +563,11 @@
         html += `
             <div class="price-summary">
                 <div class="price-row-summary">
-                    <span class="label">基础价格:</span>
+                    <span class="label">Basic Price:</span>
                     <span class="value">${basePrice.toFixed(2)} RMB</span>
                 </div>
                 <div class="price-row-summary">
-                    <span class="label">升级费用:</span>
+                    <span class="label">Upgrade Price:</span>
                     <span class="value">+${upgradeTotal.toFixed(2)} RMB</span>
                 </div>
                 <div class="price-row-summary total">
@@ -587,12 +589,21 @@
         const configIdValue = document.getElementById('configId').value;
         const modelNameValue = document.getElementById('modelName').value;
         const remark = document.getElementById('remark').value;
+        const netid = document.getElementById('netid').value.trim();
+        const userEmail = document.getElementById('user_email').value.trim();
         const totalPrice = calculateTotal();
+        
+        if (!netid || !userEmail) {
+            alert('Please enter your NetID and email.');
+            return;
+        }
         
         const data = {
             device_type: deviceType,
             model_name: modelNameValue,
             configuration_id: configIdValue,
+            netid: netid,
+            user_email: userEmail,
             remark: remark,
             cpu: '{{ configuration.cpu }}',
             memory: '{{ configuration.memory }}',

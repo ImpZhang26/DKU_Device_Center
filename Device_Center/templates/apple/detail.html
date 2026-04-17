@@ -123,19 +123,14 @@
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'apple_index' %}">Apple</a> <span class="brand-separator">/</span> <a href="{% if device_type == 'Laptop' %}{% url 'apple_laptop' %}{% elif device_type == 'Desktop' %}{% url 'apple_desktop' %}{% elif device_type == 'iPad' %}{% url 'apple_ipad' %}{% endif %}">{{ device_type_name }}</a> <span class="brand-separator">/</span> <span class="current-brand">{{ configuration.model.model_name }}</span></h1>
+<h1 class="logo"><a href="/">Configuration Center</a> <span class="brand-separator">/</span> <a href="{% url 'apple_index' %}">Apple</a> <span class="brand-separator">/</span> <a href="{% if device_type == 'Laptop' %}{% url 'apple_laptop' %}{% elif device_type == 'Desktop' %}{% url 'apple_desktop' %}{% elif device_type == 'iPad' %}{% url 'apple_ipad' %}{% endif %}">{{ device_type|title }}</a> <span class="brand-separator">/</span> <span class="current-brand">{{ configuration.model.model_name }}</span></h1>
                 <nav class="nav">
                     <a href="{% url 'apple_laptop' %}">MacBook</a>
                     <a href="{% url 'apple_desktop' %}">iMac/Mac mini</a>
                     <a href="{% url 'apple_ipad' %}">iPad</a>
                     <a href="{% url 'apple_accessories' %}">Accessories</a>
                 <span class="user-info">
-                        {% if request.session.is_admin or request.session.user_id %}
-                            &#128100; {{ request.session.admin_name|default:request.session.user_name }} 
-                            <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
-                        {% else %}
-                            <a href="/login/" class="btn-link">[Admin]</a>
-                        {% endif %}
+<a href="{% url 'login' %}" class="btn-link">[Admin]</a>
                     </span>
                 </nav>
             </div>
@@ -268,7 +263,7 @@
     </div>
 
     <footer class="footer">
-        <div class="container"><p>&copy; {{ current_year }} Device Center. All rights reserved.</p></div>
+        <div class="container"><p>&copy; {{ current_year }} Configuration Center. All rights reserved.</p></div>
     </footer>
 
     <script>

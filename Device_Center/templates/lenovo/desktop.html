@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenovo Desktop选配 - Lenovo</title>
+    <title>Lenovo Desktop</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <a href="{% url 'lenovo_index' %}">Lenovo</a> <span class="brand-separator">/</span> <span class="current-brand">Desktop</span></h1>
+                <h1 class="logo"><a href="/">Configuration Center</a> <span class="brand-separator">/</span> <a href="{% url 'lenovo_index' %}">Lenovo</a> <span class="brand-separator">/</span> <span class="current-brand">Desktop</span></h1>
                 <nav class="nav">
                     <a href="{% url 'lenovo_laptop' %}">Laptop</a>
                     <a href="{% url 'lenovo_desktop' %}" class="active">Desktop</a>
@@ -22,7 +22,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -35,7 +35,7 @@
             <div class="config-layout">
                 <!-- 左侧：型号选择 -->
                 <aside class="config-sidebar">
-                    <h3>选择型号</h3>
+                    <h3>Select Model</h3>
                     <ul class="model-list">
                         {% for m in models %}
                         <li>
@@ -139,15 +139,23 @@
                         <div id="orderDetails"></div>
                     </div>
                     <div class="form-group">
+                        <label for="netid">NETID <span style="color:red;">*</span></label>
+                        <input type="text" id="netid" placeholder="Please enter your NetID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_email">eMail <span style="color:red;">*</span></label>
+                        <input type="email" id="user_email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
                         <label for="remark">Remark</label>
-                        <textarea id="remark" name="remark" rows="3" placeholder="如有特殊需求请Remark"></textarea>
+                        <textarea id="remark" name="remark" rows="3" placeholder="If you have any special requirements, please note them."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" id="configId" name="configId">
                     <input type="hidden" id="modelName" name="modelName">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                    <button type="button" class="btn btn-primary" onclick="submitOrder()">确认提交</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitOrder()">Submit</button>
                 </div>
             </form>
         </div>
@@ -155,7 +163,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+            <p>&copy; {{ current_year }} Configuration Center. All rights reserved.</p>
         </div>
     </footer>
 
@@ -164,13 +172,7 @@
     const productType = '{{ product_type }}';
     
     function buyNow(configId, modelName, configName, price, cpu, memory, hardDisk, graphicCard, screen) {
-        // 检查用户是否已登录
-        var userName = '{{ user_name|escapejs }}';
-        if (!userName || userName === '') {
-            alert('请先登录后再提交订单');
-            window.location.href = '/login/';
-            return;
-        }
+
         
         document.getElementById('configId').value = configId;
         document.getElementById('modelName').value = modelName + ' ' + configName;
@@ -226,11 +228,20 @@
         const configId = document.getElementById('configId').value;
         const modelName = document.getElementById('modelName').value;
         const remark = document.getElementById('remark').value;
+        const netid = document.getElementById('netid').value.trim();
+        const userEmail = document.getElementById('user_email').value.trim();
+        
+        if (!netid || !userEmail) {
+            alert('Please enter your NetID and email.');
+            return;
+        }
         
         const data = {
             device_type: productType,
             model_name: modelName,
             configuration_id: configId,
+            netid: netid,
+            user_email: userEmail,
             remark: remark,
             cpu: document.querySelector('#orderDetails .summary-item:nth-child(2) span:last-child').textContent,
             memory: document.querySelector('#orderDetails .summary-item:nth-child(3) span:last-child').textContent,

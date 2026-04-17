@@ -209,7 +209,7 @@ def apple_detail(request, config_id):
         return render(request, '404.html', status=404)
     
     device_type = config.model.device_type.device_type
-    device_type_name = config.model.device_type.name
+    device_type_display = device_type.capitalize()
     
     # 计算折扣百分比
     if config.original_price and config.original_price > config.discount_price:
@@ -308,14 +308,18 @@ def apple_detail(request, config_id):
         
         configuration_upgrade_html += '</div>'
     
-    # 设置用户信息
-    user_name = request.session.get('user_name', '')
+    # 设置用户信息 (consistent with other brands)
+    is_logged_in = bool(request.session.get('is_admin') or request.session.get('user_id'))
+    user_name = (request.session.get('admin_name') or 
+                 request.session.get('user_name', '') or 
+                 request.session.get('user_id', 'Admin'))
     
     return render(request, 'apple/detail.html', {
         'configuration': config,
         'device_type': device_type,
-        'device_type_name': device_type_name,
+        'device_type_display': device_type_display,
         'brand': 'Apple',
+        'is_logged_in': is_logged_in,
         'user_name': user_name,
         'discount_percent': discount_percent,
         'configuration_parameters_html': configuration_parameters_html,

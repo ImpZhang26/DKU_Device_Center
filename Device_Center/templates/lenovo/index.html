@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lenovo 选配中心</title>
+    <title>Lenovo</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="/">Device Center</a> <span class="brand-separator">/</span> <span class="current-brand">Lenovo</span></h1>
+                <h1 class="logo"><a href="/">Configuration Center</a> <span class="brand-separator">/</span> <span class="current-brand">Lenovo</span></h1>
                 <nav class="nav">
                     <a href="{% url 'lenovo_laptop' %}">Laptop</a>
                     <a href="{% url 'lenovo_desktop' %}">Desktop</a>
@@ -22,7 +22,7 @@
                             </a>
                             <a href="{% url 'logout' %}" class="btn-link">[退出]</a>
                         {% else %}
-                            <a href="{% url 'login' %}">[登录]</a>
+                            <a href="{% url 'login' %}">[Admin]</a>
                         {% endif %}
                     </span>
                 </nav>
@@ -33,8 +33,8 @@
     <main class="main">
         <div class="container">
             <section class="hero-section">
-                <h2>Lenovo 设备选配中心</h2>
-                <p>选择您需要的产品类型，开始个性化配置</p>
+                <h2>Configure Your Lenovo Product</h2>
+                <p>Choose a product to start customizing.</p>
             </section>
 
             <div class="product-categories">
@@ -63,7 +63,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; {{ current_year }} Device Center. All rights reserved.</p>
+            <p>&copy; {{ current_year }} Configuration Center. All rights reserved.</p>
         </div>
     </footer>
 </body>
