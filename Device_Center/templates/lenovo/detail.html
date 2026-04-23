@@ -366,7 +366,7 @@
                     </div>
                     <div class="form-group">
                         <label for="netid">NetID <span style="color:red;">*</span></label>
-                        <input type="text" id="netid" placeholder="Please enter your NetID" required>
+                        <input type="text" id="netid" placeholder="Please enter your NetID." required>
                     </div>
                     <div class="form-group">
                         <label for="user_email">eMail <span style="color:red;">*</span></label>
@@ -594,7 +594,7 @@
         const totalPrice = calculateTotal();
         
         if (!netid || !userEmail) {
-            alert('Please enter your NetID and email.');
+            alert('Please enter your NetID and email!');
             return;
         }
         

@@ -113,11 +113,11 @@ def _build_user_email_html(order_data):
     </head>
     <body>
         <div class="header">
-            <h1>Configuration Info>
+            <h1>Configuration Info</h1>
             <p>Hello, we have received your configuration request!</p>
         </div>
         <div class="content">
-            <h2>Configurationtion Summary>
+            <h2>Configurationtion Summary</h2>
             <p><strong>No.:</strong> <span class="order-number">{order_data.get("order_number", "N/A")}</span></p>
             <p><strong>Time:</strong> {created_at}</p>
             
